@@ -80,7 +80,7 @@ allprojects {
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
+            languageVersion.set(JavaLanguageVersion.of(21))
         }
     }
 
@@ -114,8 +114,11 @@ subprojects {
 
     setupRepositories()
 
+    // Architectury names its configurations "NeoForge" (capital F), which a plain
+    // replaceFirstChar on "neoforge" would render as "Neoforge" and fail to match.
     val capitalizedName =
-        project.name.replaceFirstChar { it.uppercase() }
+        if (project.name == "neoforge") "NeoForge"
+        else project.name.replaceFirstChar { it.uppercase() }
 
     val loom = project.extensions.getByType<LoomGradleExtensionAPI>()
     loom.apply {
@@ -124,8 +127,6 @@ subprojects {
             vmArg("-XX:+AllowEnhancedClassRedefinition")
             vmArg("-XX:+IgnoreUnrecognizedVMOptions")
             vmArg("-Dmixin.debug.export=true")
-            vmArg("-Dmixin.env.remapRefMap=true")
-            vmArg("-Dmixin.env.refMapRemappingFile=${projectDir}/build/createSrgToMcp/output.srg")
         }
     }
 
@@ -227,8 +228,8 @@ subprojects {
         // Trim -build.X+mcX.XX.X from version string
         //val createFabricVersion: String = Regex("(\\d+\\.\\d+\\.\\d+-\\w)").find("create_fabric_version"())?.value.toString()
 
-        val createForgeVersion = "create_forge_version"().split("-")[0]
-        val createForgeVersionRange = (rootProject.ext["create_forge_version_range"] as String?) ?: createForgeVersion
+        val createNeoVersion = "create_neoforge_version"().split("-")[0]
+        val createNeoVersionRange = (rootProject.ext["create_neoforge_version_range"] as String?) ?: createNeoVersion
 
         // set up properties for filling into metadata
         val properties = mapOf(
@@ -237,16 +238,16 @@ subprojects {
                 "fabric_api_version" to "fabric_api_version"(),
                 "fabric_loader_version" to "fabric_loader_version"(),
                 "voicechat_api_version" to "voicechat_api_version"(),
-                "forge_version" to "forge_version"().split(".")[0], // only specify major version of forge
-                "create_forge_version" to createForgeVersion,
-                "create_forge_version_range" to createForgeVersionRange,
+                "neoforge_version" to "neoforge_version"().split(".")[0], // only specify major version of neoforge
+                "create_neoforge_version" to createNeoVersion,
+                "create_neoforge_version_range" to createNeoVersionRange,
                 "create_fabric_version" to "create_fabric_version"(),
                 "create_fabric_version_range" to "create_fabric_version_range"(),
         )
 
         inputs.properties(properties)
 
-        filesMatching(listOf("fabric.mod.json", "META-INF/mods.toml")) {
+        filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml")) {
             expand(properties)
         }
     }
@@ -294,7 +295,6 @@ subprojects {
             modLoaders.add("fabric")
             modLoaders.add("quilt")
         } else {
-            modLoaders.add("forge")
             modLoaders.add("neoforge")
         }
 
@@ -416,9 +416,9 @@ fun <T> getValueFromAnnotation(annotation: AnnotationNode?, key: String): T? {
 tasks.register("railwaysPublish") {
     when (val platform = System.getenv("PLATFORM")) {
         "both" -> {
-            dependsOn(tasks.build, ":fabric:publish", ":forge:publish", ":common:publish", ":fabric:publishMods", ":forge:publishMods")
+            dependsOn(tasks.build, ":neoforge:publish", ":common:publish", ":neoforge:publishMods")
         }
-        "fabric", "forge" -> {
+        "neoforge" -> {
             dependsOn("${platform}:build", "${platform}:publish", "${platform}:publishMods")
         }
     }
@@ -427,7 +427,9 @@ tasks.register("railwaysPublish") {
 fun Project.setupRepositories() {
     repositories {
         mavenCentral()
-        maven("https://maven.createmod.net") // Create, Ponder, Flywheel
+        maven("https://maven.createmod.net") // Create, Ponder, Flywheel, Catnip
+        maven("https://maven.neoforged.net/releases") // NeoForge
+        maven("https://maven.ithundxr.dev/snapshots") // Registrate (MC1.21+)
         maven("https://modmaven.dev/") // flywheel fabric
         maven("https://maven.shedaniel.me/") // Cloth Config, REI
         maven("https://maven.blamejared.com/") // JEI, Hex Casting

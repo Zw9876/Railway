@@ -1,0 +1,36 @@
+modLoader = "javafml"
+loaderVersion = "[${neoforge_version},)"
+issueTrackerURL = "https://github.com/Layers-of-Railways/Railway/issues"
+license = "LGPL v3"
+
+[[mods]]
+modId = "railways"
+version = "${version}"
+displayName = "Create: Steam 'n' Rails"
+authors = "The Railways Team"
+description = '''Customization and extension of Create rail systems and steam system'''
+
+# TODO(phase2): add `railways-common.mixins.json` here once common is ported to 1.21.1
+[[mixins]]
+config = "railways.mixins.json"
+
+[[dependencies.railways]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${neoforge_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.railways]]
+modId = "minecraft"
+type = "required"
+versionRange = "[${minecraft_version}]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.railways]]
+modId = "create"
+type = "required"
+versionRange = "${create_neoforge_version_range}"
+ordering = "NONE"
+side = "BOTH"
