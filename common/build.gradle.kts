@@ -38,6 +38,27 @@ architectury {
 }
 
 dependencies {
+    // NeoForge on common's COMPILE classpath only.
+    //
+    // No file in common imports net.neoforged.* (only 2 of 657 reference any
+    // loader package). The need is purely transitive: our classes extend Create
+    // classes, and Create's extend NeoForge types (CopycatModel ->
+    // BakedModelWrapper, etc.), so javac must see them to typecheck.
+    //
+    // This uses the plain `universal` artifact rather than loom's neoForge
+    // configuration on purpose: setting loom.platform=neoforge here would make
+    // common a platform project, which is incompatible with architectury's
+    // common{} block ("SRG is not supported on NeoForge"). NeoForge 1.21 ships
+    // Mojmap, matching our mappings, so no remapping is required.
+
+    compileOnly("net.neoforged:neoforge:${"neoforge_version"()}:universal")
+    // Requesting the `universal` classifier above bypasses POM dependency
+    // resolution, so NeoForge's own libraries must be named explicitly.
+    // night-config backs NeoForge's config system (hard errors in CRConfigs);
+    // bus only silences "unknown enum constant EventPriority" warnings.
+    compileOnly("com.electronwill.night-config:core:3.8.3")
+    compileOnly("com.electronwill.night-config:toml:3.8.3")
+    compileOnly("net.neoforged:bus:8.0.5")
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
     modImplementation("net.fabricmc:fabric-loader:${"fabric_loader_version"()}")
