@@ -111,7 +111,7 @@ public abstract class RailwaysRecipeProvider extends RecipeProvider {
         }
 
         public static TagKey<Item> fence() {
-            return TagKey.create(Registries.ITEM, new ResourceLocation("minecraft:fences"));
+            return TagKey.create(Registries.ITEM, ResourceLocation.parse("minecraft:fences"));
         }
 
         public static ItemLike campfire() {

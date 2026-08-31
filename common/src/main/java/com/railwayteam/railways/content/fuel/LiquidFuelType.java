@@ -72,12 +72,12 @@ public class LiquidFuelType {
                                 String string = primitive.getAsString();
 
                                 if (string.startsWith("#")) {
-                                    TagKey<Fluid> tag = TagKey.create(Registries.FLUID, new ResourceLocation(primitive.getAsString().substring(1)));
+                                    TagKey<Fluid> tag = TagKey.create(Registries.FLUID, ResourceLocation.parse(primitive.getAsString().substring(1)));
                                     if (tag != null) {
                                         type.fluidTags.add(() -> tag);
                                     }
                                 } else {
-                                    Fluid fluid = BuiltInRegistries.FLUID.get(new ResourceLocation(primitive.getAsString()));
+                                    Fluid fluid = BuiltInRegistries.FLUID.get(ResourceLocation.parse(primitive.getAsString()));
                                     if (fluid != null) {
                                         type.fluids.add(() -> fluid);
                                     }

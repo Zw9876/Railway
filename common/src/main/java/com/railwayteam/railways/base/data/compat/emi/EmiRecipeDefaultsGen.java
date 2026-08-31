@@ -64,7 +64,7 @@ public class EmiRecipeDefaultsGen implements DataProvider {
         for (PalettesColor color : PalettesColor.values()) {
             if (color.isNetherite()) continue;
             String path = "create/filling/railways/empty_paint_pitcher/with/railways/paint/" + color.getSerializedName();
-            DEFAULT_RECIPES.add(new ResourceLocation("emi", path));
+            DEFAULT_RECIPES.add(ResourceLocation.fromNamespaceAndPath("emi", path));
             DEFAULT_RECIPES.add(jeiMangle(Railways.asResource(path)));
         }
     }
@@ -97,7 +97,7 @@ public class EmiRecipeDefaultsGen implements DataProvider {
     }
 
     private static ResourceLocation jeiMangle(ResourceLocation loc) {
-        return new ResourceLocation("jei", "/" + loc.getNamespace() + "/" + loc.getPath());
+        return ResourceLocation.fromNamespaceAndPath("jei", "/" + loc.getNamespace() + "/" + loc.getPath());
     }
 
     @Override

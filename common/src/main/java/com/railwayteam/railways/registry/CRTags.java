@@ -87,7 +87,7 @@ public class CRTags {
     }
 
     AllBlockTags(NameSpace namespace, String path, boolean optional, boolean alwaysDatagen) {
-      ResourceLocation id = new ResourceLocation(namespace.id, path == null ? Lang.asId(name()) : path);
+      ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? Lang.asId(name()) : path);
       if (optional) {
         tag = optionalTag(BuiltInRegistries.BLOCK, id);
       } else {
@@ -154,7 +154,7 @@ public class CRTags {
     }
 
     AllItemTags(NameSpace namespace, String path, boolean optional, boolean alwaysDatagen) {
-      ResourceLocation id = new ResourceLocation(namespace.id, path == null ? Lang.asId(name()) : path);
+      ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? Lang.asId(name()) : path);
       if (optional) {
         tag = optionalTag(BuiltInRegistries.ITEM, id);
       } else {

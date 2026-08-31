@@ -124,7 +124,7 @@ public class Railways {
   }
 
   public static ResourceLocation asResource(String name) {
-    return new ResourceLocation(MOD_ID, name);
+    return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
   }
 
   public static void gatherData(DataGenerator.PackGenerator gen) {

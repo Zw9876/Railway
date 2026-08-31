@@ -273,7 +273,7 @@ public abstract class MixinTrain implements IOccupiedCouplers, IIndexedSchedule,
         ((IHandcarTrain) train).railways$setHandcar(tag.getBoolean("IsHandcar"));
 
         if (tag.contains("ShadowKey", Tag.TAG_STRING)) {
-            ((IShadowTrain) train).railways$setShadow(new ResourceLocation(tag.getString("ShadowKey")));
+            ((IShadowTrain) train).railways$setShadow(ResourceLocation.parse(tag.getString("ShadowKey")));
         } else {
             ((IShadowTrain) train).railways$clearShadow();
         }
