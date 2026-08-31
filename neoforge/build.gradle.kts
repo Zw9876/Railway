@@ -38,7 +38,7 @@ dependencies {
     // Create and its dependencies
     modImplementation("com.simibubi.create:create-${"minecraft_version"()}:${"create_neoforge_version"()}:slim") { isTransitive = false }
     modImplementation("net.createmod.ponder:ponder-neoforge:${"ponder_version"()}")
-    modImplementation("net.createmod.catnip:Catnip-NeoForge-${"minecraft_version"()}:${"catnip_version"()}") { isTransitive = false }
+    // Catnip intentionally omitted: ponder-neoforge bundles it (see :common notes).
     modImplementation("com.tterrag.registrate:Registrate:${"registrate_version"()}")
     modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${"minecraft_version"()}:${"flywheel_version"()}")
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${"minecraft_version"()}:${"flywheel_version"()}")

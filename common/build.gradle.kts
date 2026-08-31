@@ -47,8 +47,9 @@ dependencies {
     // against the NeoForge artifacts directly. This is a NeoForge-only source tree.
     modCompileOnly("com.simibubi.create:create-${"minecraft_version"()}:${"create_neoforge_version"()}:slim") { isTransitive = false }
     modCompileOnly("net.createmod.ponder:ponder-neoforge:${"ponder_version"()}")
-    // Catnip 0.8.54's POM references a nonexistent group (dev.engine_room), so resolve it non-transitively
-    modCompileOnly("net.createmod.catnip:Catnip-NeoForge-${"minecraft_version"()}:${"catnip_version"()}") { isTransitive = false }
+    // NOTE: do NOT declare Catnip here. ponder-neoforge bundles 274 catnip classes,
+    // and declaring both makes two JPMS modules export net.createmod.catnip.* ->
+    // ResolutionException at runtime. Create's own POM depends on ponder, never catnip.
     modCompileOnly("com.tterrag.registrate:Registrate:${"registrate_version"()}")
     modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${"minecraft_version"()}:${"flywheel_version"()}")
 
