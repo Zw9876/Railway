@@ -101,6 +101,11 @@ allprojects {
 
     tasks.withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
+        // During the 1.21.1 port, -Pmaxerrs=N surfaces the full error census
+        // instead of javac stopping at its default 100.
+        (findProperty("maxerrs") as String?)?.let {
+            options.compilerArgs.addAll(listOf("-Xmaxerrs", it, "-Xmaxwarns", it))
+        }
     }
 
     java {
@@ -144,6 +149,11 @@ subprojects {
             officialMojangMappings { nameSyntheticMembers = false }
             parchment("org.parchmentmc.data:parchment-${"minecraft_version"()}:${"parchment_version"()}@zip")
         })
+
+        // JSR-305 (javax.annotation.Nullable / ParametersAreNonnullByDefault).
+        // Forge 1.20.1 supplied this transitively; NeoForge 1.21.1 does not.
+        // Compile-time-only annotations, so no runtime dependency is needed.
+        "compileOnly"("com.google.code.findbugs:jsr305:3.0.2")
 
         // Used to decompile mixin dumps, needs to be on the classpath
         // Uncomment if you want it to decompile mixin exports, beware it has very verbose logging.
