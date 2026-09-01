@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.content.buffer;
 
+import net.minecraft.world.item.component.CustomData;
+
+import net.minecraft.core.component.DataComponents;
+
 
 import com.railwayteam.railways.registry.CRBlocks;
 import com.railwayteam.railways.registry.CRTrackMaterials;
@@ -128,10 +132,10 @@ public class TrackBufferBlockItem extends TrackTargetingBlockItem {
                 return InteractionResult.FAIL;
             }
             
-            CompoundTag stackTag = stack.getOrCreateTag();
-            stack.setTag(stackTag);
-            
-            CompoundTag oldTeTag = stackTag.getCompound("BlockEntityTag");
+            // 1.21: the BlockEntityTag NBT compound is now the
+            // BLOCK_ENTITY_DATA component (itself a CustomData).
+            CustomData oldBlockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+            CompoundTag oldTeTag = oldBlockEntityData == null ? new CompoundTag() : oldBlockEntityData.copyTag();
             
             CompoundTag teTag = new CompoundTag();
             if (oldTeTag != null) {
@@ -159,7 +163,10 @@ public class TrackBufferBlockItem extends TrackTargetingBlockItem {
             }
             
             teTag.put("TargetTrack", NbtUtils.writeBlockPos(pos.subtract(placedPos)));
-            stackTag.put("BlockEntityTag", teTag);
+            // Written at the END on purpose. The old code called setTag() up
+            // front and then kept mutating the live tag; under component copy
+            // semantics that would have discarded everything built below.
+            stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(teTag));
             
             TrackShape shape = state.getValue(TrackBlock.SHAPE);
             boolean diagonal = shape == TrackShape.PD || shape == TrackShape.ND;

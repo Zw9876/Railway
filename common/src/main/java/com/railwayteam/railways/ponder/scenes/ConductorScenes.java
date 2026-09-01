@@ -18,6 +18,16 @@
 
 package com.railwayteam.railways.ponder.scenes;
 
+import com.mojang.authlib.properties.PropertyMap;
+
+import java.util.Optional;
+
+import net.minecraft.world.item.component.DyedItemColor;
+
+import net.minecraft.world.item.component.ResolvableProfile;
+
+import net.minecraft.core.component.DataComponents;
+
 import com.mojang.authlib.GameProfile;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.registry.CREntities;
@@ -53,15 +63,12 @@ public class ConductorScenes {
 
   public static ElementLink<EntityElement> makePlayerStand(SceneBuilder scene, String playerName, int leatherColor, Vec3 pos) {
     ItemStack playerHead = new ItemStack(Items.PLAYER_HEAD);
-    GameProfile gameprofile = new GameProfile(null, playerName);
-    /*try {
-      Minecraft.getInstance().getSkinManager().registerSkins(gameprofile, null, false);
-    } catch (NullPointerException ignored) {}*/
-    SkullBlockEntity.updateGameprofile(gameprofile, (profile) -> {
-      CompoundTag itemTag = playerHead.getOrCreateTag();
-      itemTag.put("SkullOwner", NbtUtils.writeGameProfile(new CompoundTag(), profile));
-      playerHead.setTag(itemTag);
-    });
+    // 1.21: SkullOwner NBT became the PROFILE component, and
+    // SkullBlockEntity.updateGameprofile was removed. An unresolved
+    // ResolvableProfile (name only) is resolved lazily when rendered, so the
+    // old async callback is no longer needed.
+    playerHead.set(DataComponents.PROFILE,
+        new ResolvableProfile(Optional.of(playerName), Optional.empty(), new PropertyMap()));
 
     ElementLink<EntityElement> player = scene.world().createEntity(w -> {
       ArmorStand entity = EntityType.ARMOR_STAND.create(w);
@@ -82,18 +89,15 @@ public class ConductorScenes {
 
     scene.world().modifyEntity(player, entity -> {
       entity.setItemSlot(EquipmentSlot.HEAD, playerHead);
-      CompoundTag leatherTag = new CompoundTag();
-      {
-        CompoundTag displayTag = new CompoundTag();
-        displayTag.putInt("color", leatherColor);
-        leatherTag.put("display", displayTag);
-      }
       ItemStack chestplate = new ItemStack(Items.LEATHER_CHESTPLATE);
       ItemStack leggings = new ItemStack(Items.LEATHER_LEGGINGS);
       ItemStack boots = new ItemStack(Items.LEATHER_BOOTS);
-      chestplate.setTag(leatherTag);
-      leggings.setTag(leatherTag);
-      boots.setTag(leatherTag);
+      // 1.21: leather tint moved from the display.color NBT to the
+      // DYED_COLOR component. As custom data it would render untinted.
+      DyedItemColor dye = new DyedItemColor(leatherColor, true);
+      chestplate.set(DataComponents.DYED_COLOR, dye);
+      leggings.set(DataComponents.DYED_COLOR, dye);
+      boots.set(DataComponents.DYED_COLOR, dye);
       entity.setItemSlot(EquipmentSlot.CHEST, chestplate);
       entity.setItemSlot(EquipmentSlot.LEGS, leggings);
       entity.setItemSlot(EquipmentSlot.FEET, boots);

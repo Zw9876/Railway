@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.content.conductor;
 
+import net.minecraft.world.item.component.ResolvableProfile;
+
+import net.minecraft.core.component.DataComponents;
+
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
@@ -79,16 +83,13 @@ public class ConductorSecondaryHeadLayer<T extends ConductorEntity, M extends En
         }
         ((HeadedModel)this.getParentModel()).getHead().translateAndRotate(matrixStack);
         if (item instanceof BlockItem && ((BlockItem)item).getBlock() instanceof AbstractSkullBlock) {
-            CompoundTag compoundTag;
             matrixStack.scale(1.1875f, -1.1875f, -1.1875f);
-            GameProfile gameProfile = null;
-            if (itemStack.hasTag() && (compoundTag = itemStack.getTag()).contains("SkullOwner", 10)) {
-                gameProfile = NbtUtils.readGameProfile(compoundTag.getCompound("SkullOwner"));
-            }
+            // 1.21: skull owner lives in the PROFILE component, not SkullOwner NBT.
+            ResolvableProfile resolvableProfile = itemStack.get(DataComponents.PROFILE);
             matrixStack.translate(-0.5, 0.0, -0.5);
             SkullBlock.Type type = ((AbstractSkullBlock)((BlockItem)item).getBlock()).getType();
             SkullModelBase skullModelBase = this.skullModels.get(type);
-            RenderType renderType = SkullBlockRenderer.getRenderType(type, gameProfile);
+            RenderType renderType = SkullBlockRenderer.getRenderType(type, resolvableProfile);
             SkullBlockRenderer.renderSkull(null, 180.0f, limbSwing, matrixStack, buffer, packedLight, skullModelBase, renderType);
         } else if (!(item instanceof ArmorItem) || ((ArmorItem)item).getEquipmentSlot() != EquipmentSlot.HEAD) {
             CustomHeadLayer.translateToHead(matrixStack, false);
