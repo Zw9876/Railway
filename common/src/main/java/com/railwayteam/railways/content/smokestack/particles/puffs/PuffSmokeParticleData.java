@@ -18,32 +18,31 @@
 
 package com.railwayteam.railways.content.smokestack.particles.puffs;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.railwayteam.railways.registry.CRParticleTypes;
 import com.simibubi.create.foundation.particle.ICustomParticleDataWithSprite;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
-
 public abstract class PuffSmokeParticleData<T extends PuffSmokeParticleData<T>> implements ParticleOptions, ICustomParticleDataWithSprite<T> {
-	
+
 	@FunctionalInterface
 	protected interface Constructor<T extends PuffSmokeParticleData<T>> {
 		@Contract("_, _, _, _ -> new")
 		T create(boolean stationary, float red, float green, float blue);
 	}
 
-	protected static <T extends PuffSmokeParticleData<T>> Codec<T> makeCodec(Constructor<T> constructor) {
-		return RecordCodecBuilder.create(i -> i
+	protected static <T extends PuffSmokeParticleData<T>> MapCodec<T> makeCodec(Constructor<T> constructor) {
+		return RecordCodecBuilder.mapCodec(i -> i
 			.group(Codec.BOOL.fieldOf("stationary")
 					.forGetter(p -> p.stationary),
 				Codec.FLOAT.fieldOf("red") // -1, -1, -1 indicates un-dyed
@@ -55,29 +54,19 @@ public abstract class PuffSmokeParticleData<T extends PuffSmokeParticleData<T>> 
 			.apply(i, constructor::create));
 	}
 
-	@SuppressWarnings("deprecation")
-	protected static <T extends PuffSmokeParticleData<T>> Deserializer<T> makeDeserializer(Constructor<T> constructor) {
-		return new Deserializer<>() {
-            public @NotNull T fromCommand(@NotNull ParticleType<T> particleTypeIn,
-										  @NotNull StringReader reader) throws CommandSyntaxException {
-                reader.expect(' ');
-                boolean stationary = reader.readBoolean();
-                reader.expect(' ');
-                float red = reader.readFloat();
-                reader.expect(' ');
-                float green = reader.readFloat();
-                reader.expect(' ');
-                float blue = reader.readFloat();
-                return constructor.create(stationary, red, green, blue);
-            }
-
-            public @NotNull T fromNetwork(@NotNull ParticleType<T> particleTypeIn,
-										  @NotNull FriendlyByteBuf buffer) {
-                return constructor.create(buffer.readBoolean(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
-            }
-        };
+	// Replaces the old ParticleOptions.Deserializer, removed in 1.20.5.
+	// Command parsing is now derived from the MapCodec, so only the network
+	// half needs an explicit implementation.
+	protected static <T extends PuffSmokeParticleData<T>> StreamCodec<RegistryFriendlyByteBuf, T> makeStreamCodec(Constructor<T> constructor) {
+		return StreamCodec.composite(
+			ByteBufCodecs.BOOL, p -> p.stationary,
+			ByteBufCodecs.FLOAT, p -> p.red,
+			ByteBufCodecs.FLOAT, p -> p.green,
+			ByteBufCodecs.FLOAT, p -> p.blue,
+			constructor::create
+		);
 	}
-	
+
 	boolean stationary;
 	float red;
 	float green;
@@ -114,24 +103,10 @@ public abstract class PuffSmokeParticleData<T extends PuffSmokeParticleData<T>> 
 	}
 
 	@Override
-	public void writeToNetwork(FriendlyByteBuf buffer) {
-		buffer.writeBoolean(stationary);
-		buffer.writeFloat(red);
-		buffer.writeFloat(green);
-		buffer.writeFloat(blue);
-	}
+	public abstract MapCodec<T> getCodec(ParticleType<T> type);
 
 	@Override
-	public @NotNull String writeToString() {
-		return String.format(Locale.ROOT, "%s %b %f %f %f", getParticleType().parameter(), stationary, red, green, blue);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public abstract Deserializer<T> getDeserializer();
-
-	@Override
-	public abstract Codec<T> getCodec(ParticleType<T> type);
+	public abstract StreamCodec<? super RegistryFriendlyByteBuf, T> getStreamCodec();
 
 	@Override
 	public abstract ParticleEngine.SpriteParticleRegistration<T> getMetaFactory();
@@ -160,10 +135,8 @@ public abstract class PuffSmokeParticleData<T extends PuffSmokeParticleData<T>> 
 	}
 
 	public static class Small extends PuffSmokeParticleData<Small> {
-		public static final Codec<Small> CODEC = makeCodec(Small::new);
-
-		@SuppressWarnings("deprecation")
-		public static final Deserializer<Small> DESERIALIZER = makeDeserializer(Small::new);
+		public static final MapCodec<Small> CODEC = makeCodec(Small::new);
+		public static final StreamCodec<RegistryFriendlyByteBuf, Small> STREAM_CODEC = makeStreamCodec(Small::new);
 
 		public Small() {}
 
@@ -188,15 +161,14 @@ public abstract class PuffSmokeParticleData<T extends PuffSmokeParticleData<T>> 
 			return CRParticleTypes.SMOKE_PUFF_SMALL;
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
-		public Deserializer<Small> getDeserializer() {
-			return DESERIALIZER;
+		public MapCodec<Small> getCodec(ParticleType<Small> type) {
+			return CODEC;
 		}
 
 		@Override
-		public Codec<Small> getCodec(ParticleType<Small> type) {
-			return CODEC;
+		public StreamCodec<? super RegistryFriendlyByteBuf, Small> getStreamCodec() {
+			return STREAM_CODEC;
 		}
 
 		@Override
@@ -211,10 +183,8 @@ public abstract class PuffSmokeParticleData<T extends PuffSmokeParticleData<T>> 
 	}
 
 	public static class Medium extends PuffSmokeParticleData<Medium> {
-		public static final Codec<Medium> CODEC = makeCodec(Medium::new);
-
-		@SuppressWarnings("deprecation")
-		public static final Deserializer<Medium> DESERIALIZER = makeDeserializer(Medium::new);
+		public static final MapCodec<Medium> CODEC = makeCodec(Medium::new);
+		public static final StreamCodec<RegistryFriendlyByteBuf, Medium> STREAM_CODEC = makeStreamCodec(Medium::new);
 
 		public Medium() {}
 
@@ -239,15 +209,14 @@ public abstract class PuffSmokeParticleData<T extends PuffSmokeParticleData<T>> 
 			return CRParticleTypes.SMOKE_PUFF_MEDIUM;
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
-		public Deserializer<Medium> getDeserializer() {
-			return DESERIALIZER;
+		public MapCodec<Medium> getCodec(ParticleType<Medium> type) {
+			return CODEC;
 		}
 
 		@Override
-		public Codec<Medium> getCodec(ParticleType<Medium> type) {
-			return CODEC;
+		public StreamCodec<? super RegistryFriendlyByteBuf, Medium> getStreamCodec() {
+			return STREAM_CODEC;
 		}
 
 		@Override

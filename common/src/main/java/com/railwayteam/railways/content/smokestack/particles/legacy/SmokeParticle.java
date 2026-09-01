@@ -63,21 +63,13 @@ public class SmokeParticle extends SimpleAnimatedParticle {
 
 	public static final ParticleRenderType TRANSPARENT_SMOKE = new ParticleRenderType() {
 		@Override
-		public void begin(BufferBuilder builder, TextureManager manager) {
+		public BufferBuilder begin(Tesselator tesselator, TextureManager manager) {
 			RenderSystem.depthMask(false);
 			RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
 			RenderSystem.enableBlend();
 			RenderSystem.enableDepthTest();
 			RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-			builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-		}
-
-		@Override
-		public void end(Tesselator tesselator) {
-			tesselator.end();
-			RenderSystem.depthMask(true);
-			RenderSystem.disableBlend();
-			RenderSystem.defaultBlendFunc();
+			return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
 		}
 
 		@Override
@@ -186,10 +178,10 @@ public class SmokeParticle extends SimpleAnimatedParticle {
 		float n = this.getV0();
 		float o = this.getV1();
 		int p = this.getLightColor(partialTicks);
-		buffer.vertex((double)vector3fs[0].x(), (double)vector3fs[0].y(), (double)vector3fs[0].z()).uv(m, o).color(this.rCol, this.gCol, this.bCol, this.alpha*alphaFactor).uv2(p).endVertex();
-		buffer.vertex((double)vector3fs[1].x(), (double)vector3fs[1].y(), (double)vector3fs[1].z()).uv(m, n).color(this.rCol, this.gCol, this.bCol, this.alpha*alphaFactor).uv2(p).endVertex();
-		buffer.vertex((double)vector3fs[2].x(), (double)vector3fs[2].y(), (double)vector3fs[2].z()).uv(l, n).color(this.rCol, this.gCol, this.bCol, this.alpha*alphaFactor).uv2(p).endVertex();
-		buffer.vertex((double)vector3fs[3].x(), (double)vector3fs[3].y(), (double)vector3fs[3].z()).uv(l, o).color(this.rCol, this.gCol, this.bCol, this.alpha*alphaFactor).uv2(p).endVertex();
+		buffer.addVertex(vector3fs[0].x(), vector3fs[0].y(), vector3fs[0].z()).setUv(m, o).setColor(this.rCol, this.gCol, this.bCol, this.alpha*alphaFactor).setLight(p);
+		buffer.addVertex(vector3fs[1].x(), vector3fs[1].y(), vector3fs[1].z()).setUv(m, n).setColor(this.rCol, this.gCol, this.bCol, this.alpha*alphaFactor).setLight(p);
+		buffer.addVertex(vector3fs[2].x(), vector3fs[2].y(), vector3fs[2].z()).setUv(l, n).setColor(this.rCol, this.gCol, this.bCol, this.alpha*alphaFactor).setLight(p);
+		buffer.addVertex(vector3fs[3].x(), vector3fs[3].y(), vector3fs[3].z()).setUv(l, o).setColor(this.rCol, this.gCol, this.bCol, this.alpha*alphaFactor).setLight(p);
 	}
 
     /*	@Override
@@ -228,26 +220,22 @@ public class SmokeParticle extends SimpleAnimatedParticle {
 			}
 
 			int j = this.getLightColor(pPartialTicks);
-			pBuffer.vertex((double) avector3f[0].x(), (double) avector3f[0].y(), (double) avector3f[0].z())
-				.uv(f8, f6)
-				.color(this.rCol, this.gCol, this.bCol, this.alpha)
-				.uv2(j)
-				.endVertex();
-			pBuffer.vertex((double) avector3f[1].x(), (double) avector3f[1].y(), (double) avector3f[1].z())
-				.uv(f8, f5)
-				.color(this.rCol, this.gCol, this.bCol, this.alpha)
-				.uv2(j)
-				.endVertex();
-			pBuffer.vertex((double) avector3f[2].x(), (double) avector3f[2].y(), (double) avector3f[2].z())
-				.uv(f7, f5)
-				.color(this.rCol, this.gCol, this.bCol, this.alpha)
-				.uv2(j)
-				.endVertex();
-			pBuffer.vertex((double) avector3f[3].x(), (double) avector3f[3].y(), (double) avector3f[3].z())
-				.uv(f7, f6)
-				.color(this.rCol, this.gCol, this.bCol, this.alpha)
-				.uv2(j)
-				.endVertex();
+			pBuffer.addVertex(avector3f[0].x(), avector3f[0].y(), avector3f[0].z())
+				.setUv(f8, f6)
+				.setColor(this.rCol, this.gCol, this.bCol, this.alpha)
+				.setLight(j);
+			pBuffer.addVertex(avector3f[1].x(), avector3f[1].y(), avector3f[1].z())
+				.setUv(f8, f5)
+				.setColor(this.rCol, this.gCol, this.bCol, this.alpha)
+				.setLight(j);
+			pBuffer.addVertex(avector3f[2].x(), avector3f[2].y(), avector3f[2].z())
+				.setUv(f7, f5)
+				.setColor(this.rCol, this.gCol, this.bCol, this.alpha)
+				.setLight(j);
+			pBuffer.addVertex(avector3f[3].x(), avector3f[3].y(), avector3f[3].z())
+				.setUv(f7, f6)
+				.setColor(this.rCol, this.gCol, this.bCol, this.alpha)
+				.setLight(j);
 
 		}
 	}*/
