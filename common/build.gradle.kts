@@ -59,6 +59,9 @@ dependencies {
     compileOnly("com.electronwill.night-config:core:3.8.3")
     compileOnly("com.electronwill.night-config:toml:3.8.3")
     compileOnly("net.neoforged:bus:8.0.5")
+    // net.neoforged.fml.config.ModConfig / IConfigSpec live in fancymodloader,
+    // not in the neoforge universal jar.
+    compileOnly("net.neoforged.fancymodloader:loader:4.0.42")
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
     modImplementation("net.fabricmc:fabric-loader:${"fabric_loader_version"()}")

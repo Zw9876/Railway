@@ -21,8 +21,8 @@ package com.railwayteam.railways.mixin;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.config.CRConfigs;
 import net.createmod.catnip.config.ui.ConfigHelper;
-import net.minecraftforge.fml.config.IConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.fml.config.ModConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,8 +36,8 @@ public class MixinConfigHelper {
             cir.setReturnValue(true);
     }
 
-    @Inject(method = "findForgeConfigSpecFor", at = @At("HEAD"), cancellable = true)
-    private static void returnSNRConfig(ModConfig.Type type, String modID, CallbackInfoReturnable<IConfigSpec<?>> cir) {
+    @Inject(method = "findModConfigSpecFor", at = @At("HEAD"), cancellable = true)
+    private static void returnSNRConfig(ModConfig.Type type, String modID, CallbackInfoReturnable<ModConfigSpec> cir) {
         if (modID.equals(Railways.MOD_ID)) {
             cir.setReturnValue(CRConfigs.byType(type).specification);
         }
