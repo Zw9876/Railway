@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.mixin.client;
 
+import com.railwayteam.railways.util.ItemUtils;
+
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.railwayteam.railways.config.CRConfigs;
@@ -52,7 +54,7 @@ public class MixinContraptionHandlerClient {
             return original.call(vec3, entity);
 
         ItemStack stack = player.getItemInHand(interactionHand);
-        CompoundTag tag = stack.getTag();
+        CompoundTag tag = ItemUtils.getCustomTag(stack);
         if (tag == null || !tag.getBoolean("ShadowHammer")) {
             if (!(player.isCreative() && CRConfigs.client().universalShadowWrench.get()))
                 return original.call(vec3, entity);

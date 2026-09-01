@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.cycle_menu;
 
+import com.railwayteam.railways.util.ItemUtils;
+
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.annotation.multiloader.MultiLoaderEvent;
 import com.railwayteam.railways.registry.CRPalettes;
@@ -44,7 +46,7 @@ public class TagCycleHandlerServer {
         TagKey<Item> targetTag = CYCLE_TRACKER.getCycleTag(target);
         if (handTag == null || !handTag.equals(targetTag)) return false;
         ItemStack newStack = new ItemStack(target, handStack.getCount());
-        newStack.setTag(handStack.getTag());
+        ItemUtils.setCustomTag(newStack, ItemUtils.getCustomTag(handStack));
         player.setItemInHand(hand, newStack);
         return true;
     }

@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.conductor.toolbox;
 
+import com.railwayteam.railways.util.ItemUtils;
+
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.mixin.AccessorBlockEntity;
 import com.railwayteam.railways.mixin.AccessorToolboxBlockEntity;
@@ -50,7 +52,7 @@ public class MountedToolbox extends ToolboxBlockEntity {
   }
 
   public void readFromItem(ItemStack stack) {
-    CompoundTag tag = stack.getTag();
+    CompoundTag tag = ItemUtils.getCustomTag(stack);
     if (tag == null)
       return;
     readInventory(tag.getCompound("Inventory"));
@@ -131,14 +133,17 @@ public class MountedToolbox extends ToolboxBlockEntity {
 
   public ItemStack getCloneItemStack() {
     ItemStack stack = getDisplayStack();
-    CompoundTag tag = stack.getOrCreateTag();
-
     CompoundTag data = new CompoundTag();
     write(data, false);
     CompoundTag inv = data.getCompound("Inventory");
-    tag.put("Inventory", inv);
 
-    tag.putUUID("UniqueId", getUniqueId());
+    // mutateCustomTag writes the result back. The old code mutated the live
+    // tag returned by getOrCreateTag(); getOrCreateCustomTag returns a copy,
+    // so mutating it here would silently do nothing.
+    ItemUtils.mutateCustomTag(stack, tag -> {
+      tag.put("Inventory", inv);
+      tag.putUUID("UniqueId", getUniqueId());
+    });
 
     return stack;
   }

@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.cycle_menu;
 
+import com.railwayteam.railways.util.ItemUtils;
+
 import com.railwayteam.railways.annotation.multiloader.MultiLoaderEvent;
 import com.railwayteam.railways.registry.CRKeys;
 import com.railwayteam.railways.registry.CRPackets;
@@ -79,7 +81,7 @@ public class TagCycleHandlerClient {
             TagKey<Item> tag = CYCLE_TRACKER.getCycleTag(item);
             if (tag != null) {
                 cycleTag.setValue(tag);
-                stackTag.setValue(stack.getTag());
+                stackTag.setValue(ItemUtils.getCustomTag(stack));
             }
             return tag != null;
         })) return;

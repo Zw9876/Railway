@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.mixin;
 
+import com.railwayteam.railways.util.ItemUtils;
+
 import com.railwayteam.railways.config.CRConfigs;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.mixin_interfaces.ICarriageConductors;
@@ -77,7 +79,7 @@ public abstract class MixinStationBlock {
                 cir.setReturnValue(InteractionResult.CONSUME);
                 GlobalStation station = stationBe.getStation();
                 if (station != null && station.getPresentTrain() == null) {
-                    CompoundTag stackTag = itemInHand.getTag();
+                    CompoundTag stackTag = ItemUtils.getCustomTag(itemInHand);
                     if (stackTag == null || !stackTag.hasUUID("SelectedTrain") || !stackTag.hasUUID("SelectedConductor")) {
                         cir.setReturnValue(InteractionResult.FAIL);
                         return;
@@ -107,11 +109,11 @@ public abstract class MixinStationBlock {
 
                     stackTag.put("SelectedPos", NbtUtils.writeBlockPos(pos));
                     stackTag.remove("Bezier");
-                    itemInHand.setTag(stackTag);
+                    ItemUtils.setCustomTag(itemInHand, stackTag);
 
                     if (CRConfigs.server().conductors.whistleRequiresOwning.get() && train.runtime.getSchedule() != null && !train.runtime.completed && !train.runtime.isAutoSchedule && train.getOwner(level) != pPlayer) {
                         stackTag.remove("SelectedPos");
-                        itemInHand.setTag(stackTag);
+                        ItemUtils.setCustomTag(itemInHand, stackTag);
                         return;
                     }
 
@@ -183,11 +185,11 @@ public abstract class MixinStationBlock {
                         carriage.forEachPresentEntity(e -> e.getIndirectPassengers()
                                 .forEach(p -> {
                                     if (p instanceof ConductorEntity conductor && !found.get()) {
-                                        CompoundTag stackTag = itemInHand.getOrCreateTag();
+                                        CompoundTag stackTag = ItemUtils.getOrCreateCustomTag(itemInHand);
                                         stackTag.putUUID("SelectedTrain", train.id);
                                         stackTag.putUUID("SelectedConductor", conductor.getUUID());
                                         stackTag.putByte("SelectedColor", conductor.getEntityData().get(ConductorEntity.COLOR));
-                                        itemInHand.setTag(stackTag);
+                                        ItemUtils.setCustomTag(itemInHand, stackTag);
                                         pPlayer.setItemInHand(pHand, itemInHand);
                                         cir.setReturnValue(InteractionResult.SUCCESS);
                                         found.set(true);

@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.cycle_menu;
 
+import com.railwayteam.railways.util.ItemUtils;
+
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -115,7 +117,7 @@ public class RadialTagCycleMenu extends AbstractSimiScreen {
             if (slot < cycle.size()) {
                 ItemStack stack = new ItemStack(cycle.get(slot));
                 if (stackTag != null) {
-                    stack.setTag(stackTag.copy());
+                    ItemUtils.setCustomTag(stack, stackTag.copy());
                 }
 
                 if (minecraft != null) {

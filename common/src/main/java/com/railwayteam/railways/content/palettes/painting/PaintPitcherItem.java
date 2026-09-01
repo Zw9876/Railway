@@ -121,14 +121,15 @@ public abstract class PaintPitcherItem extends Item {
             throw new IllegalArgumentException("Levels must be between 1 and " + MAX_LEVELS);
         }
 
-        var tag = stack.getOrCreateTag();
-        tag.putInt("FillLevel", levels);
+        // Must write back: getOrCreateCustomTag returns a copy, unlike the
+        // live tag the old getOrCreateTag() handed out.
+        ItemUtils.mutateCustomTag(stack, tag -> tag.putInt("FillLevel", levels));
     }
 
     public int getLevels(ItemStack stack) {
         if (!(stack.getItem() instanceof PaintPitcherItem)) return 0;
 
-        var tag = stack.getTag();
+        var tag = ItemUtils.getCustomTag(stack);
         if (tag == null || !tag.contains("FillLevel", Tag.TAG_INT))
             return MAX_LEVELS;
 
@@ -144,7 +145,7 @@ public abstract class PaintPitcherItem extends Item {
         if (levels == 0) {
             ItemStack stack = CRItems.EMPTY_PAINT_PITCHER.asStack();
             copyStackData(base, stack);
-            stack.removeTagKey("FillLevel");
+            ItemUtils.removeCustomTagKey(stack, "FillLevel");
             return stack;
         } else {
             ItemStack stack = new ItemStack(this);
@@ -156,7 +157,7 @@ public abstract class PaintPitcherItem extends Item {
 
     public void setFillInPlace(ItemStack stack, int levels) {
         if (levels <= 0) {
-            stack.removeTagKey("FillLevel");
+            ItemUtils.removeCustomTagKey(stack, "FillLevel");
             ((ItemStackDuck) (Object) stack).railways$setItem(CRItems.EMPTY_PAINT_PITCHER.get());
         } else {
             ((ItemStackDuck) (Object) stack).railways$setItem(this);
