@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.schedule;
 
+import net.minecraft.core.HolderLookup;
+
 import com.google.common.collect.ImmutableList;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.annotation.multiloader.MultiLoaderEvent;
@@ -149,14 +151,14 @@ public class RedstoneLinkInstruction extends ScheduleInstruction {
     }
 
     @Override
-    protected void writeAdditional(CompoundTag tag) {
-        tag.put("Frequency", freq.serializeEach(f -> f.getStack().save(new CompoundTag())));
+    protected void writeAdditional(HolderLookup.Provider registries, CompoundTag tag) {
+        tag.put("Frequency", freq.serializeEach(f -> f.getStack().saveOptional(registries)));
     }
 
     @Override
-    protected void readAdditional(CompoundTag tag) {
+    protected void readAdditional(HolderLookup.Provider registries, CompoundTag tag) {
         if (tag.contains("Frequency", Tag.TAG_LIST))
-            freq = Couple.deserializeEach(tag.getList("Frequency", Tag.TAG_COMPOUND), c -> RedstoneLinkNetworkHandler.Frequency.of(ItemStack.of(c)));
+            freq = Couple.deserializeEach(tag.getList("Frequency", Tag.TAG_COMPOUND), c -> RedstoneLinkNetworkHandler.Frequency.of(ItemStack.parseOptional(registries, c)));
         else
             freq = Couple.create(() -> RedstoneLinkNetworkHandler.Frequency.EMPTY);
     }

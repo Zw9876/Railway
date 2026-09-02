@@ -134,7 +134,7 @@ public abstract class MixinStationBlock {
                                         } else {
                                             schedulesList = passengerTag.getList("heldSchedules", Tag.TAG_COMPOUND);
                                         }
-                                        schedulesList.add(scheduleStack.save(new CompoundTag()));
+                                        schedulesList.add(scheduleStack.saveOptional(pLevel.registryAccess()));
                                         scheduleStack.setCount(0);
                                         break;
                                     }

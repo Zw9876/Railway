@@ -280,8 +280,8 @@ public class ConductorEntity extends AbstractGolem {
       for (var freq : this.entries().entrySet()) {
         if (freq.getValue().isPresent()) {
           CompoundTag subTag = new CompoundTag();
-          subTag.put("first", freq.getValue().get().getFirst().getStack().save(new CompoundTag()));
-          subTag.put("second", freq.getValue().get().getSecond().getStack().save(new CompoundTag()));
+          subTag.put("first", freq.getValue().get().getFirst().getStack().saveOptional(ConductorEntity.this.registryAccess()));
+          subTag.put("second", freq.getValue().get().getSecond().getStack().saveOptional(ConductorEntity.this.registryAccess()));
           tag.put(freq.getKey(), subTag);
         }
       }
@@ -291,8 +291,8 @@ public class ConductorEntity extends AbstractGolem {
     public FrequencyHolder read(CompoundTag tag) {
       for (var freq : this.setters().entrySet()) {
         if (tag.contains(freq.getKey(), Tag.TAG_COMPOUND)) {
-          ItemStack first = ItemStack.of(tag.getCompound(freq.getKey()).getCompound("first"));
-          ItemStack second = ItemStack.of(tag.getCompound(freq.getKey()).getCompound("second"));
+          ItemStack first = ItemStack.parseOptional(ConductorEntity.this.registryAccess(), tag.getCompound(freq.getKey()).getCompound("first"));
+          ItemStack second = ItemStack.parseOptional(ConductorEntity.this.registryAccess(), tag.getCompound(freq.getKey()).getCompound("second"));
           freq.getValue().accept(Optional.of(Couple.create(Frequency.of(first), Frequency.of(second))));
         } else {
           freq.getValue().accept(Optional.empty());
@@ -1521,7 +1521,7 @@ public class ConductorEntity extends AbstractGolem {
       boolean hasItem = false;
       for (ItemStack heldSchedule : heldSchedules) {
         if (!heldSchedule.isEmpty()) {
-          schedulesTag.add(heldSchedule.save(new CompoundTag()));
+          schedulesTag.add(heldSchedule.saveOptional(registryAccess()));
           hasItem = true;
         }
       }
@@ -1555,7 +1555,7 @@ public class ConductorEntity extends AbstractGolem {
     if (nbt.contains("heldSchedules", Tag.TAG_LIST)) {
       ListTag schedulesTag = nbt.getList("heldSchedules", Tag.TAG_COMPOUND);
       for (int i = 0; i < schedulesTag.size(); i++) {
-        ItemStack stack = ItemStack.of(schedulesTag.getCompound(i));
+        ItemStack stack = ItemStack.parseOptional(registryAccess(), schedulesTag.getCompound(i));
         if (!stack.isEmpty())
           getHeldSchedules().add(stack);
       }

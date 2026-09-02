@@ -311,7 +311,7 @@ public class ConductorWhistleItem extends TrackTargetingBlockItem {
                                 } else {
                                     schedulesList = passengerTag.getList("heldSchedules", Tag.TAG_COMPOUND);
                                 }
-                                schedulesList.add(scheduleStack.save(new CompoundTag()));
+                                schedulesList.add(scheduleStack.saveOptional(pContext.getLevel().registryAccess()));
                                 scheduleStack.setCount(0);
                                 break;
                             }

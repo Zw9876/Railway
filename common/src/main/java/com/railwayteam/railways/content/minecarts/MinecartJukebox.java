@@ -126,14 +126,14 @@ public class MinecartJukebox extends MinecartBlock {
   protected void readAdditionalSaveData(CompoundTag compound) {
     super.readAdditionalSaveData(compound);
     if (compound.contains("Disc", Tag.TAG_COMPOUND)) {
-      disc = ItemStack.of(compound.getCompound("Disc"));
+      disc = ItemStack.parseOptional(registryAccess(), compound.getCompound("Disc"));
     }
   }
 
   @Override
   protected void addAdditionalSaveData(CompoundTag compound) {
     super.addAdditionalSaveData(compound);
-    compound.put("Disc", disc.save(new CompoundTag()));
+    compound.put("Disc", disc.saveOptional(registryAccess()));
   }
 
   // clientside
