@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.content.buffer.single_deco;
 
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+
+import com.mojang.serialization.MapCodec;
+
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.createmod.catnip.math.VoxelShaper;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -37,6 +41,11 @@ public class GenericDyeableSingleBufferBlock extends AbstractDyeableSingleBuffer
     public GenericDyeableSingleBufferBlock(Properties properties, VoxelShaper shaper) {
         super(properties);
         this.shaper = shaper;
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(p -> new GenericDyeableSingleBufferBlock(p, shaper));
     }
 
     public static NonNullFunction<Properties, GenericDyeableSingleBufferBlock> createFactory(VoxelShaper shaper) {

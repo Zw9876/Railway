@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.buffer.headstock;
 
+import com.mojang.serialization.MapCodec;
+
 import com.railwayteam.railways.content.buffer.BlockStateBlockItemGroup;
 import com.railwayteam.railways.registry.CRBlockEntities;
 import com.railwayteam.railways.registry.CRBlocks;
@@ -69,6 +71,11 @@ public class HeadstockBlock extends HorizontalDirectionalBlock implements IBE<He
             .setValue(STYLE, HeadstockStyle.BUFFER)
             .setValue(UPSIDE_DOWN, false)
         );
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(HeadstockBlock::new);
     }
 
     @Override

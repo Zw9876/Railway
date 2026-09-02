@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.content.buffer;
 
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+
+import com.mojang.serialization.MapCodec;
+
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.custom_bogeys.special.monobogey.MonoBogeyBlock;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -44,6 +48,11 @@ public class MonoTrackBufferBlock extends WoodVariantTrackBufferBlock {
     public MonoTrackBufferBlock(Properties pProperties) {
         super(pProperties);
         registerDefaultState(defaultBlockState().setValue(STYLE, Style.STANDARD).setValue(UPSIDE_DOWN, false));
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(MonoTrackBufferBlock::new);
     }
 
     @Override

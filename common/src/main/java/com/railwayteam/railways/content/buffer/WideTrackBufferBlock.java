@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.content.buffer;
 
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+
+import com.mojang.serialization.MapCodec;
+
 import com.railwayteam.railways.registry.CRBlockEntities;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Direction;
@@ -31,6 +35,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class WideTrackBufferBlock extends TrackBufferBlock<TrackBufferBlockEntity> {
     public WideTrackBufferBlock(Properties pProperties) {
         super(pProperties);
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(WideTrackBufferBlock::new);
     }
 
     @Override

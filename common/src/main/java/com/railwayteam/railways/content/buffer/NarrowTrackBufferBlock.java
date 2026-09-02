@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.content.buffer;
 
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+
+import com.mojang.serialization.MapCodec;
+
 import com.railwayteam.railways.Railways;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Direction;
@@ -38,6 +42,11 @@ public class NarrowTrackBufferBlock extends WoodVariantTrackBufferBlock {
     public NarrowTrackBufferBlock(Properties pProperties) {
         super(pProperties);
         registerDefaultState(defaultBlockState().setValue(STYLE, Style.STANDARD));
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(NarrowTrackBufferBlock::new);
     }
 
     @Override

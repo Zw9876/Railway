@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.buffer.headstock;
 
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,6 +32,11 @@ public class CopycatHeadstockBarsBlock extends HorizontalDirectionalBlock {
     public CopycatHeadstockBarsBlock(Properties properties) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(UPSIDE_DOWN, false));
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(CopycatHeadstockBarsBlock::new);
     }
 
     @Override

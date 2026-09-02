@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.content.buffer.single_deco;
 
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+
+import com.mojang.serialization.MapCodec;
+
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.buffer.BlockStateBlockItemGroup;
 import com.railwayteam.railways.registry.CRBlocks;
@@ -48,6 +52,11 @@ public class LinkPinBlock extends AbstractDyeableSingleBufferBlock implements Bl
         super(properties);
         registerDefaultState(defaultBlockState()
             .setValue(STYLE, Style.LINK));
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(LinkPinBlock::new);
     }
 
     @Override

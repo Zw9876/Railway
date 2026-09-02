@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.semaphore;
 
+import com.mojang.serialization.MapCodec;
+
 import com.railwayteam.railways.config.CRConfigs;
 import com.railwayteam.railways.registry.CRBlockEntities;
 import com.railwayteam.railways.registry.CRBlocks;
@@ -66,6 +68,11 @@ public class SemaphoreBlock extends HorizontalDirectionalBlock implements IBE<Se
     public SemaphoreBlock(Properties pProperties) {
         super(pProperties);
         registerDefaultState(defaultBlockState().setValue(FLIPPED,false).setValue(FULL,false).setValue(UPSIDE_DOWN, false));
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return simpleCodec(SemaphoreBlock::new);
     }
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
