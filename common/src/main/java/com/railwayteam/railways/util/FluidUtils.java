@@ -45,7 +45,7 @@ public class FluidUtils {
     }
 
     @ExpectPlatform
-    public static void addFluidOutput(ProcessingRecipeBuilder<ProcessingRecipe<?>> b, Fluid fluid, long amount, @Nullable CompoundTag nbt) {
+    public static void addFluidOutput(ProcessingRecipeBuilder<ProcessingRecipe<?, ?>> b, Fluid fluid, long amount, @Nullable CompoundTag nbt) {
         throw new AssertionError();
     }
 

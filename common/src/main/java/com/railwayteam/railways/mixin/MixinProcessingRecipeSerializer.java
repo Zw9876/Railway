@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ProcessingRecipeSerializer.class)
-public class MixinProcessingRecipeSerializer<T extends ProcessingRecipe<?>> {
+public class MixinProcessingRecipeSerializer<T extends ProcessingRecipe<?, ?>> {
     @Inject(method = "writeToJson", at = @At("RETURN"), remap = false)
     private void multiloaderMangleFluidIngredient(JsonObject json, T recipe, CallbackInfo ci) {
         if (!recipe.getId().getNamespace().equals(Railways.MOD_ID)) return;
