@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.conductor.toolbox;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.util.ItemUtils;
 
 import com.railwayteam.railways.content.conductor.ConductorEntity;
@@ -74,8 +76,8 @@ public class MountedToolbox extends ToolboxBlockEntity {
   }
 
   @Override
-  public void read(CompoundTag compound, boolean clientPacket) {
-    super.read(compound, clientPacket);
+  public void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+    super.read(compound, registries, clientPacket);
     if (compound.contains("Color", CompoundTag.TAG_INT)) {
       DyeColor color = DyeColor.byId(compound.getInt("Color"));
       // change the color by setting the stored state and updating the color provider
@@ -85,8 +87,8 @@ public class MountedToolbox extends ToolboxBlockEntity {
   }
 
   @Override
-  public void write(CompoundTag compound, boolean clientPacket) {
-    super.write(compound, clientPacket);
+  public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+    super.write(compound, registries, clientPacket);
     compound.putInt("Color", getColor().getId());
   }
 

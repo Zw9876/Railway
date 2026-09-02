@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.switches;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.content.switches.TrackSwitchBlock.SwitchState;
 import com.railwayteam.railways.mixin_interfaces.ISwitchDisabledEdge;
 import com.railwayteam.railways.registry.CREdgePointTypes;
@@ -334,8 +336,8 @@ public class TrackSwitch extends SingleBlockEntityEdgePoint {
     }
 
     @Override
-    public void write(CompoundTag nbt, DimensionPalette dimensions) {
-        super.write(nbt, dimensions);
+    public void write(CompoundTag nbt, HolderLookup.Provider registries, DimensionPalette dimensions) {
+        super.write(nbt, registries, dimensions);
         nbt.put("SwitchPoint", switchPoint.write(dimensions));
         nbt.put("Exits", NBTHelper.writeCompoundList(exits, e -> e.write(dimensions)));
         nbt.putString("SwitchState", switchState.getSerializedName());
@@ -355,8 +357,8 @@ public class TrackSwitch extends SingleBlockEntityEdgePoint {
     }
 
     @Override
-    public void read(CompoundTag nbt, boolean migration, DimensionPalette dimensions) {
-        super.read(nbt, migration, dimensions);
+    public void read(CompoundTag nbt, HolderLookup.Provider registries, boolean migration, DimensionPalette dimensions) {
+        super.read(nbt, registries, migration, dimensions);
         String exit = nbt.getString("SwitchState");
         try {
             switchState = SwitchState.valueOf(exit.toUpperCase(Locale.ROOT));

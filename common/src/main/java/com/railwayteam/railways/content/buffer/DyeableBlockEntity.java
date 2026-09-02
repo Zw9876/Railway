@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.buffer;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.util.BlockStateUtils;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -52,15 +54,15 @@ public class DyeableBlockEntity extends SmartBlockEntity implements IDyedBuffer 
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
 
     @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        super.write(tag, clientPacket);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
         if (color != null)
             tag.putInt("Color", color.getId());
     }
 
     @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
         DyeColor prevColor = color;
 
         if (tag.contains("Color"))

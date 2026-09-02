@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.smokestack.block.be;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.smokestack.SmokeEmissionParams;
 import com.railwayteam.railways.content.smokestack.block.SmokeStackBlock;
@@ -80,8 +82,8 @@ public class SmokeStackBlockEntity extends SmartBlockEntity implements IHaveGogg
     }
 
     @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
         if (tag.contains("color", Tag.TAG_INT)) {
             int colorOrdinal = tag.getInt("color");
             color = DyeColor.byId(colorOrdinal);
@@ -94,8 +96,8 @@ public class SmokeStackBlockEntity extends SmartBlockEntity implements IHaveGogg
     }
 
     @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        super.write(tag, clientPacket);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
         if (color != null) {
             tag.putInt("color", color.getId());
         }

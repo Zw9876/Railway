@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.coupling.coupler;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.mixin_interfaces.IHandcarTrain;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.trains.entity.Train;
@@ -83,8 +85,8 @@ public class TrackCoupler extends SingleBlockEntityEdgePoint {
     }
 
     @Override
-    public void read(CompoundTag nbt, boolean migration, DimensionPalette dimensions) {
-        super.read(nbt, migration, dimensions);
+    public void read(CompoundTag nbt, HolderLookup.Provider registries, boolean migration, DimensionPalette dimensions) {
+        super.read(nbt, registries, migration, dimensions);
         activated = nbt.getInt("Activated");
         if (nbt.contains("TrainId"))
             currentTrain = nbt.getUUID("TrainId");
@@ -98,8 +100,8 @@ public class TrackCoupler extends SingleBlockEntityEdgePoint {
     }
 
     @Override
-    public void write(CompoundTag nbt, DimensionPalette dimensions) {
-        super.write(nbt, dimensions);
+    public void write(CompoundTag nbt, HolderLookup.Provider registries, DimensionPalette dimensions) {
+        super.write(nbt, registries, dimensions);
         nbt.putInt("Activated", activated);
         if (currentTrain != null)
             nbt.putUUID("TrainId", currentTrain);

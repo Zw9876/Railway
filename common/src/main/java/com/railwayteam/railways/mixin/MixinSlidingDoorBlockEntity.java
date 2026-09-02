@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.mixin;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.content.extended_sliding_doors.SlidingDoorMode;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -42,8 +44,8 @@ public class MixinSlidingDoorBlockEntity implements SlidingDoorMode.IHasDoorMode
         SlidingDoorBlockEntity this_ = (SlidingDoorBlockEntity) (Object) this;
         railways$doorModeScroll = new ScrollOptionBehaviour<>(SlidingDoorMode.class, Component.translatable("create.sliding_door.mode"), this_, new SlidingDoorMode.SlidingDoorValueBoxTransform()) {
             @Override
-            public void read(CompoundTag nbt, boolean clientPacket) {
-                super.read(nbt, clientPacket);
+            public void read(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
+                super.read(nbt, registries, clientPacket);
                 setValue(value); // ensure that it is properly bounded
             }
         };

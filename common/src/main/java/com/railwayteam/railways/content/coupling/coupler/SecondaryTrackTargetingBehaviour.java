@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.coupling.coupler;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.mixin.AccessorTrackTargetingBehavior;
 import com.simibubi.create.content.trains.graph.EdgePointType;
 import com.simibubi.create.content.trains.signal.TrackEdgePoint;
@@ -48,7 +50,7 @@ public class SecondaryTrackTargetingBehaviour<T extends TrackEdgePoint> extends 
     }
 
     @Override
-    public void write(CompoundTag nbt, boolean clientPacket) {
+    public void write(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
         AccessorTrackTargetingBehavior accessor = (AccessorTrackTargetingBehavior) this;
         nbt.putUUID("SecondaryId", accessor.getId());
         nbt.put("SecondaryTargetTrack", NbtUtils.writeBlockPos(accessor.getTargetTrack()));
@@ -70,7 +72,7 @@ public class SecondaryTrackTargetingBehaviour<T extends TrackEdgePoint> extends 
     }
 
     @Override
-    public void read(CompoundTag nbt, boolean clientPacket) {
+    public void read(CompoundTag nbt, HolderLookup.Provider registries, boolean clientPacket) {
         AccessorTrackTargetingBehavior accessor = (AccessorTrackTargetingBehavior) this;
         accessor.setId(nbt.contains("SecondaryId") ? nbt.getUUID("SecondaryId") : UUID.randomUUID());
         accessor.setTargetTrack(NbtUtils.readBlockPos(nbt.getCompound("SecondaryTargetTrack")));

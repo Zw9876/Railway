@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.buffer.headstock;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.content.buffer.IDyedBuffer;
 import com.railwayteam.railways.util.BlockStateUtils;
 import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
@@ -47,15 +49,15 @@ public class CopycatHeadstockBlockEntity extends CopycatBlockEntity implements I
     }
 
     @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        super.write(tag, clientPacket);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
         if (color != null)
             tag.putInt("Color", color.getId());
     }
 
     @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
         DyeColor prevColor = color;
 
         if (tag.contains("Color"))

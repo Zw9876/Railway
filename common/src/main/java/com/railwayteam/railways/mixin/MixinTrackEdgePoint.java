@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.mixin;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.content.coupling.coupler.SecondaryTrackTargetingBehaviour;
 import com.railwayteam.railways.registry.CREdgePointTypes;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
@@ -37,7 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = TrackEdgePoint.class, remap = false)
 public abstract class MixinTrackEdgePoint {
-    @Shadow public abstract void write(CompoundTag nbt, DimensionPalette dimensions);
+    @Shadow public abstract void write(CompoundTag nbt, HolderLookup.Provider registries, DimensionPalette dimensions);
 
     @Shadow public abstract EdgePointType<?> getType();
 
@@ -48,7 +50,7 @@ public abstract class MixinTrackEdgePoint {
             return;
         CompoundTag migrationData = new CompoundTag();
         DimensionPalette dimensions = new DimensionPalette();
-        write(migrationData, dimensions);
+        write(migrationData, level.registryAccess(), dimensions);
         dimensions.write(migrationData);
         behaviour.invalidateEdgePoint(migrationData);
     }

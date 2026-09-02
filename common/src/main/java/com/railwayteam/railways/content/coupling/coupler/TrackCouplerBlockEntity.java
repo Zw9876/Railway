@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.coupling.coupler;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.config.CRConfigs;
 import com.railwayteam.railways.content.coupling.TrainUtils;
@@ -96,8 +98,8 @@ public class TrackCouplerBlockEntity extends SmartBlockEntity implements Transfo
     }
 
     @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        super.write(tag, clientPacket);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
         tag.putBoolean("EdgePointsOk", edgePointsOk);
         tag.putBoolean("Power", lastReportedPower);
         tag.putInt("AnalogOutput", lastAnalogOutput);
@@ -108,8 +110,8 @@ public class TrackCouplerBlockEntity extends SmartBlockEntity implements Transfo
     }
 
     @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
         edgePointsOk = tag.getBoolean("EdgePointsOk");
         lastReportedPower = tag.getBoolean("Power");
         lastAnalogOutput = tag.getInt("AnalogOutput");

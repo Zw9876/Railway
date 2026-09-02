@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.conductor.whistle;
 
+import net.minecraft.core.HolderLookup;
+
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.simibubi.create.Create;
 import com.simibubi.create.api.contraption.transformable.TransformableBlockEntity;
@@ -105,14 +107,14 @@ public class ConductorWhistleFlagBlockEntity extends SmartBlockEntity implements
     }
 
     @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        super.write(tag, clientPacket);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
         tag.putByte("SelectedColor", ConductorEntity.idFrom(color));
     }
 
     @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
         color = ConductorEntity.colorFrom(tag.getByte("SelectedColor"));
     }
 }

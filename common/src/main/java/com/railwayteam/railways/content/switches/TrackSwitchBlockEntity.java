@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.switches;
 
+import net.minecraft.core.HolderLookup;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.switches.TrackSwitchBlock.SwitchConstraint;
@@ -521,8 +523,8 @@ public class TrackSwitchBlockEntity extends SmartBlockEntity implements Transfor
     }
 
     @Override
-    protected void write(CompoundTag tag, boolean clientPacket) {
-        super.write(tag, clientPacket);
+    protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(tag, registries, clientPacket);
         if (clientPacket)
             tag.putString("SwitchState", (state == null ? SwitchState.NORMAL : state).getSerializedName());
         tag.putInt("AnalogOutput", lastAnalogOutput);
@@ -534,8 +536,8 @@ public class TrackSwitchBlockEntity extends SmartBlockEntity implements Transfor
     }
 
     @Override
-    protected void read(CompoundTag tag, boolean clientPacket) {
-        super.read(tag, clientPacket);
+    protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(tag, registries, clientPacket);
         if (clientPacket) {
             String switchState = tag.getString("SwitchState").toUpperCase(Locale.ROOT);
             try {
