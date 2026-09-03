@@ -18,21 +18,37 @@
 
 package com.railwayteam.railways.compat.tracks;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.railwayteam.railways.registry.CRIngredientTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
+import net.neoforged.neoforge.common.crafting.IngredientType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
 /**
- * Represents a special ingredient for datagen - it references an item that does not necessarily exist
+ * Represents a special ingredient for datagen - it references an item that does not necessarily exist.
+ * <p>
+ * 1.21 made {@link Ingredient} final, so this can no longer extend it. NeoForge's
+ * ICustomIngredient is the supported replacement: {@link #toVanilla()} produces an
+ * Ingredient suitable for Create's TrackMaterial fields, and
+ * {@link Ingredient#getCustomIngredient()} recovers this instance at runtime.
+ * <p>
+ * NOTE: the generated recipe JSON is no longer a bare {@code {"item": "<id>"}}. It is now a
+ * custom ingredient type, so datapacks overriding compat-track recipes need updating.
  */
-public class SoftIngredient extends Ingredient {
+public class SoftIngredient implements ICustomIngredient {
+    public static final MapCodec<SoftIngredient> CODEC = RecordCodecBuilder.mapCodec(i -> i
+        .group(ResourceLocation.CODEC.fieldOf("item").forGetter(s -> s.item))
+        .apply(i, SoftIngredient::new));
+
     public final ResourceLocation item;
+
     public SoftIngredient(ResourceLocation item) {
-        super(Stream.empty());
         this.item = item;
     }
 
@@ -40,15 +56,37 @@ public class SoftIngredient extends Ingredient {
         return new SoftIngredient(item);
     }
 
+    /** Convenience for the many sites that need a vanilla Ingredient to hand to Create. */
+    public static Ingredient vanillaOf(ResourceLocation item) {
+        return of(item).toVanilla();
+    }
+
+    /**
+     * Never matches: the referenced item may not be installed. This mirrors the old
+     * behaviour, which passed an empty value stream to the Ingredient constructor.
+     */
     @Override
-    public @NotNull JsonElement toJson() {
-        JsonObject jsonobject = new JsonObject();
-        jsonobject.addProperty("item", item.toString());
-        return jsonobject;
+    public boolean test(@NotNull ItemStack stack) {
+        return false;
     }
 
     @Override
-    public boolean isEmpty() {
+    public @NotNull Stream<ItemStack> getItems() {
+        return Stream.empty();
+    }
+
+    /**
+     * False so NeoForge routes matching through {@link #test} rather than deriving it
+     * from the (empty) item list, which would make this look like an empty ingredient.
+     * The old class overrode isEmpty() to false for the same reason.
+     */
+    @Override
+    public boolean isSimple() {
         return false;
+    }
+
+    @Override
+    public @NotNull IngredientType<?> getType() {
+        return CRIngredientTypes.SOFT.get();
     }
 }

@@ -25,3 +25,12 @@ accessible class net/minecraft/client/particle/ParticleEngine$SpriteParticleRegi
 accessible class net/minecraft/world/item/CreativeModeTab$TabVisibility
 accessible class net/minecraft/data/tags/TagsProvider$TagAppender
 accessible class net/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender
+# Ingredient internals. Construction (fromValues + TagValue) and the inspection in
+# RailwaysSequencedAssemblyRecipeGen must share a representation: switching
+# construction to NeoForge's CompoundIngredient would leave `values` empty and the
+# iron-or-zinc detection would silently stop matching.
+accessible field net/minecraft/world/item/crafting/Ingredient values [Lnet/minecraft/world/item/crafting/Ingredient$Value;
+accessible method net/minecraft/world/item/crafting/Ingredient fromValues (Ljava/util/stream/Stream;)Lnet/minecraft/world/item/crafting/Ingredient;
+accessible method net/minecraft/world/item/crafting/Ingredient$TagValue <init> (Lnet/minecraft/tags/TagKey;)V
+accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
+accessible class net/minecraft/world/item/crafting/Ingredient$Value

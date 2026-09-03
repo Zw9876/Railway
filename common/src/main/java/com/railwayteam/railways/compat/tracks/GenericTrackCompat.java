@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.compat.tracks;
 
+
 import com.railwayteam.railways.ModSetup;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.compat.Mods;
@@ -26,7 +27,6 @@ import com.railwayteam.railways.content.custom_tracks.CustomTrackBlockStateGener
 import com.railwayteam.railways.content.custom_tracks.gen_template.OutputPrefixer;
 import com.railwayteam.railways.content.custom_tracks.gen_template.TextureMaps;
 import com.railwayteam.railways.content.custom_tracks.gen_template.TrackGenTemplate;
-import com.railwayteam.railways.mixin.AccessorIngredient$TagValue;
 import com.railwayteam.railways.multiloader.CommonTags;
 import com.railwayteam.railways.registry.CRBlocks;
 import com.railwayteam.railways.registry.CRTrackMaterials;
@@ -100,7 +100,7 @@ public class GenericTrackCompat {
                 .lang(langName(name))
                 .block(() -> BLOCKS.get(name))
                 .particle(asResource("block/track/"+name+"/standard_track_crossing_"+name))
-                .sleeper(baseBlock.map(Ingredient::of).orElseGet(() -> SoftIngredient.of(getSlabLocation(name))))
+                .sleeper(baseBlock.map(Ingredient::of).orElseGet(() -> SoftIngredient.vanillaOf(getSlabLocation(name))))
                 .rails(getIngredientForRail())
             );
             MATERIALS.put(name, standardMaterial);
@@ -170,9 +170,13 @@ public class GenericTrackCompat {
     }
 
     protected Ingredient getIngredientForRail() {
+        // Kept on fromValues/TagValue (widened in railways.accesswidener) rather than
+        // CompoundIngredient: RailwaysSequencedAssemblyRecipeGen inspects
+        // railsIngredient.values to spot this exact iron-or-zinc pair, and a custom
+        // ingredient would present an empty values array to that check.
         return Ingredient.fromValues(Stream.of(
-                AccessorIngredient$TagValue.railways$create(CommonTags.IRON_NUGGETS.tag),
-                AccessorIngredient$TagValue.railways$create(CommonTags.ZINC_NUGGETS.tag)
+                new Ingredient.TagValue(CommonTags.IRON_NUGGETS.tag),
+                new Ingredient.TagValue(CommonTags.ZINC_NUGGETS.tag)
         ));
     }
 
