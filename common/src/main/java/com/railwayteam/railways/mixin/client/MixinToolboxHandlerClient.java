@@ -126,8 +126,12 @@ public class MixinToolboxHandlerClient {
           remap = false,
           at = @At(
                   value = "INVOKE_ASSIGN",
-                  target = "Lnet/minecraft/nbt/NbtUtils;readBlockPos(Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/core/BlockPos;",
-                  remap = true
+                  // Create 1.21.1 no longer calls NbtUtils.readBlockPos here; it calls
+                  // catnip's NBTHelper.readBlockPos(CompoundTag, String), which still
+                  // returns a BlockPos (it unwraps the Optional itself). Verified
+                  // against ToolboxHandlerClient bytecode -- javac cannot check this.
+                  target = "Lnet/createmod/catnip/nbt/NBTHelper;readBlockPos(Lnet/minecraft/nbt/CompoundTag;Ljava/lang/String;)Lnet/minecraft/core/BlockPos;",
+                  remap = false
           )
   )
   @SuppressWarnings("InvalidInjectorMethodSignature")

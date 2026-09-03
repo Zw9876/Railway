@@ -269,7 +269,7 @@ public class ConductorWhistleItem extends TrackTargetingBlockItem {
                 teTag.putString("Name", stationName);
                 teTag.putByte("SelectedColor", stackTag.getByte("SelectedColor"));
                 teTag.putBoolean("TargetDirection", stackTag.getBoolean("SelectedDirection"));
-                BlockPos selectedPos = NbtUtils.readBlockPos(stackTag.getCompound("SelectedPos"));
+                BlockPos selectedPos = NbtUtils.readBlockPos(stackTag, "SelectedPos").orElse(BlockPos.ZERO);
                 teTag.put("TargetTrack", NbtUtils.writeBlockPos(selectedPos.subtract(placePos)));
                 stackTag.put("BlockEntityTag", teTag);
                 ItemUtils.setCustomTag(stack, stackTag);

@@ -1539,7 +1539,7 @@ public class ConductorEntity extends AbstractGolem {
       getEntityData().set(COLOR, nbt.getByte("color"));
     }
     if (nbt.contains("target", Tag.TAG_COMPOUND)) {
-      getEntityData().set(BLOCK, NbtUtils.readBlockPos(nbt.getCompound("target")));
+      getEntityData().set(BLOCK, NbtUtils.readBlockPos(nbt, "target").orElse(BlockPos.ZERO));
     }
     if (nbt.contains("toolboxHolder", Tag.TAG_COMPOUND)) {
       setToolbox(MountedToolbox.read(this, nbt.getCompound("toolboxHolder")));
