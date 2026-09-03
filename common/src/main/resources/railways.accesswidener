@@ -23,3 +23,5 @@ accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
 accessible class net/minecraft/client/renderer/texture/SpriteContents$AnimatedTexture
 accessible class net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration
 accessible class net/minecraft/world/item/CreativeModeTab$TabVisibility
+accessible class net/minecraft/data/tags/TagsProvider$TagAppender
+accessible class net/minecraft/data/tags/IntrinsicHolderTagsProvider$IntrinsicTagAppender

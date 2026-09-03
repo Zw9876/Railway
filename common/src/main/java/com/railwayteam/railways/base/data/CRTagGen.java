@@ -28,7 +28,7 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.data.TagGen;
 import com.tterrag.registrate.providers.RegistrateTagsProvider;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.minecraft.data.tags.TagsProvider.TagAppender;
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -55,10 +55,10 @@ public class CRTagGen {
 		}
 	}
 
-	public static void generateBlockTags(RegistrateTagsProvider<Block> prov) {
+	public static void generateBlockTags(RegistrateTagsProvider.IntrinsicImpl<Block> prov) {
 		prov.addTag(CRTags.AllBlockTags.SEMAPHORE_POLES.tag)
 				.add(AllBlocks.METAL_GIRDER.get(), AllBlocks.METAL_GIRDER_ENCASED_SHAFT.get())
-				.forceAddTag(BlockTags.FENCES);
+				.addTag(BlockTags.FENCES);
 
 		prov.addTag(CRTags.AllBlockTags.TRACK_CASING_BLACKLIST.tag);
 		prov.addTag(AllBlockTags.TRACK_CASING_WHITELIST.tag)
@@ -79,7 +79,7 @@ public class CRTagGen {
 		}
 	}
 
-	public static void generateItemTags(RegistrateTagsProvider<Item> prov) {
+	public static void generateItemTags(RegistrateTagsProvider.IntrinsicImpl<Item> prov) {
 		CommonTags.DYES.values().forEach(tag -> tag.generateCommon(prov));
 		CommonTags.IRON_NUGGETS.generateCommon(prov);
 		CommonTags.ZINC_NUGGETS.generateCommon(prov);
@@ -113,16 +113,17 @@ public class CRTagGen {
 		}
 	}
 
-	public static TagAppender<Item> tagAppender(RegistrateTagsProvider<Item> prov, AllItemTags tag) {
+	public static IntrinsicTagAppender<Item> tagAppender(RegistrateTagsProvider.IntrinsicImpl<Item> prov, AllItemTags tag) {
 		return tagAppender(prov, tag.tag);
 	}
 
-	public static TagAppender<Block> tagAppender(RegistrateTagsProvider<Block> prov, AllBlockTags tag) {
+	public static IntrinsicTagAppender<Block> tagAppender(RegistrateTagsProvider.IntrinsicImpl<Block> prov, AllBlockTags tag) {
 		return tagAppender(prov, tag.tag);
 	}
 
-	@ExpectPlatform // this has to be platformed out because addTag on fabric has a signature that includes FabricTagProvider$FabricTagBuilder
-	public static <T> TagAppender<T> tagAppender(RegistrateTagsProvider<T> prov, TagKey<T> tag) {
-		throw new AssertionError();
+	// De-platformed: the split existed only because Fabric's addTag had a
+	// different signature, and this is now a NeoForge-only tree.
+	public static <T> IntrinsicTagAppender<T> tagAppender(RegistrateTagsProvider.IntrinsicImpl<T> prov, TagKey<T> tag) {
+		return prov.addTag(tag);
 	}
 }
