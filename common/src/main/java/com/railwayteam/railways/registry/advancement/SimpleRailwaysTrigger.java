@@ -18,43 +18,54 @@
 
 package com.railwayteam.railways.registry.advancement;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
-import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class SimpleRailwaysTrigger extends CriterionTriggerBase<SimpleRailwaysTrigger.Instance> {
 
+	/**
+	 * 1.21 replaced createInstance(JsonObject, DeserializationContext) with a
+	 * Codec. This trigger carries no data of its own, so the only field is the
+	 * optional player predicate every SimpleInstance has.
+	 */
+	public static final Codec<Instance> CODEC = RecordCodecBuilder.create(i -> i
+		.group(ContextAwarePredicate.CODEC.optionalFieldOf("player").forGetter(Instance::player))
+		.apply(i, Instance::new));
+
 	public SimpleRailwaysTrigger(String id) {
 		super(id);
 	}
 
 	@Override
-	public Instance createInstance(JsonObject json, DeserializationContext context) {
-		return new Instance(getId());
+	public Codec<Instance> codec() {
+		return CODEC;
 	}
 
 	public void trigger(ServerPlayer player) {
-		super.trigger(player, null);
+		// Cast disambiguates our (ServerPlayer, List) overload from
+		// SimpleCriterionTrigger's (ServerPlayer, Predicate).
+		super.trigger(player, (List<Supplier<Object>>) null);
 	}
 
 	public Instance instance() {
-		return new Instance(getId());
+		return new Instance(Optional.empty());
 	}
 
 	public static class Instance extends CriterionTriggerBase.Instance {
 
-		public Instance(ResourceLocation idIn) {
-			super(idIn, ContextAwarePredicate.ANY);
+		public Instance(Optional<ContextAwarePredicate> player) {
+			super(player);
 		}
 
 		@Override

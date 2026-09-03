@@ -18,85 +18,62 @@
 
 package com.railwayteam.railways.registry.advancement;
 
-import com.google.common.collect.Maps;
 import com.railwayteam.railways.Railways;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.advancements.CriterionTrigger;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
+import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
+/**
+ * 1.21 rewrote the criterion system. SimpleCriterionTrigger now owns all the
+ * listener bookkeeping -- addPlayerListener / removePlayerListener /
+ * removePlayerListeners are final there -- so this class no longer maintains
+ * its own listener map and simply adapts our supplier-list test to the
+ * Predicate the parent expects.
+ * <p>
+ * Triggers are also registered into BuiltInRegistries.TRIGGER_TYPES rather than
+ * carrying their own id, and each must supply a Codec instead of a
+ * createInstance(JsonObject, DeserializationContext).
+ */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public abstract class CriterionTriggerBase<T extends CriterionTriggerBase.Instance> implements CriterionTrigger<T> {
+public abstract class CriterionTriggerBase<T extends CriterionTriggerBase.Instance> extends SimpleCriterionTrigger<T> {
+
+	private final ResourceLocation id;
 
 	public CriterionTriggerBase(String id) {
 		this.id = Railways.asResource(id);
 	}
 
-	private final ResourceLocation id;
-	protected final Map<PlayerAdvancements, Set<Listener<T>>> listeners = Maps.newHashMap();
-
-	@Override
-	public void addPlayerListener(PlayerAdvancements playerAdvancementsIn, Listener<T> listener) {
-		Set<Listener<T>> playerListeners = this.listeners.computeIfAbsent(playerAdvancementsIn, k -> new HashSet<>());
-
-		playerListeners.add(listener);
-	}
-
-	@Override
-	public void removePlayerListener(PlayerAdvancements playerAdvancementsIn, Listener<T> listener) {
-		Set<Listener<T>> playerListeners = this.listeners.get(playerAdvancementsIn);
-		if (playerListeners != null) {
-			playerListeners.remove(listener);
-			if (playerListeners.isEmpty()) {
-				this.listeners.remove(playerAdvancementsIn);
-			}
-		}
-	}
-
-	@Override
-	public void removePlayerListeners(PlayerAdvancements playerAdvancementsIn) {
-		this.listeners.remove(playerAdvancementsIn);
-	}
-
-	@Override
+	/** Retained for registration; CriterionTrigger.getId() no longer exists. */
 	public ResourceLocation getId() {
 		return id;
 	}
 
 	protected void trigger(ServerPlayer player, @Nullable List<Supplier<Object>> suppliers) {
-		PlayerAdvancements playerAdvancements = player.getAdvancements();
-		Set<Listener<T>> playerListeners = this.listeners.get(playerAdvancements);
-		if (playerListeners != null) {
-			List<Listener<T>> list = new LinkedList<>();
-
-			for (Listener<T> listener : playerListeners) {
-				if (listener.getTriggerInstance()
-					.test(suppliers)) {
-					list.add(listener);
-				}
-			}
-
-			list.forEach(listener -> listener.run(playerAdvancements));
-
-		}
+		super.trigger(player, instance -> instance.test(suppliers));
 	}
 
-	public abstract static class Instance extends AbstractCriterionTriggerInstance {
+	public abstract static class Instance implements SimpleCriterionTrigger.SimpleInstance {
 
-		public Instance(ResourceLocation idIn, ContextAwarePredicate predicate) {
-			super(idIn, predicate);
+		private final Optional<ContextAwarePredicate> player;
+
+		public Instance(Optional<ContextAwarePredicate> player) {
+			this.player = player;
+		}
+
+		@Override
+		public Optional<ContextAwarePredicate> player() {
+			return player;
 		}
 
 		protected abstract boolean test(@Nullable List<Supplier<Object>> suppliers);
 	}
-
 }

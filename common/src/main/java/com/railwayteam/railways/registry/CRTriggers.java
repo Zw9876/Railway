@@ -18,9 +18,12 @@
 
 package com.railwayteam.railways.registry;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.minecraft.core.Registry;
+
 import com.railwayteam.railways.registry.advancement.CriterionTriggerBase;
 import com.railwayteam.railways.registry.advancement.SimpleRailwaysTrigger;
-import net.minecraft.advancements.CriteriaTriggers;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +42,9 @@ public class CRTriggers {
 	}
 
 	public static void register() {
-		triggers.forEach(CriteriaTriggers::register);
+		// CriteriaTriggers.register is private in 1.21 -- vanilla registers only its
+		// own triggers. Mod triggers go straight into the TRIGGER_TYPES registry.
+		triggers.forEach(t -> Registry.register(BuiltInRegistries.TRIGGER_TYPES, t.getId(), t));
 	}
 
 }

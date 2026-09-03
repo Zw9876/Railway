@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.registry;
 
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.advancements.AdvancementHolder;
+
 import com.google.common.collect.Sets;
 import com.railwayteam.railways.registry.advancement.CRAdvancement;
 import com.railwayteam.railways.registry.advancement.CRAdvancement.Builder;
@@ -76,30 +80,37 @@ public class CRAdvancements implements DataProvider {
 	// Datagen
 
 	private final PackOutput output;
+	// 1.21 datagen needs a registry lookup to encode advancements through their Codec.
+	private final CompletableFuture<HolderLookup.Provider> registries;
 
-	public CRAdvancements(PackOutput output) {
+	public CRAdvancements(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
 		this.output = output;
+		this.registries = registries;
 	}
 
 	@Override
 	public CompletableFuture<?> run(CachedOutput cache) {
-		PathProvider pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, "advancements");
-		List<CompletableFuture<?>> futures = new ArrayList<>();
+		return registries.thenCompose(provider -> {
+			// 1.21 renamed the datapack folder from "advancements" to "advancement";
+			// writing the old name puts the files somewhere the game never reads.
+			PathProvider pathProvider = output.createPathProvider(PackOutput.Target.DATA_PACK, "advancement");
+			List<CompletableFuture<?>> futures = new ArrayList<>();
 
-		Set<ResourceLocation> set = Sets.newHashSet();
-		Consumer<Advancement> consumer = (advancement) -> {
-			ResourceLocation id = advancement.getId();
-			if (!set.add(id))
-				throw new IllegalStateException("Duplicate advancement " + id);
-			Path path = pathProvider.json(id);
-			futures.add(DataProvider.saveStable(cache, advancement.deconstruct()
-				.serializeToJson(), path));
-		};
+			Set<ResourceLocation> set = Sets.newHashSet();
+			Consumer<AdvancementHolder> consumer = (advancement) -> {
+				ResourceLocation id = advancement.id();
+				if (!set.add(id))
+					throw new IllegalStateException("Duplicate advancement " + id);
+				Path path = pathProvider.json(id);
+				// deconstruct()/serializeToJson() are gone; advancements encode via Codec.
+				futures.add(DataProvider.saveStable(cache, provider, Advancement.CODEC, advancement.value(), path));
+			};
 
-		for (CRAdvancement advancement : ENTRIES)
-			advancement.save(consumer);
+			for (CRAdvancement advancement : ENTRIES)
+				advancement.save(consumer);
 
-		return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+			return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+		});
 	}
 
 	@Override
