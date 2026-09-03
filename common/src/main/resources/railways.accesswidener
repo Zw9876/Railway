@@ -1,5 +1,6 @@
 accessWidener   v2  named
-extendable method net/minecraft/world/entity/vehicle/AbstractMinecart getDropItem ()Lnet/minecraft/world/item/Item;
+# AbstractMinecart.getDropItem was removed in 1.21; MinecartBlock now overrides
+# getPickResult instead, which needs no widening.
 accessible class net/minecraft/client/multiplayer/ClientChunkCache$Storage
 accessible field net/minecraft/client/multiplayer/ClientChunkCache$Storage viewCenterX I
 accessible field net/minecraft/client/multiplayer/ClientChunkCache$Storage viewCenterZ I
@@ -21,3 +22,4 @@ accessible field net/minecraft/world/level/levelgen/structure/templatesystem/Str
 accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
 accessible class net/minecraft/client/renderer/texture/SpriteContents$AnimatedTexture
 accessible class net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration
+accessible class net/minecraft/world/item/CreativeModeTab$TabVisibility

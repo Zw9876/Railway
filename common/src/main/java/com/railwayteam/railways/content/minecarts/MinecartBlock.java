@@ -21,6 +21,7 @@ package com.railwayteam.railways.content.minecarts;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,9 +45,11 @@ public abstract class MinecartBlock extends AbstractMinecart {
     return content;
   }
 
+  // 1.21 removed AbstractMinecart.getDropItem(); getPickResult() is the
+  // surviving hook and returns an ItemStack rather than an Item.
   @Override
-  protected @NotNull Item getDropItem() {
-    return content.getBlock().asItem();
+  public @NotNull ItemStack getPickResult() {
+    return new ItemStack(content.getBlock());
   }
 
   /*@Override
