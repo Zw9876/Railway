@@ -18,10 +18,11 @@
 
 package com.railwayteam.railways.util;
 
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
+
 import com.google.gson.JsonObject;
 import com.railwayteam.railways.multiloader.fluid.FluidUnits;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -45,29 +46,7 @@ public class FluidUtils {
     }
 
     @ExpectPlatform
-    public static void addFluidOutput(ProcessingRecipeBuilder<ProcessingRecipe<?, ?>> b, Fluid fluid, long amount, @Nullable CompoundTag nbt) {
+    public static void addFluidOutput(StandardProcessingRecipe.Builder<?> b, Fluid fluid, long amount, @Nullable CompoundTag nbt) {
         throw new AssertionError();
-    }
-
-    public static void mangleFluidAmount(JsonObject json) {
-        if (!json.has("amount")) return;
-
-        long amount = json.remove("amount").getAsLong();
-        json.addProperty("railways:amount", amount);
-        json.addProperty("railways:amount:unit", FluidUnits.bucket());
-    }
-
-    public static void demangleFluidAmount(JsonObject json) {
-        if (!json.has("railways:amount")) return;
-        if (!json.has("railways:amount:unit")) return;
-
-        long amount = json.remove("railways:amount").getAsLong();
-        long unit = json.remove("railways:amount:unit").getAsLong();
-
-        if (unit != FluidUnits.bucket()) {
-            amount = (long) Math.floor(amount * (double) FluidUnits.bucket() / unit);
-        }
-
-        json.addProperty("amount", amount);
     }
 }
