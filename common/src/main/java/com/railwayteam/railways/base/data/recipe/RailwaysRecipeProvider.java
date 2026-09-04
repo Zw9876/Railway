@@ -31,7 +31,7 @@ import com.railwayteam.railways.registry.CRItems;
 import com.railwayteam.railways.registry.CRTags;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.foundation.fluid.FluidIngredient;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -204,7 +204,7 @@ public abstract class RailwaysRecipeProvider extends RecipeProvider {
             return CRTags.AllItemTags.BINDING_AGENTS.tag;
         }
 
-        public static FluidIngredient palettesPaint(@NotNull PalettesColor color, long amount) {
+        public static SizedFluidIngredient palettesPaint(@NotNull PalettesColor color, long amount) {
             return MultiloaderFluidStack.create(
                 CRFluids.PAINT.get(),
                 amount,

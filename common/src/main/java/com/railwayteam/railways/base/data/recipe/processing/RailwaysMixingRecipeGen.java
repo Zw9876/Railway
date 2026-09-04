@@ -33,7 +33,6 @@ import com.railwayteam.railways.util.FluidUtils;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
-import com.simibubi.create.foundation.fluid.FluidIngredient;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.data.PackOutput;
 import net.minecraft.nbt.CompoundTag;
@@ -66,7 +65,7 @@ public class RailwaysMixingRecipeGen extends RailwaysProcessingRecipeGen {
         b -> {
             b.require(Ingredients.dye(dyeColor));
             b.require(Ingredients.bindingAgent());
-            b.require(FluidIngredient.fromTag(FluidTags.WATER, FluidUnits.bucket()));
+            b.require(FluidTags.WATER, (int) FluidUnits.bucket());
             FluidUtils.addFluidOutput(b, CRFluids.PAINT.get(), FluidUnits.bucket(), PaintFluid.setColor(new CompoundTag(), color));
             return b;
         }
@@ -130,7 +129,7 @@ public class RailwaysMixingRecipeGen extends RailwaysProcessingRecipeGen {
             b -> {
                 b.require(stoneType.getBaseBlock().get());
                 b.require(Ingredients.bindingAgent());
-                b.require(FluidIngredient.fromTag(FluidTags.WATER, FluidUnits.bucket()));
+                b.require(FluidTags.WATER, (int) FluidUnits.bucket());
                 b.requiresHeat(HeatCondition.HEATED);
                 FluidUtils.addFluidOutput(b, CRFluids.PAINT.get(), FluidUnits.bucket(), PaintFluid.setColor(new CompoundTag(), color));
                 return b;
