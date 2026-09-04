@@ -18,14 +18,41 @@
 
 package com.railwayteam.railways.multiloader;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.minecraft.world.entity.EntityType;
 
-public abstract class EntityTypeConfigurator {
-	@ExpectPlatform
-	public static EntityTypeConfigurator of(Object builder) {
-		throw new AssertionError();
+/**
+ * Thin wrapper over {@link EntityType.Builder}.
+ * <p>
+ * This used to be an @ExpectPlatform abstraction because Fabric and Forge exposed
+ * different builder types. This is a NeoForge-only tree now, so it delegates directly
+ * and no longer needs a platform implementation.
+ */
+public class EntityTypeConfigurator {
+	private final EntityType.Builder<?> builder;
+
+	private EntityTypeConfigurator(EntityType.Builder<?> builder) {
+		this.builder = builder;
 	}
 
-	public abstract EntityTypeConfigurator size(float width, float height);
-	public abstract EntityTypeConfigurator fireImmune();
+	public static EntityTypeConfigurator of(Object builder) {
+		if (builder instanceof EntityType.Builder<?> typeBuilder)
+			return new EntityTypeConfigurator(typeBuilder);
+		throw new IllegalArgumentException("builder must be an EntityType.Builder");
+	}
+
+	public EntityTypeConfigurator size(float width, float height) {
+		builder.sized(width, height);
+		return this;
+	}
+
+	/** 1.21 moved eye height off the entity (getStandingEyeHeight) onto the type. */
+	public EntityTypeConfigurator eyeHeight(float eyeHeight) {
+		builder.eyeHeight(eyeHeight);
+		return this;
+	}
+
+	public EntityTypeConfigurator fireImmune() {
+		builder.fireImmune();
+		return this;
+	}
 }

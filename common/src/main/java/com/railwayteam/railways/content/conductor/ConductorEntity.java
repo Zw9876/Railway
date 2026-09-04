@@ -552,7 +552,7 @@ public class ConductorEntity extends AbstractGolem {
         if (state.getBlock() instanceof VentBlock ventBlock) {
           ventBlock.teleportConductor(level, pos, this, hitResult.getDirection().getOpposite());
         } else {
-          state.use(level, fakePlayer, InteractionHand.MAIN_HAND, hitResult);
+          state.useWithoutItem(level, fakePlayer, hitResult);
         }
       }
     }
@@ -801,7 +801,6 @@ public class ConductorEntity extends AbstractGolem {
 
   public ConductorEntity(EntityType<? extends AbstractGolem> type, Level level) {
     super(type, level);
-    this.setMaxUpStep(0.5f);
   }
 
   public boolean isHoldingSchedules() {
@@ -819,15 +818,15 @@ public class ConductorEntity extends AbstractGolem {
   }
 
   @Override
-  protected void defineSynchedData() {
-    super.defineSynchedData();
-    this.entityData.define(COLOR, idFrom(defaultColor()));
-    this.entityData.define(BLOCK, this.blockPosition());
-    this.entityData.define(JOB, Job.DEFAULT.ordinal());
-    this.entityData.define(HOLDING_SCHEDULES, this.isHoldingSchedules());
+  protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    super.defineSynchedData(builder);
+    builder.define(COLOR, idFrom(defaultColor()));
+    builder.define(BLOCK, this.blockPosition());
+    builder.define(JOB, Job.DEFAULT.ordinal());
+    builder.define(HOLDING_SCHEDULES, this.isHoldingSchedules());
     for (Map.Entry<String, Couple<EntityDataAccessor<ItemStack>>> entry : FREQUENCY_DATA.entrySet()) {
       for (boolean first : Iterate.trueAndFalse) {
-        this.entityData.define(entry.getValue().get(first), ItemStack.EMPTY);
+        builder.define(entry.getValue().get(first), ItemStack.EMPTY);
       }
     }
   }
@@ -859,7 +858,9 @@ public class ConductorEntity extends AbstractGolem {
       .add(Attributes.MOVEMENT_SPEED, 0.25D)
       .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
       .add(Attributes.ARMOR, 8.0D)
-      .add(Attributes.ARMOR_TOUGHNESS, 8.0D);
+      .add(Attributes.ARMOR_TOUGHNESS, 8.0D)
+      // 1.21 replaced setMaxUpStep with the STEP_HEIGHT attribute.
+      .add(Attributes.STEP_HEIGHT, 0.5D);
   }
 
   @Override
@@ -885,11 +886,6 @@ public class ConductorEntity extends AbstractGolem {
   @Override
   protected int decreaseAirSupply(int pAir) {
     return pAir;
-  }
-
-  @Override
-  protected float getStandingEyeHeight(@NotNull Pose pPose, @NotNull EntityDimensions pDimensions) {
-    return pDimensions.height * 0.76f;
   }
 
   public boolean canReach(Vec3i pos) {
@@ -1151,8 +1147,8 @@ public class ConductorEntity extends AbstractGolem {
   }
 
   @Override
-  protected void dropCustomDeathLoot(@NotNull DamageSource pSource, int pLooting, boolean pRecentlyHit) {
-    super.dropCustomDeathLoot(pSource, pLooting, pRecentlyHit);
+  protected void dropCustomDeathLoot(@NotNull ServerLevel pLevel, @NotNull DamageSource pSource, boolean pRecentlyHit) {
+    super.dropCustomDeathLoot(pLevel, pSource, pRecentlyHit);
     Job job = getJob();
     ItemStack holdingStack = this.unequipToolbox();
     if (!holdingStack.isEmpty()) {
@@ -1455,7 +1451,7 @@ public class ConductorEntity extends AbstractGolem {
           return;
         boolean canUse = state.getShape(level, pos).isEmpty() || EntityUtils.handleUseEvent(fake, InteractionHand.MAIN_HAND, hitResult);
         if (canUse) {
-          state.use(level, fake, InteractionHand.MAIN_HAND, hitResult);
+          state.useWithoutItem(level, fake, hitResult);
         }
       }
     }
@@ -1487,7 +1483,7 @@ public class ConductorEntity extends AbstractGolem {
             BlockState state = this.conductor.level.getBlockState(at);
             if (this.conductor.canUseBlock(state)) {
               ClipContext context = new ClipContext(this.conductor.getEyePosition(), new Vec3(at.getX(), at.getY(), at.getZ()),
-                  ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, null);
+                  ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, (Entity) null);
               BlockHitResult hitResult = this.conductor.level.clip(context);
               if (hitResult.getBlockPos().equals(at)) {
                 this.target = at;
@@ -1513,7 +1509,7 @@ public class ConductorEntity extends AbstractGolem {
     nbt.putByte("color", getEntityData().get(COLOR));
     if (toolbox != null) {
       CompoundTag toolboxTag = new CompoundTag();
-      toolbox.write(toolboxTag, false);
+      toolbox.write(toolboxTag, registryAccess(), false);
       nbt.put("toolboxHolder", toolboxTag);
     }
     if (!getHeldSchedules().isEmpty()) {
