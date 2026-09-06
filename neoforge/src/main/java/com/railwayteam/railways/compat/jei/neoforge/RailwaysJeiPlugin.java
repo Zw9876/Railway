@@ -29,7 +29,7 @@ import com.simibubi.create.content.fluids.transfer.FillingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeRegistration;
@@ -77,7 +77,7 @@ public class RailwaysJeiPlugin implements IModPlugin {
     public <T> void registerFluidSubtypes(@NotNull ISubtypeRegistration registration, @NotNull IPlatformFluidHelper<T> platformFluidHelper) {
         PaintFluidSubtypeInterpreter interpreter = new PaintFluidSubtypeInterpreter();
         VirtualFluid paintFluid = CRFluids.PAINT.get();
-        registration.registerSubtypeInterpreter(ForgeTypes.FLUID_STACK, paintFluid.getSource(), interpreter);
-        registration.registerSubtypeInterpreter(ForgeTypes.FLUID_STACK, paintFluid.getFlowing(), interpreter);
+        registration.registerSubtypeInterpreter(NeoForgeTypes.FLUID_STACK, paintFluid.getSource(), interpreter);
+        registration.registerSubtypeInterpreter(NeoForgeTypes.FLUID_STACK, paintFluid.getFlowing(), interpreter);
     }
 }

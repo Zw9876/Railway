@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.neoforge;
 
+import net.neoforged.fml.ModContainer;
 import com.railwayteam.railways.multiloader.neoforge.RailwaysPayloads;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.railwayteam.railways.Railways;
@@ -42,10 +43,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
@@ -60,12 +59,14 @@ import java.util.Set;
 public class RailwaysImpl {
 	static IEventBus bus;
 
-	public RailwaysImpl() {
+	public RailwaysImpl(IEventBus modEventBus, ModContainer modContainer) {
 		restoreLoggers();
-		bus = FMLJavaModLoadingContext.get().getModEventBus();
+		// 1.21 injects the mod bus and container into the @Mod constructor; FMLJavaModLoadingContext
+		// and ModLoadingContext.get() are gone.
+		bus = modEventBus;
 		CRCreativeModeTabsImpl.register(RailwaysImpl.bus);
 		Railways.init();
-		CRConfigsImpl.register(ModLoadingContext.get());
+		CRConfigsImpl.register(modContainer);
 		CRParticleTypesParticleEntryImpl.register(bus);
 		//noinspection Convert2MethodRef
 		Env.CLIENT.runIfCurrent(() -> () -> RailwaysClientImpl.init());

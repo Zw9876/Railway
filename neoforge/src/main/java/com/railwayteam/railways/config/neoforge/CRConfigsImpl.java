@@ -22,7 +22,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import com.railwayteam.railways.config.CRConfigs;
 import net.createmod.catnip.config.ConfigBase;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -31,7 +31,7 @@ import java.util.Map;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class CRConfigsImpl {
-    public static void register(ModLoadingContext context) {
+    public static void register(ModContainer context) {
         CRConfigs.registerCommon();
 
         for (Map.Entry<ModConfig.Type, ConfigBase> pair : CRConfigs.CONFIGS.entrySet())
