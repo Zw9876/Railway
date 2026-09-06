@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.smokestack.block;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.content.smokestack.RotationType;
 import com.railwayteam.railways.content.smokestack.SmokeEmissionParams;
 import com.railwayteam.railways.content.smokestack.block.be.SmokeStackBlockEntity;
@@ -110,30 +112,31 @@ public class SmokeStackBlock extends AbstractSmokeStackBlock<SmokeStackBlockEnti
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if (pPlayer.getItemInHand(pHand).getItem() instanceof DyeItem dyeItem) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos,
+                                           Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        if (stack.getItem() instanceof DyeItem dyeItem) {
             DyeColor color = dyeItem.getDyeColor();
             withBlockEntityDo(pLevel, pPos, te -> te.setColor(color));
             if (!pPlayer.isCreative()) {
-                pPlayer.getItemInHand(pHand).shrink(1);
+                stack.shrink(1);
             }
-            return InteractionResult.sidedSuccess(pLevel.isClientSide);
+            return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
         }
-        if (pPlayer.getItemInHand(pHand).is(ItemTags.SOUL_FIRE_BASE_BLOCKS)) {
+        if (stack.is(ItemTags.SOUL_FIRE_BASE_BLOCKS)) {
             withBlockEntityDo(pLevel, pPos, te -> te.setSoul(true));
             if (!pPlayer.isCreative()) {
-                pPlayer.getItemInHand(pHand).shrink(1);
+                stack.shrink(1);
             }
-            return InteractionResult.sidedSuccess(pLevel.isClientSide);
+            return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
         }
         if (pPlayer.isShiftKeyDown()) {
             withBlockEntityDo(pLevel, pPos, te -> {
                 te.setSoul(false);
                 te.setColor(null);
             });
-            return InteractionResult.sidedSuccess(pLevel.isClientSide);
+            return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
         }
-        return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
+        return super.useItemOn(stack, pState, pLevel, pPos, pPlayer, pHand, pHit);
     }
 
     @Override

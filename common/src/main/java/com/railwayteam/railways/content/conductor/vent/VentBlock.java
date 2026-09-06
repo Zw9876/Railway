@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.conductor.vent;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.config.CRConfigs;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.registry.CRShapes;
@@ -176,7 +178,8 @@ public abstract class VentBlock extends CopycatBlock implements IWrenchable {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                           Player player, InteractionHand hand, BlockHitResult hit) {
         if (player instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel && ConductorEntity.isPlayerDisguised(player)) {
             Direction direction = hit.getDirection().getOpposite();
 
@@ -185,13 +188,11 @@ public abstract class VentBlock extends CopycatBlock implements IWrenchable {
                 BlockPos end = target.get();
                 if (!level.getBlockState(end.above()).isAir())
                     end = end.below();
-                //serverPlayer.connection.teleport(end.getX(), end.getY(), end.getZ(), serverPlayer.getYRot(), serverPlayer.getXRot());
                 serverPlayer.teleportTo(serverLevel, end.getX() + 0.5, end.getY() + 0.0, end.getZ() + 0.5, serverPlayer.getYRot(), serverPlayer.getXRot());
-                //conductor.teleportToForce(end.getX() + 0.5, end.getY() + 0.0, end.getZ() + 0.5);
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
         }
-        return super.use(state, level, pos, player, hand, hit);
+        return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
     @Override

@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.palettes.boiler;
 
+import net.minecraft.world.ItemInteractionResult;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.railwayteam.railways.mixin_interfaces.IHasCustomOutline;
@@ -142,19 +143,18 @@ public class BoilerBlock extends Block implements IWrenchable, IHasCustomOutline
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos,
-                                          Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    public @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state,
+                                                    @NotNull Level level, @NotNull BlockPos pos, Player player,
+                                                    @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (player.isShiftKeyDown() || !player.mayBuild())
-            return InteractionResult.PASS;
-
-        ItemStack heldItem = player.getItemInHand(hand);
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
         IPlacementHelper helper = PlacementHelpers.get(placementHelperId);
-        if (helper.matchesItem(heldItem))
+        if (helper.matchesItem(stack))
             return helper.getOffset(player, level, state, pos, hit)
-                    .placeInWorld(level, (BlockItem) heldItem.getItem(), player, hand, hit);
+                    .placeInWorld(level, (BlockItem) stack.getItem(), player, hand, hit);
 
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

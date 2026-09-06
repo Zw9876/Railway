@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.switches;
 
+import com.railwayteam.railways.util.InteractionUtils;
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.registry.CRBlockEntities;
 import com.railwayteam.railways.registry.CRShapes;
@@ -242,26 +244,26 @@ public abstract class TrackSwitchBlock extends HorizontalDirectionalBlock implem
 
   @SuppressWarnings("deprecation")
   @Override
-  public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos,
-                                        @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-    ItemStack itemInHand = player.getItemInHand(hand);
-    if (AllItems.WRENCH.isIn(itemInHand))
-      return InteractionResult.PASS;
+  public @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state,
+                                                  @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player,
+                                                  @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    if (AllItems.WRENCH.isIn(stack))
+      return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
     if (level.isClientSide) {
-      return InteractionResult.SUCCESS;
+      return ItemInteractionResult.SUCCESS;
     }
 
     TrackSwitchBlockEntity te = getBlockEntity(level, pos);
     if (te != null) {
       if (player.getGameProfile() == ConductorEntity.FAKE_PLAYER_PROFILE) {
-        return te.onProjectileHit() ? InteractionResult.CONSUME : InteractionResult.SUCCESS;
+        return te.onProjectileHit() ? ItemInteractionResult.CONSUME : ItemInteractionResult.SUCCESS;
       } else {
-        return te.onUse(player.isSteppingCarefully());
+        return InteractionUtils.toItemResult(te.onUse(player.isSteppingCarefully()));
       }
     }
 
-    return InteractionResult.SUCCESS;
+    return ItemInteractionResult.SUCCESS;
   }
 
   @Override

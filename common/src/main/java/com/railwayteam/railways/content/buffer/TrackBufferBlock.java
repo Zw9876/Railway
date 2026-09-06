@@ -18,6 +18,9 @@
 
 package com.railwayteam.railways.content.buffer;
 
+import net.minecraft.world.level.LevelReader;
+import com.railwayteam.railways.util.InteractionUtils;
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.registry.CRBlocks;
 import com.railwayteam.railways.util.AdventureUtils;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -116,7 +119,7 @@ public abstract class TrackBufferBlock<BE extends TrackBufferBlockEntity> extend
 	}
 
 	@Override
-	public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
 		return CRBlocks.TRACK_BUFFER.asStack();
 	}
 
@@ -128,11 +131,11 @@ public abstract class TrackBufferBlock<BE extends TrackBufferBlockEntity> extend
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
-															 BlockHitResult pHit) {
+	public ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos,
+																				 Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
 		if (AdventureUtils.isAdventure(pPlayer))
-			return InteractionResult.PASS;
-		return onBlockEntityUse(pLevel, pPos, be -> be.applyDyeIfValid(pPlayer.getItemInHand(pHand)));
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		return InteractionUtils.toItemResult(onBlockEntityUse(pLevel, pPos, be -> be.applyDyeIfValid(stack)));
 	}
 
 	public static int getBaseModelYRotationOf(BlockState state) {

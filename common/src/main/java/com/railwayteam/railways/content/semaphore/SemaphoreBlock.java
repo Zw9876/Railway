@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.semaphore;
 
+import net.minecraft.world.ItemInteractionResult;
 import com.mojang.serialization.MapCodec;
 
 import com.railwayteam.railways.config.CRConfigs;
@@ -80,20 +81,14 @@ public class SemaphoreBlock extends HorizontalDirectionalBlock implements IBE<Se
     }
     @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult ray) {
-        ItemStack heldItem = player.getItemInHand(hand);
-
-        //IPlacementHelper placementHelper = PlacementHelpers.get(placementHelperId);
-
-
-        ItemStack itemInHand = player.getItemInHand(hand);
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos,
+                                           Player player, InteractionHand hand, BlockHitResult ray) {
         IPlacementHelper helper = PlacementHelpers.get(SemaphoreBlock.girderPlacementHelperId);
 
-        if (helper.matchesItem(itemInHand))
+        if (helper.matchesItem(stack))
             return helper.getOffset(player, world, state, pos, ray)
-                            .placeInWorld(world, (BlockItem) itemInHand.getItem(), player, hand, ray);
-        return InteractionResult.PASS;
+                            .placeInWorld(world, (BlockItem) stack.getItem(), player, hand, ray);
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {

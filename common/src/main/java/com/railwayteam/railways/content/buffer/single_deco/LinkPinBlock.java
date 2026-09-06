@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.buffer.single_deco;
 
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 
 import com.mojang.serialization.MapCodec;
@@ -120,7 +121,7 @@ public class LinkPinBlock extends AbstractDyeableSingleBufferBlock implements Bl
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return CRBlocks.LINK_AND_PIN_GROUP.get(state.getValue(STYLE)).asStack();
     }
 }

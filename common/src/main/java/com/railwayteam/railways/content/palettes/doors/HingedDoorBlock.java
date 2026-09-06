@@ -76,11 +76,11 @@ public class HingedDoorBlock extends DoorBlock implements IWrenchable {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (EntityUtils.isHolding(player, AllItems.WRENCH::isIn)) {
             return InteractionResult.PASS;
         }
-        return super.use(state, level, pos, player, hand, hit);
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 
     @Override

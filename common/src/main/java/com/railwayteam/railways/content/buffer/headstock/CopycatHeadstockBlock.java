@@ -18,6 +18,9 @@
 
 package com.railwayteam.railways.content.buffer.headstock;
 
+import net.minecraft.world.level.LevelReader;
+import com.railwayteam.railways.util.InteractionUtils;
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.content.buffer.BlockStateBlockItemGroup;
 import com.railwayteam.railways.registry.CRBlockEntities;
 import com.railwayteam.railways.registry.CRBlocks;
@@ -312,18 +315,19 @@ public class CopycatHeadstockBlock extends WaterloggedCopycatBlock implements Bl
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
-                                 BlockHitResult pHit) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos,
+                                           Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (AdventureUtils.isAdventure(pPlayer))
-            return InteractionResult.PASS;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         InteractionResult result = onBlockEntityUse(pLevel, pPos, be -> {
             if (be instanceof CopycatHeadstockBlockEntity copycatHeadstock) {
-                return copycatHeadstock.applyDyeIfValid(pPlayer.getItemInHand(pHand));
+                return copycatHeadstock.applyDyeIfValid(stack);
             }
             return InteractionResult.PASS;
         });
-        if (result.consumesAction()) return result;
-        return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
+        if (result.consumesAction())
+            return InteractionUtils.toItemResult(result);
+        return super.useItemOn(stack, pState, pLevel, pPos, pPlayer, pHand, pHit);
     }
 
     @Environment(EnvType.CLIENT)
@@ -342,7 +346,7 @@ public class CopycatHeadstockBlock extends WaterloggedCopycatBlock implements Bl
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return CRBlocks.COPYCAT_HEADSTOCK_GROUP.get(state.getValue(STYLE)).asStack();
     }
 }

@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.custom_bogeys.special.invisible;
 
+import net.minecraft.world.level.LevelReader;
 import com.google.common.collect.ImmutableSet;
 import com.railwayteam.railways.registry.CRBlockEntities;
 import com.railwayteam.railways.registry.CRBogeyStyles;
@@ -98,7 +99,7 @@ public class InvisibleBogeyBlock extends AbstractBogeyBlock<InvisibleBogeyBlockE
 	}
 
 	@Override
-	public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+	public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
 		return AllBlocks.RAILWAY_CASING.asStack();
 	}
 

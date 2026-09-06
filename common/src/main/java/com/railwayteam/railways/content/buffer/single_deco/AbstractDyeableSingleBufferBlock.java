@@ -18,6 +18,9 @@
 
 package com.railwayteam.railways.content.buffer.single_deco;
 
+import com.railwayteam.railways.util.InteractionUtils;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.content.buffer.DyeableBlockEntity;
 import com.railwayteam.railways.registry.CRBlockEntities;
 import com.railwayteam.railways.util.AdventureUtils;
@@ -120,11 +123,11 @@ public abstract class AbstractDyeableSingleBufferBlock extends HorizontalDirecti
 
     @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
-                                 BlockHitResult pHit) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos,
+                                           Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (AdventureUtils.isAdventure(pPlayer))
-            return InteractionResult.PASS;
-        return onBlockEntityUse(pLevel, pPos, be -> be.applyDyeIfValid(pPlayer.getItemInHand(pHand)));
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionUtils.toItemResult(onBlockEntityUse(pLevel, pPos, be -> be.applyDyeIfValid(stack)));
     }
 
     @Override

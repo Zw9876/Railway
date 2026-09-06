@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.smokestack.block.variable;
 
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.content.buffer.BlockStateBlockItemGroup;
 import com.railwayteam.railways.content.smokestack.RotationType;
 import com.railwayteam.railways.content.smokestack.SmokeEmissionParams;
@@ -172,14 +173,14 @@ public non-sealed class VariableSmokeStackBlock extends StyledSmokeStackBlock im
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        ItemStack heldItem = pPlayer.getItemInHand(pHand);
-        if (heldItem.is(getCloneItemStack(pLevel, pPos, pState).getItem())) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos,
+                                           Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        if (stack.is(getCloneItemStack(pLevel, pPos, pState).getItem())) {
             incrementSize(pLevel, pPos);
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
 
-        return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
+        return super.useItemOn(stack, pState, pLevel, pPos, pPlayer, pHand, pHit);
     }
 
     public static void incrementSize(LevelAccessor level, BlockPos pos) {

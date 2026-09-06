@@ -18,6 +18,9 @@
 
 package com.railwayteam.railways.content.buffer.headstock;
 
+import net.minecraft.world.level.LevelReader;
+import com.railwayteam.railways.util.InteractionUtils;
+import net.minecraft.world.ItemInteractionResult;
 import com.mojang.serialization.MapCodec;
 
 import com.railwayteam.railways.content.buffer.BlockStateBlockItemGroup;
@@ -144,13 +147,14 @@ public class HeadstockBlock extends HorizontalDirectionalBlock implements IBE<He
 
     @SuppressWarnings("deprecation")
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
-                                 BlockHitResult pHit) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos,
+                                           Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (AdventureUtils.isAdventure(pPlayer))
-            return InteractionResult.PASS;
-        InteractionResult result = onBlockEntityUse(pLevel, pPos, be -> be.applyMaterialIfValid(pPlayer.getItemInHand(pHand)));
-        if (result.consumesAction()) return result;
-        return onBlockEntityUse(pLevel, pPos, be -> be.applyDyeIfValid(pPlayer.getItemInHand(pHand)));
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        InteractionResult result = onBlockEntityUse(pLevel, pPos, be -> be.applyMaterialIfValid(stack));
+        if (result.consumesAction())
+            return InteractionUtils.toItemResult(result);
+        return InteractionUtils.toItemResult(onBlockEntityUse(pLevel, pPos, be -> be.applyDyeIfValid(stack)));
     }
 
     @Override
@@ -164,7 +168,7 @@ public class HeadstockBlock extends HorizontalDirectionalBlock implements IBE<He
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return CRBlocks.HEADSTOCK_GROUP.get(state.getValue(STYLE)).asStack();
     }
 }

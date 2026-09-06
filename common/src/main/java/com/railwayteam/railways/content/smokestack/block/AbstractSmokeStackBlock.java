@@ -18,6 +18,9 @@
 
 package com.railwayteam.railways.content.smokestack.block;
 
+import com.simibubi.create.AllItems;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.util.ShapeWrapper;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -111,16 +114,16 @@ public abstract class AbstractSmokeStackBlock<T extends SmartBlockEntity> extend
 
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
-                                 BlockHitResult pHit) {
-        if (AllTags.AllItemTags.WRENCH.matches(pPlayer.getItemInHand(pHand))) {
-            return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos,
+                                           Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        if (AllItems.WRENCH.isIn(stack)) {
+            return super.useItemOn(stack, pState, pLevel, pPos, pPlayer, pHand, pHit);
         }
         pState = pState.cycle(ENABLED);
         pLevel.setBlock(pPos, pState, 2);
         if (pState.getValue(WATERLOGGED))
             pLevel.scheduleTick(pPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
-        return InteractionResult.sidedSuccess(pLevel.isClientSide);
+        return ItemInteractionResult.sidedSuccess(pLevel.isClientSide);
     }
 
     @Override

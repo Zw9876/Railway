@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.smokestack.block.variable;
 
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.content.buffer.BlockStateBlockItemGroup;
 import com.railwayteam.railways.content.smokestack.RotationType;
 import com.railwayteam.railways.content.smokestack.SmokestackStyle;
@@ -124,7 +125,7 @@ public non-sealed class SmokeStackExtenderBlock extends Block implements ProperW
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return cycleGroup.get().get(state.getValue(STYLE)).asStack();
     }
 
@@ -173,18 +174,19 @@ public non-sealed class SmokeStackExtenderBlock extends Block implements ProperW
 
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                           Player player, InteractionHand hand, BlockHitResult hit) {
         BlockPos rootPos = findRoot(level, pos);
         BlockState rootState = level.getBlockState(rootPos);
         if (rootState.getBlock() instanceof VariableSmokeStackBlock rootBlock)
-            return rootBlock.use(rootState, level, rootPos, player, hand, new BlockHitResult(
+            return rootBlock.useItemOn(stack, rootState, level, rootPos, player, hand, new BlockHitResult(
                 hit.getLocation(),
                 hit.getDirection(),
                 rootPos,
                 hit.isInside()
             ));
 
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

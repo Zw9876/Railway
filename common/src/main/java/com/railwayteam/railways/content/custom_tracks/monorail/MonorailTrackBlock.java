@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.custom_tracks.monorail;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.ItemInteractionResult;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.railwayteam.railways.content.bogey_menu.handler.BogeyMenuHandlerServer;
 import com.railwayteam.railways.content.custom_bogeys.special.monobogey.AbstractMonoBogeyBlock;
@@ -187,14 +189,15 @@ public class MonorailTrackBlock extends TrackBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        InteractionResult result = super.use(state, world, pos, player, hand, hit);
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos,
+                                           Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemInteractionResult result = super.useItemOn(stack, state, world, pos, player, hand, hit);
         if (result.consumesAction())
             return result;
 
-        if (!world.isClientSide && AllItems.BRASS_HAND.isIn(player.getItemInHand(hand))) {
+        if (!world.isClientSide && AllItems.BRASS_HAND.isIn(stack)) {
             TrackPropagator.onRailAdded(world, pos, state);
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
         return result;
     }
