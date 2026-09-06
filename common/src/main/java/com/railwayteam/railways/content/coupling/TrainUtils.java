@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.coupling;
 
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.mixin.AccessorAbstractContraptionEntity;
 import com.railwayteam.railways.mixin.AccessorOrientedContraptionEntity;
@@ -69,7 +70,7 @@ public class TrainUtils {
      * @param numberOffEnd The number of carriages to move to the new train.
      * @return The new train.
      */
-    public static Train splitTrain(Train train, int numberOffEnd) {
+    public static Train splitTrain(Train train, int numberOffEnd, HolderLookup.Provider registries) {
         if (((IHandcarTrain) train).railways$isHandcar()) return train;
         if (numberOffEnd == 0)
             return train;
@@ -172,7 +173,7 @@ public class TrainUtils {
             int newIndex = ((IIndexedSchedule) train).railways$getIndex() - train.carriages.size();
             ((IIndexedSchedule) newTrain).railways$setIndex(newIndex);
 
-            newTrain.runtime.read(train.runtime.write());
+            newTrain.runtime.read(registries, train.runtime.write(registries));
             if (train.runtime.state == ScheduleRuntime.State.IN_TRANSIT) {
                 newTrain.runtime.state = ScheduleRuntime.State.PRE_TRANSIT;
                 ((AccessorScheduleRuntime) newTrain.runtime).setCooldown(0);
@@ -289,23 +290,23 @@ public class TrainUtils {
 //        frontTrain.carriages.forEach(carriage -> carriage.forEachPresentEntity(CarriageContraptionEntity::syncCarriage));
         if (frontTrain.runtime.getSchedule() == null && backTrain.runtime.getSchedule() != null) {
             ((IIndexedSchedule) frontTrain).railways$setIndex(((IIndexedSchedule) backTrain).railways$getIndex() + frontTrainSize);
-            frontTrain.runtime.read(backTrain.runtime.write());
+            frontTrain.runtime.read(itemDropLevel.registryAccess(), backTrain.runtime.write(itemDropLevel.registryAccess()));
             if (backTrain.runtime.state == ScheduleRuntime.State.IN_TRANSIT) {
                 frontTrain.runtime.state = ScheduleRuntime.State.PRE_TRANSIT;
                 ((AccessorScheduleRuntime) frontTrain.runtime).setCooldown(0);
             }
         } else if (backTrain.runtime.getSchedule() != null) {
             if (frontTrain.runtime.completed) {
-                ItemStack stack = frontTrain.runtime.returnSchedule();
+                ItemStack stack = frontTrain.runtime.returnSchedule(itemDropLevel.registryAccess());
                 Containers.dropItemStack(itemDropLevel, itemDropPos.x, itemDropPos.y, itemDropPos.z, stack);
                 ((IIndexedSchedule) frontTrain).railways$setIndex(((IIndexedSchedule) backTrain).railways$getIndex() + frontTrainSize);
-                frontTrain.runtime.read(backTrain.runtime.write());
+                frontTrain.runtime.read(itemDropLevel.registryAccess(), backTrain.runtime.write(itemDropLevel.registryAccess()));
                 if (backTrain.runtime.state == ScheduleRuntime.State.IN_TRANSIT) {
                     frontTrain.runtime.state = ScheduleRuntime.State.PRE_TRANSIT;
                     ((AccessorScheduleRuntime) frontTrain.runtime).setCooldown(0);
                 }
             } else {
-                ItemStack stack = backTrain.runtime.returnSchedule();
+                ItemStack stack = backTrain.runtime.returnSchedule(itemDropLevel.registryAccess());
                 Containers.dropItemStack(itemDropLevel, itemDropPos.x, itemDropPos.y, itemDropPos.z, stack);
             }
         }

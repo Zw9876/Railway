@@ -18,6 +18,9 @@
 
 package com.railwayteam.railways.content.conductor.toolbox;
 
+import com.simibubi.create.content.equipment.toolbox.ToolboxInventory;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.HolderLookup;
 
 import com.railwayteam.railways.util.ItemUtils;
@@ -57,11 +60,19 @@ public class MountedToolbox extends ToolboxBlockEntity {
     CompoundTag tag = ItemUtils.getCustomTag(stack);
     if (tag == null)
       return;
-    readInventory(tag.getCompound("Inventory"));
+    // 1.21: readInventory takes a ToolboxInventory rather than raw NBT.
+    ToolboxInventory inv = new ToolboxInventory(this);
+    inv.deserializeNBT(railways$registries(), tag.getCompound("Inventory"));
+    readInventory(inv);
     if (tag.contains("UniqueId"))
       setUniqueId(tag.getUUID("UniqueId"));
-    if (stack.hasCustomHoverName())
+    if (stack.has(DataComponents.CUSTOM_NAME))
       setCustomName(stack.getHoverName());
+  }
+
+  /** 1.21 threads a HolderLookup.Provider through every NBT read/write. */
+  private HolderLookup.Provider railways$registries() {
+    return parent.level().registryAccess();
   }
 
   public ConductorEntity getParent() {
@@ -106,7 +117,7 @@ public class MountedToolbox extends ToolboxBlockEntity {
     if (level == null || level.isClientSide)
       return;
     CompoundTag nbt = new CompoundTag();
-    this.write(nbt, true);
+    this.write(nbt, railways$registries(), true);
     PacketSender.syncMountedToolboxNBT(this.parent, nbt);
   }
 
@@ -117,7 +128,7 @@ public class MountedToolbox extends ToolboxBlockEntity {
 
   public static MountedToolbox read(ConductorEntity parent, CompoundTag compound) {
     MountedToolbox holder = new MountedToolbox(parent, DyeColor.BROWN);
-    holder.read(compound, false);
+    holder.read(compound, parent.level().registryAccess(), false);
     return holder;
   }
 
@@ -129,14 +140,14 @@ public class MountedToolbox extends ToolboxBlockEntity {
   public ItemStack getDisplayStack() {
     ItemStack stack = new ItemStack(AllBlocks.TOOLBOXES.get(getColor()).get());
     if (hasCustomName())
-      stack.setHoverName(getCustomName());
+      stack.set(DataComponents.CUSTOM_NAME, getCustomName());
     return stack;
   }
 
   public ItemStack getCloneItemStack() {
     ItemStack stack = getDisplayStack();
     CompoundTag data = new CompoundTag();
-    write(data, false);
+    write(data, railways$registries(), false);
     CompoundTag inv = data.getCompound("Inventory");
 
     // mutateCustomTag writes the result back. The old code mutated the live
@@ -151,9 +162,9 @@ public class MountedToolbox extends ToolboxBlockEntity {
   }
 
   @Override
-  public void sendToMenu(FriendlyByteBuf buffer) {
+  public void sendToMenu(RegistryFriendlyByteBuf buffer) {
     buffer.writeVarInt(parent.getId());
-    buffer.writeNbt(getUpdateTag());
+    buffer.writeNbt(getUpdateTag(railways$registries()));
   }
 
   @ExpectPlatform

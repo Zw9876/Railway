@@ -177,7 +177,7 @@ public class TrackCouplerBlockEntity extends SmartBlockEntity implements Transfo
             case DECOUPLING -> {
                 Train train = info.frontCarriage.train;
                 int numberOffEnd = train.carriages.size() - train.carriages.indexOf(info.backCarriage); // all carriages after and including the back carriage
-                TrainUtils.splitTrain(train, numberOffEnd);
+                TrainUtils.splitTrain(train, numberOffEnd, level.registryAccess());
             }
             case COUPLING -> {
                 Train frontTrain = info.frontCarriage.train;

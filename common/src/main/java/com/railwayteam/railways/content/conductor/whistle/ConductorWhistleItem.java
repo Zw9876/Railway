@@ -296,7 +296,7 @@ public class ConductorWhistleItem extends TrackTargetingBlockItem {
             }
 
             if (train.runtime.getSchedule() != null && !train.runtime.isAutoSchedule) {
-                ItemStack scheduleStack = train.runtime.returnSchedule();
+                ItemStack scheduleStack = train.runtime.returnSchedule(player.registryAccess());
                 if (!scheduleStack.isEmpty()) {
                     for (CompoundTag passengerTag : ((AccessorCarriage) conductorCarriage).getSerialisedPassengers().values()) {
                         if (passengerTag.contains("PlayerPassenger")) continue;

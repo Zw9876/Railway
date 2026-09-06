@@ -80,7 +80,7 @@ public class SplitTrainCommand {
             return 0;
         }
         try {
-            TrainUtils.splitTrain(train, numberOffEnd);
+            TrainUtils.splitTrain(train, numberOffEnd, ctx.getSource().registryAccess());
         } catch (Exception e) {
             ctx.getSource().sendFailure(Component.literal("Failed to split train: " + e.getMessage()));
             e.printStackTrace();

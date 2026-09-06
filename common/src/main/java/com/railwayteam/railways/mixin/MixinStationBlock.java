@@ -118,7 +118,7 @@ public abstract class MixinStationBlock {
                     }
 
                     if (train.runtime.getSchedule() != null && !train.runtime.isAutoSchedule) {
-                        ItemStack scheduleStack = train.runtime.returnSchedule();
+                        ItemStack scheduleStack = train.runtime.returnSchedule(level.registryAccess());
                         if (!scheduleStack.isEmpty()) {
                             for (CompoundTag passengerTag : ((AccessorCarriage) conductorCarriage).getSerialisedPassengers().values()) {
                                 if (passengerTag.contains("PlayerPassenger")) continue;
@@ -243,7 +243,7 @@ public abstract class MixinStationBlock {
         if (station != null) {
             Train train = station.getPresentTrain();
             BlockPos trackPosition = te.edgePoint.getGlobalPosition();
-            ItemStack schedule = train == null ? ItemStack.EMPTY : train.runtime.returnSchedule();
+            ItemStack schedule = train == null ? ItemStack.EMPTY : train.runtime.returnSchedule(sender.registryAccess());
             if (train != null && !train.disassemble(te.getAssemblyDirection(), trackPosition.above()))
                 return false;
             dropSchedule(sender, te, schedule);

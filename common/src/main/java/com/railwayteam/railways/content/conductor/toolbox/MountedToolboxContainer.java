@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.conductor.toolbox;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.registry.CRContainerTypes;
@@ -36,7 +37,7 @@ import net.minecraft.world.inventory.MenuType;
 public class MountedToolboxContainer extends ToolboxMenu {
   private ConductorEntity conductor;
 
-  public MountedToolboxContainer(MenuType<?> type, int id, Inventory inv, FriendlyByteBuf extraData) {
+  public MountedToolboxContainer(MenuType<?> type, int id, Inventory inv, RegistryFriendlyByteBuf extraData) {
     super(type, id, inv, extraData);
   }
 
@@ -57,7 +58,7 @@ public class MountedToolboxContainer extends ToolboxMenu {
   }
 
   @Override
-  protected ToolboxBlockEntity createOnClient(FriendlyByteBuf extraData) {
+  protected ToolboxBlockEntity createOnClient(RegistryFriendlyByteBuf extraData) {
     int conductorId = extraData.readVarInt();
     ClientLevel world = Minecraft.getInstance().level;
     Entity entity = world.getEntity(conductorId);
@@ -66,7 +67,7 @@ public class MountedToolboxContainer extends ToolboxMenu {
       return null;
     }
     MountedToolbox toolbox = conductor.getOrCreateToolboxHolder();
-    toolbox.read(extraData.readNbt(), true);
+    toolbox.read(extraData.readNbt(), extraData.registryAccess(), true);
     return toolbox;
   }
 
