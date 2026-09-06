@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.palettes.painting;
 
+import net.minecraft.world.item.Item.TooltipContext;
 import com.railwayteam.railways.content.palettes.PalettesColor;
 import com.railwayteam.railways.mixin_interfaces.ItemStackDuck;
 import com.railwayteam.railways.multiloader.fluid.FluidUnits;
@@ -208,7 +209,7 @@ public abstract class PaintPitcherItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         int levels = getLevels(stack);
         tooltipComponents.add(Component.translatable("item.railways.paint_pitcher.paint_level", levels, MAX_LEVELS));
     }

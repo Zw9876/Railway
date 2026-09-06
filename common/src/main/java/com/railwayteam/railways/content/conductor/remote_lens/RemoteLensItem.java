@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.conductor.remote_lens;
 
+import net.minecraft.world.item.Item.TooltipContext;
 import com.railwayteam.railways.util.ItemUtils;
 
 import com.railwayteam.railways.content.conductor.ConductorEntity;
@@ -51,8 +52,8 @@ public class RemoteLensItem extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendHoverText(@NotNull ItemStack stack, TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
         CompoundTag tag = ItemUtils.getCustomTag(stack);
         if (tag != null && tag.hasUUID("SelectedConductor")) {
             UUID conductorId = tag.getUUID("SelectedConductor");

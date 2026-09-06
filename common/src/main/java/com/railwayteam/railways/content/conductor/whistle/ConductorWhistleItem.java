@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.conductor.whistle;
 
+import net.minecraft.world.item.Item.TooltipContext;
 import com.railwayteam.railways.util.ItemUtils;
 
 import com.railwayteam.railways.config.CRConfigs;
@@ -102,8 +103,8 @@ public class ConductorWhistleItem extends TrackTargetingBlockItem {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendHoverText(@NotNull ItemStack stack, TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltip, flag);
         CompoundTag tag = ItemUtils.getCustomTag(stack);
         if (tag != null && tag.hasUUID("SelectedTrain") && tag.hasUUID("SelectedConductor")) {
             UUID trainId = tag.getUUID("SelectedTrain");

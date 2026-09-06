@@ -18,23 +18,19 @@
 
 package com.railwayteam.railways.content.conductor;
 
+import com.railwayteam.railways.registry.CRArmorMaterials;
 import com.railwayteam.railways.Railways;
 import com.simibubi.create.AllBlocks;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -45,7 +41,7 @@ public abstract class ConductorCapItem extends ArmorItem {
   public final String textureStr;
 
   protected ConductorCapItem(Properties props, DyeColor color) {
-    super(new ConductorArmorMaterial(), Type.HELMET, props);
+    super(CRArmorMaterials.CONDUCTOR_CAP, Type.HELMET, props);
     this.color  = color;
     String colorName = color.getName().toLowerCase(Locale.ROOT);
     this.textureId = Railways.asResource("textures/entity/caps/%s_conductor_cap.png".formatted(colorName));
@@ -80,45 +76,4 @@ public abstract class ConductorCapItem extends ArmorItem {
     return super.useOn(ctx);
   }
 
-  static class ConductorArmorMaterial implements ArmorMaterial {
-    @Override
-    public int getDurabilityForType(@NotNull Type type) {
-      return 0;
-    }
-
-    @Override
-    public int getDefenseForType(@NotNull Type type) {
-      return 0;
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-      return 0;
-    }
-
-    @Override
-    public @NotNull SoundEvent getEquipSound() {
-      return SoundEvents.ARMOR_EQUIP_LEATHER;
-    }
-
-    @Override
-    public @NotNull Ingredient getRepairIngredient() {
-      return Ingredient.EMPTY;
-    }
-
-    @Override
-    public @NotNull String getName() {
-      return "conductor_cap";
-    }
-
-    @Override
-    public float getToughness() {
-      return 0;
-    }
-
-    @Override
-    public float getKnockbackResistance() {
-      return 0;
-    }
-  }
 }
