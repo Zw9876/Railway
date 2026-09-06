@@ -72,7 +72,7 @@ public class CustomTrackBlockStateGeneratorImpl extends CustomTrackBlockStateGen
                     .texture("particle", template.getTexture(material, TextureKey.PARTICLE));
 
                 if (k.equals("tie") || state.getBlock() instanceof TransparentSegmentTrackBlock) {
-                    model.renderType(new ResourceLocation("cutout_mipped"));
+                    model.renderType(ResourceLocation.withDefaultNamespace("cutout_mipped"));
                 }
             }
 

@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.util.neoforge;
 
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
 import com.railwayteam.railways.annotation.multiloader.ImplClass;
 import com.railwayteam.railways.content.fuel.tank.FuelTankBlockEntity;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
@@ -44,6 +46,9 @@ public class FluidUtilsImpl {
     }
 
     public static void addFluidOutput(ProcessingRecipeBuilder<ProcessingRecipe<?>> b, Fluid fluid, long amount, @Nullable CompoundTag nbt) {
-        b.output(new FluidStack(fluid, (int) amount, nbt));
+        FluidStack stack = new FluidStack(fluid, (int) amount);
+        if (nbt != null)
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
+        b.output(stack);
     }
 }

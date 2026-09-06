@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.registry.neoforge;
 
+import net.minecraft.core.registries.Registries;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.registry.CRParticleTypes;
 import com.simibubi.create.foundation.particle.ICustomParticleData;
@@ -29,12 +30,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.util.function.Supplier;
 
 public class CRParticleTypesParticleEntryImpl {
-    private static final DeferredRegister<ParticleType<?>> REGISTER = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, Railways.MOD_ID);
+    private static final DeferredRegister<ParticleType<?>> REGISTER = DeferredRegister.create(Registries.PARTICLE_TYPE, Railways.MOD_ID);
     public static void register(String id, Supplier<ParticleType<?>> supplier) {
         REGISTER.register(id, supplier);
     }

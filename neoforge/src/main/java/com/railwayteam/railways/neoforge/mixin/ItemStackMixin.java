@@ -18,11 +18,11 @@
 
 package com.railwayteam.railways.neoforge.mixin;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.railwayteam.railways.mixin_interfaces.ItemStackDuck;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -42,7 +42,7 @@ public abstract class ItemStackMixin implements ItemStackDuck {
     @Override
     public void railways$setItem(Item item) {
         this.item = item;
-        this.delegate = ForgeRegistries.ITEMS.getDelegateOrThrow(item);
+        this.delegate = BuiltInRegistries.ITEM.wrapAsHolder(item);
         this.forgeInit();
     }
 }
