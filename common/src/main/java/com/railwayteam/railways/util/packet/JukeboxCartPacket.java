@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.util.packet;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.core.RegistryAccess;
 import com.railwayteam.railways.content.minecarts.MinecartJukebox;
 import com.railwayteam.railways.multiloader.S2CPacket;
 import net.fabricmc.api.EnvType;
@@ -31,21 +33,28 @@ import net.minecraft.world.level.Level;
 public class JukeboxCartPacket implements S2CPacket {
   final int id;
   final ItemStack record;
+  /** Only needed when writing; null on a packet decoded from the wire. */
+  private final RegistryAccess registries;
 
   public JukeboxCartPacket(Entity target, ItemStack disc) {
     id = target.getId();
     record = disc;
+    registries = target.level().registryAccess();
   }
 
   public JukeboxCartPacket(FriendlyByteBuf buf) {
     id = buf.readInt();
-    record = buf.readItem();
+    // 1.21 removed FriendlyByteBuf.readItem/writeItem: stacks travel through a codec
+    // that needs registry access to resolve their data components.
+    RegistryAccess access = Minecraft.getInstance().getConnection().registryAccess();
+    record = ItemStack.OPTIONAL_STREAM_CODEC.decode(new RegistryFriendlyByteBuf(buf, access));
+    registries = null;
   }
 
   @Override
   public void write(FriendlyByteBuf buffer) {
     buffer.writeInt(this.id);
-    buffer.writeItem(this.record);
+    ItemStack.OPTIONAL_STREAM_CODEC.encode(new RegistryFriendlyByteBuf(buffer, registries), this.record);
   }
 
   @Override

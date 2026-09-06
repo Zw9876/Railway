@@ -33,7 +33,7 @@ import com.railwayteam.railways.base.datafix.schemas.V0;
 import com.railwayteam.railways.base.datafixerapi.DataFixesInternals;
 import com.railwayteam.railways.config.CRConfigs;
 import com.railwayteam.railways.content.smokestack.block.variable.VariableStackPart;
-import net.minecraft.SharedConstants;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.util.datafix.fixes.AddNewChoices;
 import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.util.datafix.schemas.NamespacedSchema;
@@ -62,7 +62,7 @@ public class CRDataFixers {
         addFixers(builder);
 
         ExecutorService executor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("Railways Datafixer Bootstrap").setDaemon(true).setPriority(1).build());
-        api.registerFixer(Railways.DATA_FIXER_VERSION, builder.buildOptimized(SharedConstants.DATA_FIX_TYPES_TO_OPTIMIZE, executor));
+        api.registerFixer(Railways.DATA_FIXER_VERSION, builder.buildOptimized(DataFixTypes.TYPES_FOR_LEVEL_LIST, executor));
     }
 
     private static void addFixers(DataFixerBuilder builder) {

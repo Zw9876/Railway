@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.mixin;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.railwayteam.railways.Railways;
@@ -40,9 +41,13 @@ public class MixinBasingRecipe {
         )
     )
     private static boolean fixDyeWastingRecipe(Ingredient instance, ItemStack stack, Operation<Boolean> original, BasinBlockEntity basin, Recipe<?> recipe, boolean test) {
-        Level level;
-        if (Railways.MOD_ID.equals(recipe.getId().getNamespace()) && (level = basin.getLevel()) != null) {
-            if (ItemStack.isSameItem(stack, recipe.getResultItem(level.registryAccess()))) {
+        // 1.21 recipes no longer carry their id, so scope this to our recipes by the
+        // namespace of what they produce - every Railways basin recipe outputs a Railways item.
+        Level level = basin.getLevel();
+        if (level != null) {
+            ItemStack result = recipe.getResultItem(level.registryAccess());
+            if (Railways.MOD_ID.equals(BuiltInRegistries.ITEM.getKey(result.getItem()).getNamespace())
+                    && ItemStack.isSameItem(stack, result)) {
                 return false;
             }
         }
