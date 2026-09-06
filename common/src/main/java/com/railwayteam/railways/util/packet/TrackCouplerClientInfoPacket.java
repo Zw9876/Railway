@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.util.packet;
 
+import net.minecraft.core.RegistryAccess;
 import com.railwayteam.railways.content.coupling.coupler.TrackCouplerBlockEntity;
 import com.railwayteam.railways.multiloader.S2CPacket;
 import net.fabricmc.api.EnvType;
@@ -31,21 +32,29 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class TrackCouplerClientInfoPacket implements S2CPacket {
     final BlockPos blockPos;
     final TrackCouplerBlockEntity.ClientInfo info;
+    /**
+     * ClientInfo holds error Components, which 1.21 serialises through
+     * Component.Serializer with registry access. Only needed when writing.
+     */
+    private final RegistryAccess registries;
 
     public TrackCouplerClientInfoPacket(TrackCouplerBlockEntity te) {
         blockPos = te.getBlockPos();
         info = te.getClientInfo();
+        registries = te.getLevel().registryAccess();
     }
 
     public TrackCouplerClientInfoPacket(FriendlyByteBuf buf) {
         blockPos = buf.readBlockPos();
-        info = new TrackCouplerBlockEntity.ClientInfo(buf.readNbt());
+        RegistryAccess access = Minecraft.getInstance().getConnection().registryAccess();
+        info = new TrackCouplerBlockEntity.ClientInfo(access, buf.readNbt());
+        registries = null;
     }
 
     @Override
     public void write(FriendlyByteBuf buffer) {
         buffer.writeBlockPos(blockPos);
-        buffer.writeNbt(info.write());
+        buffer.writeNbt(info.write(registries));
     }
 
     @Override

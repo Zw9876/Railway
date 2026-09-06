@@ -62,7 +62,11 @@ public class CRDataFixers {
         addFixers(builder);
 
         ExecutorService executor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("Railways Datafixer Bootstrap").setDaemon(true).setPriority(1).build());
-        api.registerFixer(Railways.DATA_FIXER_VERSION, builder.buildOptimized(DataFixTypes.TYPES_FOR_LEVEL_LIST, executor));
+        // DataFixerUpper 8 split buildOptimized into build() plus an optimize() on the result,
+        // and SharedConstants.DATA_FIX_TYPES_TO_OPTIMIZE became DataFixTypes.TYPES_FOR_LEVEL_LIST.
+        DataFixerBuilder.Result result = builder.build();
+        result.optimize(DataFixTypes.TYPES_FOR_LEVEL_LIST, executor);
+        api.registerFixer(Railways.DATA_FIXER_VERSION, result.fixer());
     }
 
     private static void addFixers(DataFixerBuilder builder) {

@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.mixin.client;
 
+import net.minecraft.client.gui.components.Tooltip;
 import com.google.common.collect.ImmutableList;
 import com.railwayteam.railways.mixin_interfaces.ILimited;
 import com.railwayteam.railways.registry.CRPackets;
@@ -59,21 +60,19 @@ public abstract class MixinStationScreen extends AbstractStationScreen {
     private void initCheckbox(CallbackInfo ci) {
         int x = guiLeft;
         int y = guiTop;
-        limitEnableCheckbox = new Checkbox(x + background.getWidth() - 98, y + background.getHeight() - 26, 50, 20, Component.translatable("railways.station.train_limit"), station != null && ((ILimited) station).isLimitEnabled(), true) {
-            @Override
-            public void onPress() {
-                super.onPress();
-                CRPackets.PACKETS.send(ILimited.makeLimitEnabledPacket(blockEntity.getBlockPos(), this.selected()));
-            }
-
-            @Override
-            public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-                if (this.isHoveredOrFocused()) {
-                    guiGraphics.renderComponentTooltip(font, ImmutableList.of(Component.translatable("railways.station.train_limit.tooltip.1"), Component.translatable("railways.station.train_limit.tooltip.2")), mouseX, mouseY);
-                }
-            }
-        };
+        limitEnableCheckbox = Checkbox.builder(Component.translatable("railways.station.train_limit"), font)
+                .pos(x + background.getWidth() - 98, y + background.getHeight() - 26)
+                .selected(station != null && ((ILimited) station).isLimitEnabled())
+                .onValueChange((checkbox, selected) ->
+                        CRPackets.PACKETS.send(ILimited.makeLimitEnabledPacket(blockEntity.getBlockPos(), selected)))
+                // 1.21 made Checkbox's constructor package-private and gave it a builder, so the
+                // old anonymous subclass is gone: onPress becomes onValueChange, and the
+                // hand-rolled two-line hover tooltip becomes a real Tooltip. The builder sizes the
+                // widget from its text rather than the previous fixed 50x20.
+                .tooltip(Tooltip.create(Component.translatable("railways.station.train_limit.tooltip.1")
+                        .append("\n")
+                        .append(Component.translatable("railways.station.train_limit.tooltip.2"))))
+                .build();
         addRenderableWidget(limitEnableCheckbox);
 
         iconTypes = TrainIconType.REGISTRY.keySet()

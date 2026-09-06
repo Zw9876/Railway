@@ -110,7 +110,7 @@ public class ConductorWhistleItem extends TrackTargetingBlockItem {
             UUID trainId = tag.getUUID("SelectedTrain");
             UUID conductorId = tag.getUUID("SelectedConductor");
             String trainName = "NOT FOUND";
-            GlobalRailwayManager railways = Create.RAILWAYS.sided(level);
+            GlobalRailwayManager railways = Create.RAILWAYS.sided(null);
             if (railways != null && railways.trains.containsKey(trainId))
                 trainName = railways.trains.get(trainId).name.getString();
 

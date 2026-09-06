@@ -187,7 +187,7 @@ public abstract class CasingRenderUtils {
 
     public static TransformedInstance makeCasingInstance(PartialModel baseModel, Block casingBlock, InstancerProvider instancerProvider) {
         PartialModel texturedPartial = reTexture(baseModel, casingBlock);
-        SimpleModel model = BakedModelBuilder.create(texturedPartial.get())
+        SimpleModel model = new BakedModelBuilder(texturedPartial.get())
                 .materialFunc((renderType, shaded) ->
 					SimpleMaterial.builderOf(ModelUtil.getMaterial(RenderType.cutoutMipped(), shaded))
 						.light(LightShaders.FLAT)

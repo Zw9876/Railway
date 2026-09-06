@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.ponder.scenes;
 
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import com.railwayteam.railways.content.coupling.coupler.TrackCouplerBlock;
 import com.railwayteam.railways.content.coupling.coupler.TrackCouplerBlockEntity;
 import com.railwayteam.railways.content.switches.TrackSwitchBlock.SwitchConstraint;
@@ -566,7 +568,7 @@ public class TrainScenes {
         scene.idle(20);
 
         for (int i = 0; i < 3; i++) {
-            scene.world().createEntity((level) -> new Arrow(level, switchPos.getX() + 0.5, 30, switchPos.getZ() + 0.5) {
+            scene.world().createEntity((level) -> new Arrow(level, switchPos.getX() + 0.5, 30, switchPos.getZ() + 0.5, new ItemStack(Items.ARROW), null) {
                 @Override
                 protected void onHitBlock(@NotNull BlockHitResult result) {
                     super.onHitBlock(result);

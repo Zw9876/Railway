@@ -152,7 +152,11 @@ public class RedstoneLinkInstruction extends ScheduleInstruction {
 
     @Override
     protected void writeAdditional(HolderLookup.Provider registries, CompoundTag tag) {
-        tag.put("Frequency", freq.serializeEach(f -> f.getStack().saveOptional(registries)));
+        // saveOptional widens to Tag (EndTag for an empty stack); serializeEach wants CompoundTag.
+        tag.put("Frequency", freq.serializeEach(f -> {
+            Tag saved = f.getStack().saveOptional(registries);
+            return saved instanceof CompoundTag compound ? compound : new CompoundTag();
+        }));
     }
 
     @Override

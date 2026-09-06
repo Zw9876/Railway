@@ -587,25 +587,25 @@ public class TrackCouplerBlockEntity extends SmartBlockEntity implements Transfo
             error2 = te.error2;
         }
 
-        public ClientInfo(CompoundTag tag) {
+        public ClientInfo(HolderLookup.Provider registries, CompoundTag tag) {
             mode = NBTHelper.readEnum(tag, "mode", OperationMode.class);
             trainName1 = tag.getString("trainName1");
             trainName2 = tag.getString("trainName2");
             edgePointsOk = tag.getBoolean("edgePointsOk");
-            error = tag.contains("error") ? Component.Serializer.fromJson(tag.getString("error")) : null;
-            error2 = tag.contains("error2") ? Component.Serializer.fromJson(tag.getString("error2")) : null;
+            error = tag.contains("error") ? Component.Serializer.fromJson(tag.getString("error"), registries) : null;
+            error2 = tag.contains("error2") ? Component.Serializer.fromJson(tag.getString("error2"), registries) : null;
         }
 
-        public CompoundTag write() {
+        public CompoundTag write(HolderLookup.Provider registries) {
             CompoundTag tag = new CompoundTag();
             NBTHelper.writeEnum(tag, "mode", mode);
             tag.putString("trainName1", trainName1);
             tag.putString("trainName2", trainName2);
             tag.putBoolean("edgePointsOk", edgePointsOk);
             if (error != null)
-                tag.putString("error", Component.Serializer.toJson(error));
+                tag.putString("error", Component.Serializer.toJson(error, registries));
             if (error2 != null)
-                tag.putString("error2", Component.Serializer.toJson(error2));
+                tag.putString("error2", Component.Serializer.toJson(error2, registries));
             return tag;
         }
     }

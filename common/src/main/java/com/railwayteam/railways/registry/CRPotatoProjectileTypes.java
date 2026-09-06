@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.registry;
 
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.Codec;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.palettes.painting.PaintPitcherItem;
@@ -61,7 +62,7 @@ public class CRPotatoProjectileTypes {
     public enum PaintAction implements PotatoProjectileBlockHitAction {
         INSTANCE;
 
-        public static final Codec<PaintAction> CODEC = Codec.unit(INSTANCE);
+        public static final MapCodec<PaintAction> CODEC = MapCodec.unit(INSTANCE);
 
         @Override
         public boolean execute(LevelAccessor level, ItemStack projectile, BlockHitResult ray) {
@@ -73,12 +74,12 @@ public class CRPotatoProjectileTypes {
         }
 
         @Override
-        public Codec<? extends PotatoProjectileBlockHitAction> codec() {
+        public MapCodec<? extends PotatoProjectileBlockHitAction> codec() {
             return CODEC;
         }
     }
 
-    private static void registerAction(String name, Codec<? extends PotatoProjectileBlockHitAction> codec) {
+    private static void registerAction(String name, MapCodec<? extends PotatoProjectileBlockHitAction> codec) {
         Registry.register(CreateBuiltInRegistries.POTATO_PROJECTILE_BLOCK_HIT_ACTION, Railways.asResource(name), codec);
     }
 

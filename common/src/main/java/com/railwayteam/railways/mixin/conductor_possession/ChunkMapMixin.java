@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.mixin.conductor_possession;
 
+import net.minecraft.server.level.ChunkTrackingView;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.content.conductor.ConductorPossessionController;
 import net.minecraft.core.SectionPos;
@@ -79,10 +80,10 @@ public abstract class ChunkMapMixin {
 					for (int j = pos.z() - viewDistance - 1; j <= pos.z() + viewDistance + 1; ++j) {
 						if (oldPos != null) { // if we are updating from a previous position, only load / unload relevant chunks
 							updateChunkTracking(player, new ChunkPos(i, j), new MutableObject<>(),
-									ChunkMap.isChunkInRange(i, j, oldPos.x(), oldPos.z(), viewDistance), // was loaded
-									ChunkMap.isChunkInRange(i, j, pos.x(), pos.z(), viewDistance)        // is  loaded
+									ChunkTrackingView.isInViewDistance(oldPos.x(), oldPos.z(), viewDistance, i, j), // was loaded
+									ChunkTrackingView.isInViewDistance(pos.x(), pos.z(), viewDistance, i, j)        // is  loaded
 							);
-						} else if (ChunkMap.isChunkInRange(i, j, pos.x(), pos.z(), viewDistance))
+						} else if (ChunkTrackingView.isInViewDistance(pos.x(), pos.z(), viewDistance, i, j))
 							updateChunkTracking(player, new ChunkPos(i, j), new MutableObject<>(), false, true);
 					}
 				}

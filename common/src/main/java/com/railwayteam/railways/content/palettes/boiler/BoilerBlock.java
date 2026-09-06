@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.palettes.boiler;
 
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.ItemInteractionResult;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -273,8 +274,8 @@ public class BoilerBlock extends Block implements IWrenchable, IHasCustomOutline
                 dir = dir.getOpposite();
                 int range = AllConfigs.server().equipment.placementAssistRange.get();
                 if (player != null) {
-                    AttributeInstance reach = player.getAttribute(getAttribute());
-                    if (reach != null && reach.hasModifier(ExtendoGripItem.singleRangeAttributeModifier))
+                    AttributeInstance reach = player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
+                    if (reach != null && reach.hasModifier(ExtendoGripItem.singleRangeAttributeModifier.id()))
                         range += 4;
                 }
                 int poles = attachedPoles(level, pos, dir);
@@ -294,11 +295,6 @@ public class BoilerBlock extends Block implements IWrenchable, IHasCustomOutline
             }
 
             return offset;
-        }
-
-        @ExpectPlatform
-        public static Attribute getAttribute() {
-            throw new AssertionError();
         }
     }
 }

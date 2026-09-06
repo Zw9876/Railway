@@ -38,7 +38,8 @@ public class GuiBlockMovingInteractionBehaviour extends MovingInteractionBehavio
         Contraption contraption = contraptionEntity.getContraption();
         StructureTemplate.StructureBlockInfo info = contraption.getBlocks().get(localPos);
 
-        info.state.use(new GuiBlockContraptionWorld(player.level, contraption, localPos),
+        info.state.useItemOn(player.getItemInHand(activeHand),
+                new GuiBlockContraptionWorld(player.level, contraption, localPos),
                 player,
                 activeHand,
                 new BlockHitResult(Vec3.atCenterOf(localPos), Direction.DOWN, localPos, false)
