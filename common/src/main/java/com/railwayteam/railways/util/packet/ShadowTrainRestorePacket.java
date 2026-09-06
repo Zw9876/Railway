@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.util.packet;
 
+import net.minecraft.core.BlockPos;
 import com.railwayteam.railways.content.shadow_realm.ShadowRealm;
 import com.railwayteam.railways.mixin.AccessorTrainPacket;
 import com.railwayteam.railways.mixin.AccessorTrainRelocator;
@@ -43,7 +44,7 @@ public record ShadowTrainRestorePacket(Train train) implements S2CPacket {
             if (mc.player == null) return;
 
             AccessorTrainRelocator.railways$setRelocatingTrain(ShadowRealm.MARKER);
-            AccessorTrainRelocator.railways$setRelocatingOrigin(mc.player.position());
+            AccessorTrainRelocator.railways$setRelocatingOrigin(BlockPos.containing(mc.player.position()));
             AccessorTrainRelocator.railways$setRelocatingEntityId(-1);
             ShadowRealm.clientShadowRestoringTrain = train;
         });

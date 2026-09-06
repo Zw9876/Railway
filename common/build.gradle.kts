@@ -78,6 +78,9 @@ dependencies {
     modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${"minecraft_version"()}:${"flywheel_version"()}")
 
     modCompileOnly("de.maxhenkel.voicechat:voicechat-api:${"voicechat_api_version"()}")
+    // The three voicechat mixins target internals (Server, ServerWorldUtils,
+    // EntityAudioChannelImpl) that live in the mod jar, not the API jar.
+    modCompileOnly("maven.modrinth:simple-voice-chat:neoforge-${"voicechat_version"()}")
 
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${"mixin_extras_version"()}")!!)
 }

@@ -34,3 +34,4 @@ accessible method net/minecraft/world/item/crafting/Ingredient fromValues (Ljava
 accessible method net/minecraft/world/item/crafting/Ingredient$TagValue <init> (Lnet/minecraft/tags/TagKey;)V
 accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
 accessible class net/minecraft/world/item/crafting/Ingredient$Value
+accessible class net/minecraft/client/renderer/block/model/BlockElement$Deserializer
