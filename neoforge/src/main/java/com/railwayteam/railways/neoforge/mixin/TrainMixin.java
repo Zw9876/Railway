@@ -18,6 +18,9 @@
 
 package com.railwayteam.railways.neoforge.mixin;
 
+import net.minecraft.world.item.crafting.RecipeType;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.railwayteam.railways.registry.CRTags;
 import com.simibubi.create.content.trains.entity.Train;
 import net.minecraft.world.item.ItemStack;
@@ -28,12 +31,19 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(Train.class)
 public class TrainMixin {
-    @ModifyArg(method = "burnFuel", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/common/ForgeHooks;getBurnTime(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/crafting/RecipeType;)I"), remap = false)
-    private ItemStack railways$disableFuelConsumptionBasedOnTag(ItemStack stack) {
+    /**
+     * Create 6 burns fuel via {@code stack.getBurnTime(null)} - an instance method NeoForge adds
+     * to ItemStack - where 1.20 called the static {@code ForgeHooks.getBurnTime(stack, type)}.
+     * The old @ModifyArg swapped the stack argument for AIR; a receiver cannot be modified that
+     * way, so this wraps the call and reports a burn time of 0 instead. Same effect: an item
+     * tagged not_train_fuel never burns.
+     */
+    @WrapOperation(method = "burnFuel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getBurnTime(Lnet/minecraft/world/item/crafting/RecipeType;)I"), remap = false)
+    private int railways$disableFuelConsumptionBasedOnTag(ItemStack stack, RecipeType<?> recipeType, Operation<Integer> original) {
         if (stack.is(CRTags.AllItemTags.NOT_TRAIN_FUEL.tag)) {
-            return Items.AIR.getDefaultInstance();
+            return 0;
         }
-        return stack;
+        return original.call(stack, recipeType);
     }
 }
 

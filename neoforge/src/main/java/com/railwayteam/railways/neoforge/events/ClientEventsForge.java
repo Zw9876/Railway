@@ -32,7 +32,7 @@ import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.TickEvent.Phase;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientEventsForge {

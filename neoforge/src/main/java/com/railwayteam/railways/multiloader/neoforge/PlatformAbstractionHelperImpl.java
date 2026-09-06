@@ -21,13 +21,12 @@ package com.railwayteam.railways.multiloader.neoforge;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.railwayteam.railways.annotation.multiloader.ImplClass;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.common.ForgeHooks;
 import net.neoforged.neoforge.server.command.EnumArgument;
 
 @ImplClass
 public class PlatformAbstractionHelperImpl {
     public static int getBurnTime(Item item) {
-        return ForgeHooks.getBurnTime(item.getDefaultInstance(), null);
+        return item.getDefaultInstance().getBurnTime(null);
     }
 
     public static <T extends Enum<T>> ArgumentType<T> enumArgument(Class<T> enumClass) {

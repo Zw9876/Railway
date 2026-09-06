@@ -22,7 +22,7 @@ import com.simibubi.create.AllPackets;
 import com.simibubi.create.content.trains.HonkPacket;
 import com.simibubi.create.content.trains.entity.Train;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.neoforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
@@ -45,9 +45,9 @@ public class UtilsImpl {
 
     public static void postChunkEventClient(LevelChunk chunk, boolean load) {
 		if (load) {
-			MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk, false));
+			NeoForge.EVENT_BUS.post(new ChunkEvent.Load(chunk, false));
 		} else {
-			MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(chunk));
+			NeoForge.EVENT_BUS.post(new ChunkEvent.Unload(chunk));
 		}
     }
 

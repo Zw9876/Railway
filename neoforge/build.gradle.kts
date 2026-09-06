@@ -39,6 +39,10 @@ dependencies {
     modCompileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${"minecraft_version"()}:${"flywheel_version"()}")
     modRuntimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${"minecraft_version"()}:${"flywheel_version"()}")
 
+    // JEI: the compat plugin (RailwaysJeiPlugin) needs the API at compile time.
+    modCompileOnly("mezz.jei:jei-${"minecraft_version"()}-neoforge-api:${"jei_neoforge_version"()}")
+    modLocalRuntime("mezz.jei:jei-${"minecraft_version"()}-neoforge:${"jei_neoforge_version"()}")
+
     // NeoForge 21.1 bundles MixinExtras at runtime; we only need it at compile time.
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${"mixin_extras_version"()}")!!)!!
 }

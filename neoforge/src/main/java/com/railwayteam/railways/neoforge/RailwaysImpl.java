@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.neoforge;
 
+import net.neoforged.fml.common.EventBusSubscriber;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.config.neoforge.CRConfigsImpl;
 import com.railwayteam.railways.multiloader.CommandRegistrar;
@@ -54,7 +55,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Mod(Railways.MOD_ID)
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class RailwaysImpl {
 	static IEventBus bus;
 

@@ -38,7 +38,7 @@ import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.TickEvent.Phase;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
