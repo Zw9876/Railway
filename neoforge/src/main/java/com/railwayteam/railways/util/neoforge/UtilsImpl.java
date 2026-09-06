@@ -40,7 +40,7 @@ public class UtilsImpl {
 	}
 
     public static void sendHonkPacket(Train train, boolean isHonk) {
-		AllPackets.getChannel().send(PacketDistributor.ALL.noArg(), new HonkPacket(train, isHonk));
+		PacketDistributor.sendToAllPlayers(new HonkPacket.Clientbound(train, isHonk));
     }
 
     public static void postChunkEventClient(LevelChunk chunk, boolean load) {

@@ -26,7 +26,7 @@ import com.railwayteam.railways.registry.CRItems;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.fluids.VirtualFluid;
 import com.simibubi.create.content.fluids.transfer.FillingRecipe;
-import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.neoforge.NeoForgeTypes;
@@ -63,7 +63,7 @@ public class RailwaysJeiPlugin implements IModPlugin {
 
             String path = "create/filling/railways/empty_paint_pitcher/with/railways/paint/" + color.getSerializedName();
             recipes.add(
-                new ProcessingRecipeBuilder<>(FillingRecipe::new, Railways.asResource(path))
+                new StandardProcessingRecipe.Builder<>(FillingRecipe::new, Railways.asResource(path))
                     .withItemIngredients(Ingredient.of(CRItems.EMPTY_PAINT_PITCHER))
                     .withFluidIngredients(palettesPaint(color, PaintPitcherItem.FLUID_PER_LEVEL * PaintPitcherItem.MAX_LEVELS))
                     .withSingleItemOutput(CRItems.PAINT_PITCHERS.get(color).asStack())

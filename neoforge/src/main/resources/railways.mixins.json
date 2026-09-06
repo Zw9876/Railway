@@ -13,7 +13,6 @@
     "ChunkMapAccessor",
     "ChunkMapAccessor$TrackedEntityAccessor",
     "ContainerLevelAccessMixin",
-    "FluidHelperMixin",
     "FluidNetworkMixin",
     "ItemStackMixin",
     "RollingModeMixin",

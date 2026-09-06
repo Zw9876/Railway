@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.neoforge;
 
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.world.food.FoodProperties;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.content.conductor.IConductorHoldingFakePlayer;
@@ -67,11 +69,6 @@ public class ConductorFakePlayerForge extends FakePlayer implements IConductorHo
 	}
 
 	@Override
-	public float getEyeHeight(@NotNull Pose pose) {
-		return 0;
-	}
-
-	@Override
 	public Vec3 position() {
 		return new Vec3(getX(), getY(), getZ());
 	}
@@ -86,9 +83,10 @@ public class ConductorFakePlayerForge extends FakePlayer implements IConductorHo
 		return false;
 	}
 
+	// eat(Level, ItemStack) is final in 1.21; the overridable form takes the FoodProperties.
 	@Override
 	@NotNull
-	public ItemStack eat(@NotNull Level world, ItemStack stack) {
+	public ItemStack eat(@NotNull Level world, @NotNull ItemStack stack, @NotNull FoodProperties food) {
 		stack.shrink(1);
 		return stack;
 	}
@@ -100,7 +98,7 @@ public class ConductorFakePlayerForge extends FakePlayer implements IConductorHo
 
 	private static class ConductorNetHandler extends ServerGamePacketListenerImpl {
 		public ConductorNetHandler(MinecraftServer server, ServerPlayer player) {
-			super(server, NETWORK_MANAGER, player);
+			super(server, NETWORK_MANAGER, player, CommonListenerCookie.createInitial(player.getGameProfile(), false));
 		}
 
 		@Override

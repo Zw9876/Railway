@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.conductor.neoforge;
 
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.resources.ResourceLocation;
 import com.railwayteam.railways.content.conductor.ConductorCapItem;
 import com.railwayteam.railways.content.conductor.ConductorCapModel;
 import net.minecraft.client.model.HumanoidModel;
@@ -58,8 +60,9 @@ public class ConductorCapItemImpl extends ConductorCapItem {
 
 	@Nullable
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-		return textureStr;
+	public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot,
+											ArmorMaterial.Layer layer, boolean innerModel) {
+		return textureId;
 	}
 
 	@Override

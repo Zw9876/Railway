@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.content.switches.neoforge;
 
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.Codec;
 import com.railwayteam.railways.content.switches.TrackSwitchBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,8 +31,25 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class TrackSwitchBlockImpl extends TrackSwitchBlock {
+  // 1.21 requires every BlockBehaviour to expose a codec. TrackSwitchBlock is not
+  // datapack-constructible, so a simple one over the properties plus the automatic flag is enough.
+  public static final MapCodec<TrackSwitchBlockImpl> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+    propertiesCodec(),
+    Codec.BOOL.fieldOf("automatic").forGetter(b -> b.automatic)
+  ).apply(i, TrackSwitchBlockImpl::new));
+
+  // TrackSwitchBlock.isAutomatic is not visible from this package, so keep our own copy
+  // purely so the codec has something to serialise.
+  private final boolean automatic;
+
   protected TrackSwitchBlockImpl(Properties properties, boolean isAutomatic) {
     super(properties, isAutomatic);
+    this.automatic = isAutomatic;
+  }
+
+  @Override
+  public MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    return CODEC;
   }
 
   public static TrackSwitchBlock manual(Properties properties) {

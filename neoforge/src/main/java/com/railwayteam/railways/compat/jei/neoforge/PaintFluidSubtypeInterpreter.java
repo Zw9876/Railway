@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.compat.jei.neoforge;
 
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
 import com.railwayteam.railways.content.palettes.PalettesColor;
 import com.railwayteam.railways.content.palettes.painting.PaintFluid;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
@@ -28,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public class PaintFluidSubtypeInterpreter implements IIngredientSubtypeInterpreter<FluidStack> {
     @Override
     public @NotNull String apply(@NotNull FluidStack ingredient, @NotNull UidContext context) {
-        return PaintFluid.getColor(ingredient.getTag())
+        return PaintFluid.getColor(ingredient.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag())
             .map(PalettesColor::getSerializedName)
             .orElse(NONE);
     }

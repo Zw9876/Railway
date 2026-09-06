@@ -42,7 +42,7 @@ public abstract class ItemStackMixin implements ItemStackDuck {
     @Override
     public void railways$setItem(Item item) {
         this.item = item;
-        this.delegate = BuiltInRegistries.ITEM.wrapAsHolder(item);
+        this.delegate = BuiltInRegistries.ITEM.wrapAsHolder(item) instanceof Holder.Reference<Item> ref ? ref : BuiltInRegistries.ITEM.getHolderOrThrow(BuiltInRegistries.ITEM.getResourceKey(item).orElseThrow());
         this.forgeInit();
     }
 }

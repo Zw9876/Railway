@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.registry.neoforge;
 
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.annotation.multiloader.ImplClass;
 import com.railwayteam.railways.content.palettes.PalettesColor;
@@ -78,7 +80,7 @@ public class CRFluidsImpl {
 
                 @Override
                 public ResourceLocation getStillTexture(FluidStack stack) {
-                    return $getStillTexture(PaintFluid.getColor(stack.getTag()).orElse(null));
+                    return $getStillTexture(PaintFluid.getColor(stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag()).orElse(null));
                 }
 
                 @Override
@@ -88,14 +90,14 @@ public class CRFluidsImpl {
 
                 @Override
                 public ResourceLocation getFlowingTexture(FluidStack stack) {
-                    return $getFlowingTexture(PaintFluid.getColor(stack.getTag()).orElse(null));
+                    return $getFlowingTexture(PaintFluid.getColor(stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag()).orElse(null));
                 }
             });
         }
 
         @Override
         public String getDescriptionId(FluidStack stack) {
-            return PaintFluid.getColor(stack.getTag())
+            return PaintFluid.getColor(stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag())
                 .map(PalettesColor::getPaintNameId)
                 .orElse("fluid.railways.paint");
         }
