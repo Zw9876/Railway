@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.neoforge.events;
 
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import com.railwayteam.railways.base.reload.ClientResourceReloadListener;
 import com.railwayteam.railways.events.ClientEvents;
 import com.railwayteam.railways.registry.neoforge.CRKeysImpl;
@@ -28,8 +29,6 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
-import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.event.TickEvent.Phase;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -37,11 +36,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientEventsForge {
 	@SubscribeEvent
-	public static void onClientTick(TickEvent.ClientTickEvent event) {
-		if (event.phase == Phase.START)
-			ClientEvents.onClientTickStart(Minecraft.getInstance());
-		else if (event.phase == Phase.END)
-			ClientEvents.onClientTickEnd(Minecraft.getInstance());
+	public static void onClientTickStart(ClientTickEvent.Pre event) {
+		ClientEvents.onClientTickStart(Minecraft.getInstance());
+	}
+
+	@SubscribeEvent
+	public static void onClientTickEnd(ClientTickEvent.Post event) {
+		ClientEvents.onClientTickEnd(Minecraft.getInstance());
 	}
 
 	@SubscribeEvent

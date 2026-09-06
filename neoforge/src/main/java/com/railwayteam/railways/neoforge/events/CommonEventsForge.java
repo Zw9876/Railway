@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.neoforge.events;
 
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.content.conductor.toolbox.MountedToolbox;
@@ -29,8 +30,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
-import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.event.TickEvent.Phase;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -39,10 +38,11 @@ import org.jetbrains.annotations.Nullable;
 
 @EventBusSubscriber
 public class CommonEventsForge {
+	// 1.21 split TickEvent into per-type events whose Pre/Post are separate classes,
+	// so the old phase check becomes the subscription itself.
 	@SubscribeEvent
-	public static void onWorldTick(TickEvent.LevelTickEvent event) {
-		if (event.phase == Phase.START)
-			CommonEvents.onWorldTickStart(event.level);
+	public static void onWorldTick(LevelTickEvent.Pre event) {
+		CommonEvents.onWorldTickStart(event.getLevel());
 	}
 
 	@SubscribeEvent

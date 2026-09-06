@@ -34,7 +34,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryObject;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import static com.railwayteam.railways.registry.CRItems.ITEM_CONDUCTOR_CAP;
 
@@ -44,7 +44,7 @@ public class CRCreativeModeTabsImpl {
     private static final DeferredRegister<CreativeModeTab> TAB_REGISTER =
         DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Railways.MOD_ID);
 
-    public static final RegistryObject<CreativeModeTab> MAIN_TAB = TAB_REGISTER.register("main",
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = TAB_REGISTER.register("main",
         () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.railways"))
             .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
@@ -52,7 +52,7 @@ public class CRCreativeModeTabsImpl {
             .displayItems(new RegistrateDisplayItemsGenerator(Tabs.MAIN))
             .build());
 
-    public static final RegistryObject<CreativeModeTab> TRACKS_TAB = TAB_REGISTER.register("tracks",
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TRACKS_TAB = TAB_REGISTER.register("tracks",
         () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.railways_tracks"))
             .withTabsBefore(MAIN_TAB.getKey())
@@ -60,7 +60,7 @@ public class CRCreativeModeTabsImpl {
             .displayItems(new RegistrateDisplayItemsGenerator(Tabs.TRACK))
             .build());
 
-    public static final RegistryObject<CreativeModeTab> PALETTES_TAB = TAB_REGISTER.register("palettes",
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> PALETTES_TAB = TAB_REGISTER.register("palettes",
         () -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.railways_palettes"))
             .withTabsBefore(TRACKS_TAB.getKey())
