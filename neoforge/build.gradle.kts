@@ -18,10 +18,6 @@
 
 architectury.neoForge()
 
-// Skeleton mode (-Pskeleton): common contributes no sources, so we register no
-// mixin configs and use a minimal entrypoint. Phase 2 re-enables the real content.
-val skeletonMode = project.hasProperty("skeleton")
-
 loom {
     val common = project(":common")
     accessWidenerPath = common.loom.accessWidenerPath

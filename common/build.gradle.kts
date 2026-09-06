@@ -16,15 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Skeleton mode (-Pskeleton): compile no common sources, so the NeoForge module's
-// build + runtime plumbing can be validated before common is ported to 1.21.1.
-val skeletonMode = project.hasProperty("skeleton")
-
 loom {
-    // Skeleton mode uses an empty widener: the real one targets 1.20.1 members
-    // (e.g. AbstractMinecart.getDropItem) that no longer exist in 1.21.1. Phase 2 fixes it.
-    accessWidenerPath = if (skeletonMode) file("src/main/resources/railways-skeleton.accesswidener")
-                        else file("src/main/resources/railways.accesswidener")
+    accessWidenerPath = file("src/main/resources/railways.accesswidener")
 }
 
 architectury {
@@ -94,15 +87,10 @@ tasks.processResources {
 }
 
 sourceSets.main {
-    if (skeletonMode) {
-        java.setSrcDirs(emptyList<String>())
-        resources.setSrcDirs(emptyList<String>())
-    } else {
-        resources { // include generated resources in resources
-            srcDir("src/generated/resources")
-            exclude(".cache/**")
-            exclude("assets/create/**")
-        }
+    resources { // include generated resources in resources
+        srcDir("src/generated/resources")
+        exclude(".cache/**")
+        exclude("assets/create/**")
     }
     blossom.javaSources {
         property("version", "mod_version"())
