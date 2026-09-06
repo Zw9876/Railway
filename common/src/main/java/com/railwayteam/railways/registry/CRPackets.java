@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.registry;
 
+import com.railwayteam.railways.util.packet.StationLimitPacket;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.conductor.toolbox.MountedToolboxDisposeAllPacket;
 import com.railwayteam.railways.content.conductor.toolbox.MountedToolboxEquipPacket;
@@ -33,6 +34,7 @@ public class CRPackets {
         .c2s(SlabUseOnCurvePacket.class, SlabUseOnCurvePacket::new)
         .c2s(BogeyStyleSelectionPacket.class, BogeyStyleSelectionPacket::new)
         .c2s(DismountCameraPacket.class, DismountCameraPacket::new)
+        .c2s(StationLimitPacket.class, StationLimitPacket::new)
         .c2s(CameraMovePacket.class, CameraMovePacket::new)
         .c2s(SpyConductorInteractPacket.class, SpyConductorInteractPacket::new)
         .c2s(ConfigureDevCapeC2SPacket.class, ConfigureDevCapeC2SPacket::new)

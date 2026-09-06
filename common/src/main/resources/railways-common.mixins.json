@@ -81,7 +81,6 @@
     "MixinStandardBogeyBlockEntity",
     "MixinStationBlock",
     "MixinStationBlockEntity",
-    "MixinStationEditPacket",
     "MixinToolboxHandler",
     "MixinTrackBlock",
     "MixinTrackBlockEntity",

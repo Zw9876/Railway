@@ -87,7 +87,7 @@ public abstract class MixinStationScreen extends AbstractStationScreen {
             Train train = displayedTrain.get();
             if (train != null) {
                 train.icon = TrainIconType.byId(iconTypes.get(s));
-                CRPackets.PACKETS.send(new TrainEditPacket(train.id, trainNameBox.getValue(), train.icon.getId(), train.mapColorIndex));
+                CRPackets.PACKETS.send(new TrainEditPacket.Serverbound(train.id, trainNameBox.getValue(), train.icon.getId(), train.mapColorIndex));
             }
         });
         iconTypeScroll.active = false;
