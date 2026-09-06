@@ -36,29 +36,20 @@ public abstract class MixinPlayer extends LivingEntity {
     private MixinPlayer(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
     }
-
-    // 1.21 removed Player.getStandingEyeHeight(Pose, EntityDimensions); eye height is carried on
-    // EntityDimensions now, so scale it as the dimensions are produced instead.
+    // 1.21 removed Player.getStandingEyeHeight and Player no longer declares getDimensions, so
+    // both of the old injections collapse into getDefaultDimensions - the one sizing hook Player
+    // still declares. Absolute values are unchanged: height scaled 1.5/1.8, eye height 1.5 * 0.76.
     @Inject(method = "getDefaultDimensions", at = @At("RETURN"), cancellable = true)
     private void conductorsAreSmaller(Pose pose, CallbackInfoReturnable<EntityDimensions> cir) {
         if (ConductorEntity.isPlayerDisguised((Player) (Object) this)) {
             if (pose == Pose.SLEEPING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK || pose == Pose.SWIMMING || pose == Pose.DYING)
                 return;
-            // conductor eye height is 1.5 * 0.76
-            // player eye height is 1.62
-            EntityDimensions dimensions = cir.getReturnValue();
-            cir.setReturnValue(dimensions.withEyeHeight(dimensions.eyeHeight() * (1.5f * 0.76f / 1.62f)));
+            cir.setReturnValue(cir.getReturnValue()
+                .scale(1.0f, 1.5f / 1.8f)
+                .withEyeHeight(1.5f * 0.76f));
         }
     }
 
-    @Inject(method = "getDimensions", at = @At("RETURN"), cancellable = true)
-    private void shrinkConductorPlayer(Pose pose, CallbackInfoReturnable<EntityDimensions> cir) {
-        if (ConductorEntity.isPlayerDisguised((Player) (Object) this)) {
-            if (pose == Pose.SLEEPING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK || pose == Pose.SWIMMING || pose == Pose.DYING) return;
-            EntityDimensions dimensions = cir.getReturnValue();
-            cir.setReturnValue(dimensions.scale(1.0f, 1.5f / 1.8f));
-        }
-    }
 
     private boolean wasDisguised = false;
     @Inject(method = "tick", at = @At("HEAD"))
