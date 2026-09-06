@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.neoforge.mixin;
 
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -27,10 +29,9 @@ import com.railwayteam.railways.content.shadow_realm.ShadowRealm.RestorationTarg
 import com.simibubi.create.content.trains.entity.TrainRelocationPacket;
 import com.simibubi.create.content.trains.track.BezierTrackPointLocation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Position;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.NetworkEvent.Context;
+import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -55,23 +56,27 @@ public class TrainRelocationPacketMixin {
     @Shadow
     Vec3 lookAngle;
 
-    @WrapOperation(method = "lambda$handle$3", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;closerThan(Lnet/minecraft/core/Position;D)Z", ordinal = 1))
-    private boolean unrestrictRange(Vec3 instance, Position pos, double distance, Operation<Boolean> original,
-                                    @Local(name = "sender") ServerPlayer sender) {
-        if (sender.isCreative() && CRConfigs.server().unlimitedCreativeRelocation.get())
+    // Create 6 does the work directly in handle(ServerPlayer) - there is no enqueueWork lambda
+    // any more, so lambda$handle$3 is gone - and the range test is now
+    // Player.canInteractWithBlock/Entity rather than Vec3.closerThan.
+    @WrapOperation(method = "handle", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/world/entity/player/Player;canInteractWithBlock(Lnet/minecraft/core/BlockPos;D)Z"))
+    private boolean unrestrictBlockRange(Player instance, BlockPos pos, double distance, Operation<Boolean> original) {
+        if (instance.isCreative() && CRConfigs.server().unlimitedCreativeRelocation.get())
             return true;
-
         return original.call(instance, pos, distance);
     }
 
-    @Inject(method = "lambda$handle$3", at = @At("HEAD"), cancellable = true, remap = false)
-    private void relocateShadowTrain(Context context, CallbackInfo ci) {
-        ServerPlayer sender = context.getSender();
-        if (sender == null) {
-            ShadowRealm.LOGGER.warn("Received TrainRelocationPacket without sender, ignoring");
-            return;
-        }
+    @WrapOperation(method = "handle", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/world/entity/player/Player;canInteractWithEntity(Lnet/minecraft/world/entity/Entity;D)Z"))
+    private boolean unrestrictEntityRange(Player instance, Entity entity, double distance, Operation<Boolean> original) {
+        if (instance.isCreative() && CRConfigs.server().unlimitedCreativeRelocation.get())
+            return true;
+        return original.call(instance, entity, distance);
+    }
 
+    @Inject(method = "handle", at = @At("HEAD"), cancellable = true, remap = false)
+    private void relocateShadowTrain(ServerPlayer sender, CallbackInfo ci) {
         RestorationTarget target = new RestorationTarget(sender.level(), pos, hoveredBezier, direction, lookAngle);
         ShadowRealm.handleTrainRelocationPacket(sender, trainId, target, ci);
     }
