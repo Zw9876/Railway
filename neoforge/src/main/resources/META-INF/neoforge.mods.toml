@@ -11,9 +11,11 @@ displayName = "Create: Steam 'n' Rails"
 authors = "The Railways Team"
 description = '''Customization and extension of Create rail systems and steam system'''
 
-# TODO(phase2): add `railways-common.mixins.json` here once common is ported to 1.21.1
 [[mixins]]
 config = "railways.mixins.json"
+
+[[mixins]]
+config = "railways-common.mixins.json"
 
 [[dependencies.railways]]
 modId = "neoforge"
