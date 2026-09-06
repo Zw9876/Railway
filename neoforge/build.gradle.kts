@@ -41,7 +41,9 @@ dependencies {
 
     // JEI: the compat plugin (RailwaysJeiPlugin) needs the API at compile time.
     modCompileOnly("mezz.jei:jei-${"minecraft_version"()}-neoforge-api:${"jei_neoforge_version"()}")
-    modLocalRuntime("mezz.jei:jei-${"minecraft_version"()}-neoforge:${"jei_neoforge_version"()}")
+    // Compile-time only for now: JEI 19.53 requires NeoForge 21.1.238+, and we are pinned to
+    // 21.1.219. The plugin still builds; add the runtime jar back after bumping NeoForge.
+    // modLocalRuntime("mezz.jei:jei-${"minecraft_version"()}-neoforge:${"jei_neoforge_version"()}")
 
     // NeoForge 21.1 bundles MixinExtras at runtime; we only need it at compile time.
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${"mixin_extras_version"()}")!!)!!

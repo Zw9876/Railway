@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.neoforge;
 
+import com.railwayteam.railways.registry.CRArmorMaterials;
+import com.railwayteam.railways.registry.CRIngredientTypes;
 import net.neoforged.fml.ModContainer;
 import com.railwayteam.railways.multiloader.neoforge.RailwaysPayloads;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -75,6 +77,9 @@ public class RailwaysImpl {
 		// 1.21 payload networking: PacketSet's channels have to be registered on the mod bus.
 		bus.addListener(RailwaysPayloads::register);
 		bus.addListener(CRCapabilities::register);
+		// DeferredRegisters declared in :common still need the platform mod bus.
+		CRIngredientTypes.register(bus);
+		CRArmorMaterials.register(bus);
 	}
 
 	public static void onCommonSetup(final FMLCommonSetupEvent event) {

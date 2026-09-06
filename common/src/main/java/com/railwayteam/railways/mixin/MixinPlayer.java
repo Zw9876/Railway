@@ -37,14 +37,17 @@ public abstract class MixinPlayer extends LivingEntity {
         super(entityType, level);
     }
 
-    @Inject(method = "getStandingEyeHeight", at = @At("RETURN"), cancellable = true)
-    private void conductorsAreSmaller(Pose pose, EntityDimensions dimensions, CallbackInfoReturnable<Float> cir) {
+    // 1.21 removed Player.getStandingEyeHeight(Pose, EntityDimensions); eye height is carried on
+    // EntityDimensions now, so scale it as the dimensions are produced instead.
+    @Inject(method = "getDefaultDimensions", at = @At("RETURN"), cancellable = true)
+    private void conductorsAreSmaller(Pose pose, CallbackInfoReturnable<EntityDimensions> cir) {
         if (ConductorEntity.isPlayerDisguised((Player) (Object) this)) {
             if (pose == Pose.SLEEPING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK || pose == Pose.SWIMMING || pose == Pose.DYING)
                 return;
             // conductor eye height is 1.5 * 0.76
             // player eye height is 1.62
-            cir.setReturnValue(cir.getReturnValueF() * (1.5f * 0.76f / 1.62f));
+            EntityDimensions dimensions = cir.getReturnValue();
+            cir.setReturnValue(dimensions.withEyeHeight(dimensions.eyeHeight() * (1.5f * 0.76f / 1.62f)));
         }
     }
 
