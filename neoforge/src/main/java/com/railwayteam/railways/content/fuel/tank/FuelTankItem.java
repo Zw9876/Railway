@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.fuel.tank;
 
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
 import com.railwayteam.railways.registry.neoforge.CRBlockEntitiesImpl;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import net.minecraft.core.BlockPos;
@@ -56,21 +58,23 @@ public class FuelTankItem extends BlockItem {
         MinecraftServer minecraftserver = level.getServer();
         if (minecraftserver == null)
             return false;
-        CompoundTag nbt = itemStack.getTagElement("BlockEntityTag");
-        if (nbt != null) {
+        // 1.21 moved the BlockEntityTag NBT onto the BLOCK_ENTITY_DATA component. CustomData
+        // hands out a COPY of the tag, so mutating it in place would silently do nothing the way
+        // the old getTagElement did - update() writes the result back.
+        CustomData.update(DataComponents.BLOCK_ENTITY_DATA, itemStack, nbt -> {
             nbt.remove("Luminosity");
             nbt.remove("Size");
             nbt.remove("Height");
             nbt.remove("Controller");
             nbt.remove("LastKnownPos");
             if (nbt.contains("TankContent")) {
-                FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound("TankContent"));
+                FluidStack fluid = FluidStack.parseOptional(level.registryAccess(), nbt.getCompound("TankContent"));
                 if (!fluid.isEmpty()) {
                     fluid.setAmount(Math.min(FuelTankBlockEntity.getCapacityMultiplier(), fluid.getAmount()));
-                    nbt.put("TankContent", fluid.writeToNBT(new CompoundTag()));
+                    nbt.put("TankContent", fluid.save(level.registryAccess(), new CompoundTag()));
                 }
             }
-        }
+        });
         return super.updateCustomBlockEntityTag(blockPos, level, player, itemStack, blockState);
     }
 

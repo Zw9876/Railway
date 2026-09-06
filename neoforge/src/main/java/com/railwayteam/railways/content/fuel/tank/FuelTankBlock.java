@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.fuel.tank;
 
+import net.minecraft.world.ItemInteractionResult;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import com.railwayteam.railways.registry.neoforge.CRBlockEntitiesImpl;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -61,9 +63,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.util.ForgeSoundType;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
@@ -127,25 +127,23 @@ public class FuelTankBlock extends Block implements IWrenchable, IBE<FuelTankBlo
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult ray) {
-        ItemStack heldItem = player.getItemInHand(hand);
+    public ItemInteractionResult useItemOn(ItemStack heldItem, BlockState state, Level world, BlockPos pos, Player player,
+                                          InteractionHand hand, BlockHitResult ray) {
         boolean onClient = world.isClientSide;
 
         if (heldItem.isEmpty())
-            return InteractionResult.PASS;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!player.isCreative())
-            return InteractionResult.PASS;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
         FluidHelper.FluidExchange exchange = null;
         FuelTankBlockEntity be = ConnectivityHandler.partAt(getBlockEntityType(), world, pos);
         if (be == null)
-            return InteractionResult.FAIL;
+            return ItemInteractionResult.FAIL;
 
-        LazyOptional<IFluidHandler> tankCapability = be.getCapability(ForgeCapabilities.FLUID_HANDLER);
-        if (!tankCapability.isPresent())
-            return InteractionResult.PASS;
-        IFluidHandler fluidTank = tankCapability.orElse(null);
+        IFluidHandler fluidTank = world.getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
+        if (fluidTank == null)
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         FluidStack prevFluidInTank = fluidTank.getFluidInTank(0)
                 .copy();
 
@@ -157,14 +155,13 @@ public class FuelTankBlock extends Block implements IWrenchable, IBE<FuelTankBlo
         if (exchange == null) {
             if (GenericItemEmptying.canItemBeEmptied(world, heldItem)
                     || GenericItemFilling.canItemBeFilled(world, heldItem))
-                return InteractionResult.SUCCESS;
-            return InteractionResult.PASS;
+                return ItemInteractionResult.SUCCESS;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
 
         SoundEvent soundevent = null;
         BlockState fluidState = null;
-        FluidStack fluidInTank = tankCapability.map(fh -> fh.getFluidInTank(0))
-                .orElse(FluidStack.EMPTY);
+        FluidStack fluidInTank = fluidTank.getFluidInTank(0);
 
         if (exchange == FluidHelper.FluidExchange.ITEM_TO_TANK) {
             Fluid fluid = fluidInTank.getFluid();
@@ -212,7 +209,7 @@ public class FuelTankBlock extends Block implements IWrenchable, IBE<FuelTankBlo
                                 .scale(1 / 20f);
                         vec = vec.add(motion);
                         world.addParticle(blockParticleData, vec.x, vec.y, vec.z, motion.x, motion.y, motion.z);
-                        return InteractionResult.SUCCESS;
+                        return ItemInteractionResult.SUCCESS;
                     }
 
                     controllerBE.sendDataImmediately();
@@ -221,7 +218,7 @@ public class FuelTankBlock extends Block implements IWrenchable, IBE<FuelTankBlo
             }
         }
 
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
@@ -298,7 +295,7 @@ public class FuelTankBlock extends Block implements IWrenchable, IBE<FuelTankBlo
 
     // Tanks are less noisy when placed in batch
     public static final SoundType SILENCED_METAL =
-            new ForgeSoundType(0.1F, 1.5F, () -> SoundEvents.METAL_BREAK, () -> SoundEvents.METAL_STEP,
+            new DeferredSoundType(0.1F, 1.5F, () -> SoundEvents.METAL_BREAK, () -> SoundEvents.METAL_STEP,
                     () -> SoundEvents.METAL_PLACE, () -> SoundEvents.METAL_HIT, () -> SoundEvents.METAL_FALL);
 
     @Override

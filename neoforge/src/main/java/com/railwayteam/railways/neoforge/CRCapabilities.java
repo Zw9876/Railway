@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.neoforge;
 
+import com.railwayteam.railways.content.fuel.psi.PortableFuelInterfaceBlockEntity;
+import com.railwayteam.railways.content.fuel.tank.FuelTankBlockEntity;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.content.conductor.toolbox.MountedToolbox;
 import com.railwayteam.railways.content.palettes.painting.EmptyPaintPitcherItem;
@@ -43,6 +45,8 @@ public class CRCapabilities {
     public static void register(RegisterCapabilitiesEvent event) {
         registerPaintPitchers(event);
         registerConductorToolbox(event);
+        FuelTankBlockEntity.registerCapabilities(event);
+        PortableFuelInterfaceBlockEntity.registerCapabilities(event);
     }
 
     /**

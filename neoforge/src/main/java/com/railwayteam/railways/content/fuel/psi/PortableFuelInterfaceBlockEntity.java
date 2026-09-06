@@ -18,6 +18,9 @@
 
 package com.railwayteam.railways.content.fuel.psi;
 
+import com.railwayteam.railways.registry.neoforge.CRBlockEntitiesImpl;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import com.railwayteam.railways.mixin_interfaces.IContraptionFuel;
 import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageWrapper;
 import com.simibubi.create.content.contraptions.Contraption;
@@ -26,54 +29,50 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 public class PortableFuelInterfaceBlockEntity extends PortableStorageInterfaceBlockEntity {
 
-    protected LazyOptional<IFluidHandler> capability;
+    protected IFluidHandler capability;
 
     public PortableFuelInterfaceBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         capability = createEmptyHandler();
     }
 
+    // 1.21 registers capabilities centrally; mirrors Create's PortableFluidInterfaceBlockEntity.
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+            Capabilities.FluidHandler.BLOCK,
+            CRBlockEntitiesImpl.PORTABLE_FUEL_INTERFACE.get(),
+            (be, context) -> be.capability
+        );
+    }
+
     @Override
     public void startTransferringTo(Contraption contraption, float distance) {
-        LazyOptional<IFluidHandler> oldcap = capability;
-        capability = LazyOptional.of(() -> {
-            MountedFluidStorageWrapper fuels = ((IContraptionFuel) contraption).railways$getFluidFuels();
-            return new InterfaceFluidHandler(fuels != null ? fuels : new FluidTank(0));
-        });
-        oldcap.invalidate();
+        MountedFluidStorageWrapper fuels = ((IContraptionFuel) contraption).railways$getFluidFuels();
+        capability = new InterfaceFluidHandler(fuels != null ? fuels : new FluidTank(0));
+        invalidateCapability();
         super.startTransferringTo(contraption, distance);
     }
 
     @Override
     protected void invalidateCapability() {
-        capability.invalidate();
+        invalidateCapabilities();
     }
 
     @Override
     protected void stopTransferring() {
-        LazyOptional<IFluidHandler> oldcap = capability;
         capability = createEmptyHandler();
-        oldcap.invalidate();
+        invalidateCapability();
         super.stopTransferring();
     }
 
-    private LazyOptional<IFluidHandler> createEmptyHandler() {
-        return LazyOptional.of(() -> new InterfaceFluidHandler(new FluidTank(0)));
-    }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        if (isFluidHandlerCap(cap))
-            return capability.cast();
-        return super.getCapability(cap, side);
+    private IFluidHandler createEmptyHandler() {
+        return new InterfaceFluidHandler(new FluidTank(0));
     }
 
     public class InterfaceFluidHandler implements IFluidHandler {

@@ -18,6 +18,11 @@
 
 package com.railwayteam.railways.content.fuel.tank;
 
+import net.createmod.catnip.nbt.NBTHelper;
+import net.minecraft.core.HolderLookup;
+import com.railwayteam.railways.registry.neoforge.CRBlockEntitiesImpl;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import com.railwayteam.railways.content.fuel.LiquidFuelTrainHandler;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -37,9 +42,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.IFluidTank;
@@ -58,7 +60,7 @@ public class FuelTankBlockEntity extends SmartBlockEntity implements IHaveGoggle
 
     private static final int MAX_SIZE = 3;
 
-    protected LazyOptional<IFluidHandler> fluidCapability;
+    protected IFluidHandler fluidCapability;
     protected boolean forceFluidLevelUpdate;
     protected FuelFluidHandler tankInventory;
     protected BlockPos controller;
@@ -80,7 +82,6 @@ public class FuelTankBlockEntity extends SmartBlockEntity implements IHaveGoggle
     public FuelTankBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         tankInventory = createInventory();
-        fluidCapability = LazyOptional.of(() -> tankInventory);
         forceFluidLevelUpdate = true;
         updateConnectivity = false;
         updateCapability = false;
@@ -317,10 +318,23 @@ public class FuelTankBlockEntity extends SmartBlockEntity implements IHaveGoggle
         sendData();
     }
 
-    private void refreshCapability() {
-        LazyOptional<IFluidHandler> oldCap = fluidCapability;
-        fluidCapability = LazyOptional.of(this::handlerForCapability);
-        oldCap.invalidate();
+    void refreshCapability() {
+        fluidCapability = handlerForCapability();
+        invalidateCapabilities();
+    }
+
+    // 1.21 registers capabilities centrally instead of asking the block entity for them.
+    // Mirrors Create's own FluidTankBlockEntity.registerCapabilities.
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+            Capabilities.FluidHandler.BLOCK,
+            CRBlockEntitiesImpl.FUEL_TANK.get(),
+            (be, context) -> {
+                if (be.fluidCapability == null)
+                    be.refreshCapability();
+                return be.fluidCapability;
+            }
+        );
     }
 
     private IFluidHandler handlerForCapability() {
@@ -347,12 +361,12 @@ public class FuelTankBlockEntity extends SmartBlockEntity implements IHaveGoggle
         if (controllerBE == null)
             return false;
         return containedFluidTooltip(tooltip, isPlayerSneaking,
-                controllerBE.getCapability(ForgeCapabilities.FLUID_HANDLER));
+                level.getCapability(Capabilities.FluidHandler.BLOCK, controllerBE.getBlockPos(), null));
     }
 
     @Override
-    protected void read(CompoundTag compound, boolean clientPacket) {
-        super.read(compound, clientPacket);
+    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(compound, registries, clientPacket);
 
         BlockPos controllerBefore = controller;
         int prevSize = width;
@@ -365,16 +379,16 @@ public class FuelTankBlockEntity extends SmartBlockEntity implements IHaveGoggle
         lastKnownPos = null;
 
         if (compound.contains("LastKnownPos"))
-            lastKnownPos = NbtUtils.readBlockPos(compound.getCompound("LastKnownPos"));
+            lastKnownPos = NBTHelper.readBlockPos(compound, "LastKnownPos");
         if (compound.contains("Controller"))
-            controller = NbtUtils.readBlockPos(compound.getCompound("Controller"));
+            controller = NBTHelper.readBlockPos(compound, "Controller");
 
         if (isController()) {
             window = compound.getBoolean("Window");
             width = compound.getInt("Size");
             height = compound.getInt("Height");
             tankInventory.setCapacity(getTotalTankSize() * getCapacityMultiplier());
-            tankInventory.readFromNBT(compound.getCompound("TankContent"));
+            tankInventory.readFromNBT(registries, compound.getCompound("TankContent"));
             if (tankInventory.getSpace() < 0)
                 tankInventory.drain(-tankInventory.getSpace(), IFluidHandler.FluidAction.EXECUTE);
         }
@@ -417,7 +431,7 @@ public class FuelTankBlockEntity extends SmartBlockEntity implements IHaveGoggle
     }
 
     @Override
-    public void write(CompoundTag compound, boolean clientPacket) {
+    public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         if (updateConnectivity)
             compound.putBoolean("Uninitialized", true);
         if (lastKnownPos != null)
@@ -426,12 +440,12 @@ public class FuelTankBlockEntity extends SmartBlockEntity implements IHaveGoggle
             compound.put("Controller", NbtUtils.writeBlockPos(controller));
         if (isController()) {
             compound.putBoolean("Window", window);
-            compound.put("TankContent", tankInventory.writeToNBT(new CompoundTag()));
+            compound.put("TankContent", tankInventory.writeToNBT(registries, new CompoundTag()));
             compound.putInt("Size", width);
             compound.putInt("Height", height);
         }
         compound.putInt("Luminosity", luminosity);
-        super.write(compound, clientPacket);
+        super.write(compound, registries, clientPacket);
 
         if (!clientPacket)
             return;
@@ -440,16 +454,6 @@ public class FuelTankBlockEntity extends SmartBlockEntity implements IHaveGoggle
         if (queuedSync)
             compound.putBoolean("LazySync", true);
         forceFluidLevelUpdate = false;
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (!fluidCapability.isPresent())
-            refreshCapability();
-        if (cap == ForgeCapabilities.FLUID_HANDLER)
-            return fluidCapability.cast();
-        return super.getCapability(cap, side);
     }
 
     @Override

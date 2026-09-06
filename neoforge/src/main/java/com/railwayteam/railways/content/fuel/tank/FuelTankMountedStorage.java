@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.fuel.tank;
 
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.HolderLookup;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.railwayteam.railways.content.fuel.LiquidFuelTrainHandler;
@@ -26,7 +28,7 @@ import com.railwayteam.railways.registry.neoforge.CRMountedStorageTypesImpl;
 import com.simibubi.create.api.contraption.storage.SyncedMountedStorage;
 import com.simibubi.create.api.contraption.storage.fluid.WrapperMountedFluidStorage;
 import com.simibubi.create.content.contraptions.Contraption;
-import com.simibubi.create.foundation.utility.CreateCodecs;
+import com.simibubi.create.foundation.codec.CreateCodecs;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -41,9 +43,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class FuelTankMountedStorage extends WrapperMountedFluidStorage<Handler> implements SyncedMountedStorage {
-	public static final Codec<FuelTankMountedStorage> CODEC = RecordCodecBuilder.create(i -> i.group(
+	public static final MapCodec<FuelTankMountedStorage> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
 		ExtraCodecs.NON_NEGATIVE_INT.fieldOf("capacity").forGetter(FuelTankMountedStorage::getCapacity),
-		CreateCodecs.FLUID_STACK_CODEC.fieldOf("fluid").forGetter(FuelTankMountedStorage::getFluid)
+		FluidStack.OPTIONAL_CODEC.fieldOf("fluid").forGetter(FuelTankMountedStorage::getFluid)
 	).apply(i, FuelTankMountedStorage::new));
 
 	private boolean dirty;
@@ -101,9 +103,10 @@ public class FuelTankMountedStorage extends WrapperMountedFluidStorage<Handler> 
 		return new FuelTankMountedStorage(inventory.getCapacity(), inventory.getFluid().copy());
 	}
 
-	public static FuelTankMountedStorage fromLegacy(CompoundTag nbt) {
+	public static FuelTankMountedStorage fromLegacy(HolderLookup.Provider registries, CompoundTag nbt) {
 		int capacity = nbt.getInt("Capacity");
-		FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
+		// 1.21 fluid stacks need registry access to resolve their data components.
+		FluidStack fluid = FluidStack.parseOptional(registries, nbt);
 		return new FuelTankMountedStorage(capacity, fluid);
 	}
 
