@@ -18,11 +18,15 @@
 
 package com.railwayteam.railways.neoforge;
 
+import java.util.Optional;
+import net.neoforged.neoforgespi.language.IModFileInfo;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackSelectionConfig;
 import com.mojang.brigadier.CommandDispatcher;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.RailwaysClient;
 import com.railwayteam.railways.registry.CRParticleTypes;
-import com.simibubi.create.foundation.pack.ModFilePackResources;
+import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -41,7 +45,7 @@ import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.forgespi.locating.IModFile;
+import net.neoforged.neoforgespi.locating.IModFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -104,24 +108,31 @@ public class RailwaysClientImpl {
 		packs.add(new PackInfo(id, name));
 	}
 
-	// based on Create's impl
+	// based on Create's impl. 1.21 rebuilt built-in pack registration: Create's
+	// ModFilePackResources is gone in favour of PathPackResources over the mod file's own
+	// resource path, and Pack.create was replaced by readMetaAndCreate taking a
+	// PackLocationInfo plus a PackSelectionConfig.
 	public static void onBuiltinPackRegistration(AddPackFindersEvent event) {
 		if (event.getPackType() != PackType.CLIENT_RESOURCES)
 			return;
-		IModFile modFile = ModList.get().getModFileById(Railways.MOD_ID).getFile();
+		IModFileInfo modFileInfo = ModList.get().getModFileById(Railways.MOD_ID);
+		if (modFileInfo == null) {
+			Railways.LOGGER.error("Could not find the Railways mod file; built-in resource packs will be missing!");
+			return;
+		}
+		IModFile modFile = modFileInfo.getFile();
 
-		packs.forEach(pack -> event.addRepositorySource((consumer) -> consumer.accept(
-			Pack.create(Railways.asResource(pack.id).toString(),
-				Component.literal(pack.name),
-				false,
-				(a) -> new ModFilePackResources(pack.name, modFile, "resourcepacks/" + pack.id),
-				new Pack.Info(Component.empty(), SharedConstants.getCurrentVersion().getPackVersion(PackType.CLIENT_RESOURCES), FeatureFlagSet.of()),
-				PackType.CLIENT_RESOURCES,
-				Pack.Position.TOP,
-				false,
-				PackSource.DEFAULT
-			)
-		)));
+		packs.forEach(pack -> event.addRepositorySource(consumer -> {
+			PackLocationInfo locationInfo = new PackLocationInfo(Railways.asResource(pack.id).toString(),
+				Component.literal(pack.name), PackSource.BUILT_IN, Optional.empty());
+			PathPackResources.PathResourcesSupplier resourcesSupplier =
+				new PathPackResources.PathResourcesSupplier(modFile.findResource("resourcepacks/" + pack.id));
+			PackSelectionConfig selectionConfig = new PackSelectionConfig(false, Pack.Position.TOP, false);
+			Pack builtinPack = Pack.readMetaAndCreate(locationInfo, resourcesSupplier,
+				PackType.CLIENT_RESOURCES, selectionConfig);
+			if (builtinPack != null)
+				consumer.accept(builtinPack);
+		}));
 		packs.clear();
 	}
 
