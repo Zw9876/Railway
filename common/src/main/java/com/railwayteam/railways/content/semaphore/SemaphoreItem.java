@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.semaphore;
 
+import net.minecraft.world.ItemInteractionResult;
 import com.railwayteam.railways.util.EntityUtils;
 import net.createmod.catnip.placement.IPlacementHelper;
 import net.createmod.catnip.placement.PlacementHelpers;
@@ -61,11 +62,11 @@ public class SemaphoreItem extends BlockItem {
         if(!placementHelper.matchesState(state))
             return super.place(pContext);
 
-        InteractionResult result = placementHelper.getOffset(player, world, state, pos, ray)
+        ItemInteractionResult result = placementHelper.getOffset(player, world, state, pos, ray)
                 .placeInWorld(world, this, player, pContext.getHand(), ray);
 
         if(result.consumesAction())
-            return result;
+            return result.result();
         else
             return super.place(pContext);
     }

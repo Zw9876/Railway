@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.compat.tracks;
 
+import org.jetbrains.annotations.Nullable;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.railwayteam.railways.registry.CRIngredientTypes;
@@ -59,6 +61,21 @@ public class SoftIngredient implements ICustomIngredient {
     /** Convenience for the many sites that need a vanilla Ingredient to hand to Create. */
     public static Ingredient vanillaOf(ResourceLocation item) {
         return of(item).toVanilla();
+    }
+
+    /**
+     * Reverse of {@link #toVanilla()}.
+     * <p>
+     * NeoForge patches {@code Ingredient} itself with a {@code getCustomIngredient()} accessor,
+     * and unlike most of its additions that patch is not behind an extension interface, so it
+     * only exists in the patched Minecraft jar that the platform module compiles against - not
+     * in :common. Hence the platform hop.
+     *
+     * @return the wrapped SoftIngredient, or null if this is any other kind of ingredient
+     */
+    @ExpectPlatform
+    public static @Nullable SoftIngredient unwrap(Ingredient ingredient) {
+        throw new AssertionError();
     }
 
     /**

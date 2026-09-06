@@ -64,7 +64,7 @@ public class TrackDemoCommand {
                                     baseState = baseState.setValue(SlabBlock.TYPE, SlabType.DOUBLE);
                                 level.setBlockAndUpdate(pos.east(3), baseState);
                                 level.setBlockAndUpdate(pos.east(3).above(), baseState);
-                            } else if (material.sleeperIngredient.getCustomIngredient() instanceof SoftIngredient softIngredient) {
+                            } else if (SoftIngredient.unwrap(material.sleeperIngredient) instanceof SoftIngredient softIngredient) {
                                 Optional<Block> baseBlock = BuiltInRegistries.BLOCK.getOptional(softIngredient.item);
                                 if (baseBlock.isPresent()) {
                                     BlockState baseState = baseBlock.get().defaultBlockState();

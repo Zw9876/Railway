@@ -55,7 +55,7 @@ public class MountedToolboxSyncPacket implements S2CPacket {
     if (level != null) {
       Entity target = level.getEntity(this.id);
       if (target instanceof ConductorEntity conductor) {
-        conductor.getOrCreateToolboxHolder().read(this.nbt, true);
+        conductor.getOrCreateToolboxHolder().read(this.nbt, level.registryAccess(), true);
       }
     }
   }

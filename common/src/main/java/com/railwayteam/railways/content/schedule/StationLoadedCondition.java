@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.schedule;
 
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.schedule.condition.ScheduleWaitCondition;
@@ -56,10 +57,10 @@ public class StationLoadedCondition extends ScheduleWaitCondition {
     }
 
     @Override
-    protected void writeAdditional(CompoundTag tag) {}
+    protected void writeAdditional(HolderLookup.Provider registries, CompoundTag tag) {}
 
     @Override
-    protected void readAdditional(CompoundTag tag) {}
+    protected void readAdditional(HolderLookup.Provider registries, CompoundTag tag) {}
 
     @Override
     public ResourceLocation getId() {

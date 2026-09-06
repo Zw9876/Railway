@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.base.data.recipe;
 
+import net.neoforged.neoforge.common.extensions.IRecipeOutputExtension;
 import com.railwayteam.railways.Railways;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipeBuilder;
 import com.simibubi.create.content.trains.track.TrackMaterial;
@@ -60,6 +61,9 @@ public class RailwaysSequencedAssemblyRecipeBuilder extends SequencedAssemblyRec
     public void build(RecipeOutput output) {
         super.build(recipeConditions.isEmpty()
             ? output
-            : output.withConditions(recipeConditions.toArray(new ICondition[0])));
+            // RecipeOutput extends IRecipeOutputExtension under NeoForge, but that patch lives
+            // in the patched Minecraft jar, which :common does not compile against. The
+            // interface itself ships in neoforge-universal, so cast to reach withConditions.
+            : ((IRecipeOutputExtension) output).withConditions(recipeConditions.toArray(new ICondition[0])));
     }
 }

@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.multiloader;
 
+import net.minecraft.network.DisconnectionDetails;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.registry.CRPackets;
 import net.createmod.catnip.net.base.BasePacketPayload;
@@ -209,7 +210,7 @@ public abstract class PacketSet {
 				return;
 			Component error = Component.literal("Steam n' Rails on the client uses a different network format than the server.")
 					.append(" You should use the same version of the mod on both sides.");
-			mc.getConnection().onDisconnect(error);
+			mc.getConnection().onDisconnect(new DisconnectionDetails(error));
 		}
 	}
 
