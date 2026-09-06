@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.content.bogey_menu;
 
+import org.joml.Matrix4fStack;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.platform.Window;
@@ -269,11 +270,11 @@ public class BogeyMenuScreen extends AbstractSimiScreen {
 
             // Push current pose and Setup model view
             ms.pushPose();
-            PoseStack modelViewStack = RenderSystem.getModelViewStack();
-            modelViewStack.pushPose();
+            Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
+            modelViewStack.pushMatrix();
             modelViewStack.translate(18 * scalePercentage, 6 * scalePercentage, 0);
-            modelViewStack.translate(x + 189.5, y + 86, 1500);
-            modelViewStack.scale(1, 1, -1);
+            modelViewStack.translate((float) (x + 189.5), (float) (y + 86), 1500F);
+            modelViewStack.scale(1F, 1F, -1F);
             RenderSystem.applyModelViewMatrix();
 
             // Setup pose and lighting correctly
@@ -304,7 +305,7 @@ public class BogeyMenuScreen extends AbstractSimiScreen {
             
             // End batch, pop modelViewStack & apply and pop the pose
             bufferSource.endBatch();
-            modelViewStack.popPose();
+            modelViewStack.popMatrix();
             RenderSystem.applyModelViewMatrix();
             ms.popPose();
 
@@ -413,8 +414,8 @@ public class BogeyMenuScreen extends AbstractSimiScreen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        super.mouseScrolled(mouseX, mouseY, delta);
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double delta) {
+        super.mouseScrolled(mouseX, mouseY, scrollX, delta);
         if (!canScroll()) return false;
         if (insideCategorySelector(mouseX, mouseY)) return false;
         if (selectedCategory.getBogeyEntryList().size() < 6) return false;

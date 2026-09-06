@@ -194,15 +194,15 @@ public class ConductorEntityModel<T extends ConductorEntity> extends HumanoidMod
   }
 
   @Override
-  public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-    head.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-    body.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-    rightArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-    leftArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-    rightLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-    leftLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-    //hat.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+  public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+    head.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+    body.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+    rightArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+    leftArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+    rightLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+    leftLeg.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+    //hat.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     if (realHat != null)
-      realHat.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+      realHat.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
   }
 }

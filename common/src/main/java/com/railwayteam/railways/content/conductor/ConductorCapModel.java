@@ -116,7 +116,7 @@ public class ConductorCapModel<T extends LivingEntity> extends Model implements 
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
 		if (override != null) {
 			poseStack.pushPose();
 			cap.translateAndRotate(poseStack);
@@ -135,7 +135,7 @@ public class ConductorCapModel<T extends LivingEntity> extends Model implements 
 				.renderInto(poseStack, Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.translucent()));
 			poseStack.popPose();
 		} else {
-			cap.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+			cap.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
 		}
 	}
 

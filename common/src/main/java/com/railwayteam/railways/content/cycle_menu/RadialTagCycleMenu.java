@@ -188,7 +188,7 @@ public class RadialTagCycleMenu extends AbstractSimiScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics) {
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         PoseStack ms = guiGraphics.pose();
 
         int a = ((int) (0x50 * Math.min(1, (ticksOpen + AnimationTickHolder.getPartialTicks()) / 20f))) << 24;
@@ -221,7 +221,7 @@ public class RadialTagCycleMenu extends AbstractSimiScreen {
 
     @SuppressWarnings("IntegerDivisionInFloatingPointContext")
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double delta) {
         Window window = Minecraft.getInstance().getWindow();
         double hoveredX = mouseX - window.getGuiScaledWidth() / 2;
         double hoveredY = mouseY - window.getGuiScaledHeight() / 2;
@@ -240,7 +240,7 @@ public class RadialTagCycleMenu extends AbstractSimiScreen {
             return true;
         }
 
-        return super.mouseScrolled(mouseX, mouseY, delta);
+        return super.mouseScrolled(mouseX, mouseY, scrollX, delta);
     }
 
     @Override
