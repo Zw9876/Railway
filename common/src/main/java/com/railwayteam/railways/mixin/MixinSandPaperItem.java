@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.mixin;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.InteractionHand;
 import com.railwayteam.railways.content.palettes.PalettesColor;
 import com.railwayteam.railways.content.palettes.painting.RepaintingTarget;

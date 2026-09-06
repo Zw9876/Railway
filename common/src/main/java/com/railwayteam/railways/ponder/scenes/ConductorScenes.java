@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.ponder.scenes;
 
+import net.minecraft.world.entity.LivingEntity;
 import com.mojang.authlib.properties.PropertyMap;
 
 import java.util.Optional;
@@ -88,7 +89,7 @@ public class ConductorScenes {
     });
 
     scene.world().modifyEntity(player, entity -> {
-      entity.setItemSlot(EquipmentSlot.HEAD, playerHead);
+      ((LivingEntity) entity).setItemSlot(EquipmentSlot.HEAD, playerHead);
       ItemStack chestplate = new ItemStack(Items.LEATHER_CHESTPLATE);
       ItemStack leggings = new ItemStack(Items.LEATHER_LEGGINGS);
       ItemStack boots = new ItemStack(Items.LEATHER_BOOTS);
@@ -98,9 +99,9 @@ public class ConductorScenes {
       chestplate.set(DataComponents.DYED_COLOR, dye);
       leggings.set(DataComponents.DYED_COLOR, dye);
       boots.set(DataComponents.DYED_COLOR, dye);
-      entity.setItemSlot(EquipmentSlot.CHEST, chestplate);
-      entity.setItemSlot(EquipmentSlot.LEGS, leggings);
-      entity.setItemSlot(EquipmentSlot.FEET, boots);
+      ((LivingEntity) entity).setItemSlot(EquipmentSlot.CHEST, chestplate);
+      ((LivingEntity) entity).setItemSlot(EquipmentSlot.LEGS, leggings);
+      ((LivingEntity) entity).setItemSlot(EquipmentSlot.FEET, boots);
     });
     return player;
   }
@@ -303,7 +304,7 @@ public class ConductorScenes {
     scene.idle(10);
 
     scene.world().modifyEntity(player, entity -> {
-      entity.setItemSlot(EquipmentSlot.HEAD, CRItems.ITEM_CONDUCTOR_CAP.get(DyeColor.RED).asStack());
+      ((LivingEntity) entity).setItemSlot(EquipmentSlot.HEAD, CRItems.ITEM_CONDUCTOR_CAP.get(DyeColor.RED).asStack());
     });
 
     scene.overlay().showText(30)

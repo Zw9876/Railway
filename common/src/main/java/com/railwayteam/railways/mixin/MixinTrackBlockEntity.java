@@ -160,7 +160,7 @@ public abstract class MixinTrackBlockEntity extends SmartBlockEntity implements 
         }
 
         if (tag.contains("TrackCasing")) {
-            ResourceLocation casingName = ResourceLocation.of(tag.getString("TrackCasing"), ':');
+            ResourceLocation casingName = ResourceLocation.bySeparator(tag.getString("TrackCasing"), ':');
             if (BuiltInRegistries.BLOCK.containsKey(casingName)) {
                 this.railways$setTrackCasing(BuiltInRegistries.BLOCK.get(casingName));
                 return;

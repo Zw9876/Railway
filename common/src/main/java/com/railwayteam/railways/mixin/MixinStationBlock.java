@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.mixin;
 
+import net.minecraft.core.component.DataComponents;
 import com.railwayteam.railways.util.ItemUtils;
 
 import com.railwayteam.railways.config.CRConfigs;
@@ -279,7 +280,7 @@ public abstract class MixinStationBlock {
             if (station == null || station.getPresentTrain() == null) return;
 
             Train train = station.getPresentTrain();
-            if (itemInHand.hasCustomHoverName()) { // Set the train name
+            if (itemInHand.has(DataComponents.CUSTOM_NAME)) { // Set the train name
                 String newName = itemInHand.getHoverName().getString();
                 if (train.name.getString().equals(newName)) return;
 
@@ -287,7 +288,7 @@ public abstract class MixinStationBlock {
                 CRPackets.PACKETS.sendTo(PlayerSelection.all(),
                     new TrainEditPacket.TrainEditReturnPacket(train.id, newName, train.icon.getId(), train.mapColorIndex));
             } else { // Get the train's name and put it on the nametag
-                itemInHand.setHoverName(Component.literal(train.name.getString()));
+                itemInHand.set(DataComponents.CUSTOM_NAME, Component.literal(train.name.getString()));
             }
         }
     }
