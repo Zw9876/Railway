@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.base.data.recipe;
 
+import net.neoforged.neoforge.fluids.crafting.DataComponentFluidIngredient;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
@@ -26,7 +30,6 @@ import com.railwayteam.railways.content.buffer.single_deco.LinkPinBlock;
 import com.railwayteam.railways.content.palettes.PalettesColor;
 import com.railwayteam.railways.content.palettes.painting.PaintFluid;
 import com.railwayteam.railways.multiloader.CommonTags;
-import com.railwayteam.railways.multiloader.fluid.MultiloaderFluidStack;
 import com.railwayteam.railways.registry.CRBlocks;
 import com.railwayteam.railways.registry.CRFluids;
 import com.railwayteam.railways.registry.CRItems;
@@ -207,11 +210,15 @@ public abstract class RailwaysRecipeProvider extends RecipeProvider {
         }
 
         public static SizedFluidIngredient palettesPaint(@NotNull PalettesColor color, long amount) {
-            return MultiloaderFluidStack.create(
-                CRFluids.PAINT.get(),
-                amount,
-                PaintFluid.setColor(new CompoundTag(), color)
-            ).asFluidIngredient();
+            // MultiloaderFluidStack is gone; it only bridged Forge's FluidStack against Fabric's
+            // FluidVariant. Its asFluidIngredient used FluidIngredient.fromFluidStack, which was
+            // NBT-sensitive, so the paint colour was part of the match. DataComponentFluidIngredient
+            // is the 1.21 equivalent - plain FluidIngredient.of matches by fluid alone and would
+            // make every paint colour interchangeable.
+            FluidStack stack = new FluidStack(CRFluids.PAINT.get(), (int) amount);
+            stack.set(DataComponents.CUSTOM_DATA,
+                CustomData.of(PaintFluid.setColor(new CompoundTag(), color)));
+            return new SizedFluidIngredient(DataComponentFluidIngredient.of(false, stack), (int) amount);
         }
 
         public static TagKey<Item> brassIngot() {

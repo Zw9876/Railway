@@ -18,11 +18,14 @@
 
 package com.railwayteam.railways.multiloader.fluid;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.neoforged.neoforge.fluids.FluidType;
 
+/**
+ * De-platformed: the @ExpectPlatform existed only because Fabric measured fluids in 81000
+ * droplets per bucket while Forge used 1000 millibuckets. This is a NeoForge-only tree now.
+ */
 public class FluidUnits {
-    @ExpectPlatform
     public static long bucket() {
-        throw new AssertionError();
+        return FluidType.BUCKET_VOLUME;
     }
 }
