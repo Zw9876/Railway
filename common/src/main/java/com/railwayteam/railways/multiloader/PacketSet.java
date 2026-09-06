@@ -20,7 +20,7 @@ package com.railwayteam.railways.multiloader;
 
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.registry.CRPackets;
-import com.simibubi.create.foundation.networking.SimplePacketBase;
+import net.createmod.catnip.net.base.BasePacketPayload;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -95,7 +95,7 @@ public abstract class PacketSet {
 	 * Send one of Create's packets to the server.
 	 */
 	@Environment(EnvType.CLIENT)
-	public abstract void send(SimplePacketBase packet);
+	public abstract void send(BasePacketPayload packet);
 
 	/**
 	 * Send the given S2C packet to the given player.
@@ -105,9 +105,9 @@ public abstract class PacketSet {
 	}
 
 	/**
-	 * Send the given Create packet to the given player.
+	 * Send the given Create/catnip packet to the given player.
 	 */
-	public abstract void sendTo(ServerPlayer player, SimplePacketBase packet);
+	public abstract void sendTo(ServerPlayer player, BasePacketPayload packet);
 
 	/**
 	 * Send the given S2C packet to the given players.
@@ -125,9 +125,9 @@ public abstract class PacketSet {
 	}
 
 	/**
-	 * Send the given Create packet to the given players.
+	 * Send the given Create/catnip packet to the given players.
 	 */
-	public abstract void sendTo(PlayerSelection selection, SimplePacketBase packet);
+	public abstract void sendTo(PlayerSelection selection, BasePacketPayload packet);
 
 	@Environment(EnvType.CLIENT)
 	public abstract void registerS2CListener();

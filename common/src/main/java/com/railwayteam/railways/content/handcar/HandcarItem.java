@@ -32,7 +32,7 @@ import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.CarriageBogey;
 import com.simibubi.create.content.trains.entity.CarriageContraption;
 import com.simibubi.create.content.trains.entity.Train;
-import com.simibubi.create.content.trains.entity.TrainPacket;
+import com.simibubi.create.content.trains.entity.AddTrainPacket;
 import com.simibubi.create.content.trains.entity.TravellingPoint;
 import com.simibubi.create.content.trains.entity.TravellingPoint.SteerDirection;
 import com.simibubi.create.content.trains.graph.TrackEdge;
@@ -231,7 +231,7 @@ public class HandcarItem extends BlockItem implements IDeployAnywayBlockItem {
         train.name = Component.translatable("block.railways.handcar");
         train.collectInitiallyOccupiedSignalBlocks();
         Create.RAILWAYS.addTrain(train);
-        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new TrainPacket(train, true));
+        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new AddTrainPacket(train));
         return train;
     }
 

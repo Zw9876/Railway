@@ -18,24 +18,35 @@
 
 package com.railwayteam.railways.util.packet;
 
-import net.minecraft.core.BlockPos;
 import com.railwayteam.railways.content.shadow_realm.ShadowRealm;
-import com.railwayteam.railways.mixin.AccessorTrainPacket;
 import com.railwayteam.railways.mixin.AccessorTrainRelocator;
 import com.railwayteam.railways.multiloader.S2CPacket;
 import com.simibubi.create.content.trains.entity.Train;
-import com.simibubi.create.content.trains.entity.TrainPacket;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
-public record ShadowTrainRestorePacket(Train train) implements S2CPacket {
+/**
+ * Create's TrainPacket used to double as a Train serialiser, and this packet borrowed it.
+ * In 1.21 that job belongs to Train.STREAM_CODEC, which needs registry access, so the
+ * sending side captures a RegistryAccess and the receiving side takes one from the
+ * connection. {@code registries} is only read when writing, so it is null on the client.
+ */
+public record ShadowTrainRestorePacket(Train train, RegistryAccess registries) implements S2CPacket {
     public ShadowTrainRestorePacket(FriendlyByteBuf buf) {
-        this(((AccessorTrainPacket) new TrainPacket(buf)).railways$getTrain());
+        this(readTrain(buf), null);
+    }
+
+    private static Train readTrain(FriendlyByteBuf buf) {
+        RegistryAccess access = Minecraft.getInstance().getConnection().registryAccess();
+        return Train.STREAM_CODEC.decode(new RegistryFriendlyByteBuf(buf, access));
     }
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        new TrainPacket(train, true).write(buffer);
+        Train.STREAM_CODEC.encode(new RegistryFriendlyByteBuf(buffer, registries), train);
     }
 
     @Override

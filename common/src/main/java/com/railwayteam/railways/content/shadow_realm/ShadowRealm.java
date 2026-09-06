@@ -33,7 +33,7 @@ import com.simibubi.create.content.trains.RailwaySavedData;
 import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.Carriage.DimensionalCarriageEntity;
 import com.simibubi.create.content.trains.entity.Train;
-import com.simibubi.create.content.trains.entity.TrainPacket;
+import com.simibubi.create.content.trains.entity.AddTrainPacket;
 import com.simibubi.create.content.trains.entity.TrainRelocator;
 import com.simibubi.create.content.trains.track.BezierTrackPointLocation;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -147,7 +147,7 @@ public class ShadowRealm {
         Create.RAILWAYS.addTrain(train);
         savedData.setDirty();
 
-        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new TrainPacket(train, true));
+        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new AddTrainPacket(train));
         train.status.displayInformation("railways.shadow_realm.restored", true);
         return true;
     }

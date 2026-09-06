@@ -113,7 +113,7 @@ public class ShadowRealmCommand {
             return 0;
         }
 
-        CRPackets.PACKETS.sendTo(player, new ShadowTrainRestorePacket(train));
+        CRPackets.PACKETS.sendTo(player, new ShadowTrainRestorePacket(train, player.registryAccess()));
 
         source.sendSuccess(() -> Component.literal("Use a wrench on a track to restore '").append(train.name).append("'"), true);
         return 1;

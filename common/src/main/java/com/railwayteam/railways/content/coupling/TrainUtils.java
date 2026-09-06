@@ -39,7 +39,7 @@ import com.simibubi.create.content.trains.entity.CarriageContraption;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import com.simibubi.create.content.trains.entity.Navigation;
 import com.simibubi.create.content.trains.entity.Train;
-import com.simibubi.create.content.trains.entity.TrainPacket;
+import com.simibubi.create.content.trains.entity.AddTrainPacket;
 import com.simibubi.create.content.trains.entity.TravellingPoint;
 import com.simibubi.create.content.trains.graph.TrackNode;
 import com.simibubi.create.content.trains.schedule.ScheduleRuntime;
@@ -149,8 +149,8 @@ public class TrainUtils {
         train.updateSignalBlocks = true;
 
         Create.RAILWAYS.addTrain(newTrain);
-        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new TrainPacket(newTrain, true));
-//        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new TrainPacket(train, true));
+        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new AddTrainPacket(newTrain));
+//        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new AddTrainPacket(train));
 
         Arrays.stream(lastCarriages).forEach(c -> c.forEachPresentEntity(CarriageContraptionEntity::syncCarriage));
 //        lastCarriage.forEachPresentEntity(CarriageContraptionEntity::syncCarriage);
@@ -337,6 +337,6 @@ public class TrainUtils {
         }
         train.invalid = true; // don't remove yet, otherwise concurrent modification exceptions happen
         /*Create.RAILWAYS.removeTrain(train.id);
-        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new TrainPacket(train, false));*/
+        CRPackets.PACKETS.sendTo(PlayerSelection.all(), new RemoveTrainPacket(train));*/
     }
 }
