@@ -52,6 +52,15 @@ public abstract class MinecartBlock extends AbstractMinecart {
     return new ItemStack(content.getBlock());
   }
 
+  // VehicleEntity.getDropItem() is still abstract and decides what a destroyed
+  // cart drops. Deriving it from getPickResult keeps the two in step, so each
+  // subclass only has to override the pick result: the jukebox cart drops a
+  // jukebox cart, and a plain block cart drops its block.
+  @Override
+  public @NotNull Item getDropItem() {
+    return getPickResult().getItem();
+  }
+
   /*@Override
   public void destroy(DamageSource source) {
     super.destroy(source);

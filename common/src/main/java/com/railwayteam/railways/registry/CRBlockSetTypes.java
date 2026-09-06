@@ -26,7 +26,10 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 public class CRBlockSetTypes {
     public static final BlockSetType LOCOMETAL = register(new BlockSetType(
         "railways:locometal",
-        true,
+        true,  // canOpenByHand - unchanged from 1.20
+        true,  // canOpenByWindCharge - new in 1.21; matches canOpenByHand, as vanilla's do
+        false, // canButtonBeActivatedByArrows - new in 1.21; metal, matching iron. Unused: no locometal button
+        BlockSetType.PressurePlateSensitivity.MOBS, // new in 1.21; matching iron. Unused: no locometal pressure plate
         SoundType.METAL,
         SoundEvents.IRON_DOOR_CLOSE,
         SoundEvents.IRON_DOOR_OPEN,

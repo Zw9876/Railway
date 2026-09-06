@@ -522,7 +522,7 @@ public class TrackCouplerBlockEntity extends SmartBlockEntity implements Transfo
 
     @Override
     protected AABB createRenderBoundingBox() {
-        return new AABB(worldPosition, edgePoint.getGlobalPosition())
+        return AABB.encapsulatingFullBlocks(worldPosition, edgePoint.getGlobalPosition())
                 .minmax(new AABB(worldPosition, secondEdgePoint.getGlobalPosition()))
                 .inflate(2);
     }

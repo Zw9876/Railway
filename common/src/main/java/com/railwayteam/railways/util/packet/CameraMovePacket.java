@@ -76,7 +76,7 @@ public class CameraMovePacket implements C2SPacket, S2CPacket {
                 conductor.setPos(d0, d1, d2);
                 float f = (float)(packet.getYRot(conductor.getYRot()) * 360) / 256.0F;
                 float f1 = (float)(packet.getXRot(conductor.getXRot()) * 360) / 256.0F;
-                conductor.lerpTo(d0, d1, d2, f, f1, 3, true);
+                conductor.lerpTo(d0, d1, d2, f, f1, 3);
                 conductor.setOnGround(packet.isOnGround());
             }
         }

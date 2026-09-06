@@ -73,8 +73,7 @@ public class PaintBrushItem extends Item {
         if (!target.repaint(pitcherColor)) return InteractionResult.FAIL;
 
         PaintPitcherItem.usePaint(player, InteractionHand.OFF_HAND);
-        player.getMainHandItem().hurtAndBreak(1, player,
-            (playerEntity) -> playerEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
 
         return InteractionResult.SUCCESS;
     }

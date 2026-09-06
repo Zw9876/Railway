@@ -45,7 +45,7 @@ public class PalettesTrapDoorBlock extends TrapDoorBlock implements IWrenchable 
     public static final BooleanProperty WINDOWED = HingedDoorBlock.WINDOWED;
 
     public PalettesTrapDoorBlock(Properties properties) {
-        super(properties, CRBlockSetTypes.LOCOMETAL);
+        super(CRBlockSetTypes.LOCOMETAL, properties);
         registerDefaultState(defaultBlockState()
             .setValue(WINDOWED, false));
     }
