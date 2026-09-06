@@ -18,6 +18,10 @@
 
 package com.railwayteam.railways.content.minecarts;
 
+import java.util.Optional;
+import net.minecraft.world.item.JukeboxSong;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.Holder;
 import com.railwayteam.railways.registry.CREntities;
 import com.railwayteam.railways.registry.CRItems;
 import com.railwayteam.railways.util.packet.PacketSender;
@@ -39,7 +43,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.RecordItem;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -65,11 +68,13 @@ public class MinecartJukebox extends MinecartBlock {
     super(CREntities.CART_JUKEBOX.get(), level, x, y, z, Blocks.JUKEBOX);
   }
 
+  /** 1.21 replaced RecordItem with the JUKEBOX_PLAYABLE component pointing at a JukeboxSong. */
+  private Optional<Holder<JukeboxSong>> getSong(ItemStack stack) {
+    return JukeboxSong.fromStack(this.level.registryAccess(), stack);
+  }
+
   public int getComparatorOutput() {
-    if (disc.getItem() instanceof RecordItem record) {
-      return record.getAnalogOutput();
-    }
-    return 0;
+    return getSong(disc).map(song -> song.value().comparatorOutput()).orElse(0);
   }
 
   @Override
@@ -108,7 +113,7 @@ public class MinecartJukebox extends MinecartBlock {
       if (disc.isEmpty()) { // no disc inserted
         // get the disc from the player, if they have one
         ItemStack handStack = player.getItemInHand(hand);
-        if (handStack.getItem() instanceof RecordItem) {
+        if (handStack.has(DataComponents.JUKEBOX_PLAYABLE)) {
           __insertRecord(handStack);
           if (!player.isCreative()) player.setItemInHand(hand, ItemStack.EMPTY);
           player.awardStat(Stats.PLAY_RECORD);
@@ -176,10 +181,10 @@ public class MinecartJukebox extends MinecartBlock {
   @Environment(EnvType.CLIENT)
   // clientside
   private void startPlaying () {
-    if (!this.disc.isEmpty()) {
-      sound = new JukeboxCartSoundInstance(((RecordItem)this.disc.getItem()).getSound());
+    getSong(this.disc).ifPresent(song -> {
+      sound = new JukeboxCartSoundInstance(song.value().soundEvent().value());
       Minecraft.getInstance().getSoundManager().play(sound);
-    }
+    });
   }
 
   @Environment(EnvType.CLIENT)
