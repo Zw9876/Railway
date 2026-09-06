@@ -35,3 +35,4 @@ accessible method net/minecraft/world/item/crafting/Ingredient$TagValue <init> (
 accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
 accessible class net/minecraft/world/item/crafting/Ingredient$Value
 accessible class net/minecraft/client/renderer/block/model/BlockElement$Deserializer
+accessible method net/minecraft/data/recipes/RecipeProvider inventoryTrigger ([Lnet/minecraft/advancements/critereon/ItemPredicate;)Lnet/minecraft/advancements/Criterion;

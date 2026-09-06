@@ -18,12 +18,13 @@
 
 package com.railwayteam.railways.base.data.recipe.processing;
 
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.base.data.recipe.RailwaysRecipeProvider;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
@@ -42,9 +43,9 @@ public abstract class RailwaysProcessingRecipeGen extends RailwaysRecipeProvider
 
 	protected static final List<RailwaysProcessingRecipeGen> GENERATORS = new ArrayList<>();
 
-	public static DataProvider registerAll(PackOutput output) {
-		GENERATORS.add(new RailwaysMixingRecipeGen(output));
-		GENERATORS.add(new RailwaysItemApplicationRecipeGen(output));
+	public static DataProvider registerAll(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+		GENERATORS.add(new RailwaysMixingRecipeGen(output, registries));
+		GENERATORS.add(new RailwaysItemApplicationRecipeGen(output, registries));
 
 		return new DataProvider() {
 
@@ -62,8 +63,8 @@ public abstract class RailwaysProcessingRecipeGen extends RailwaysRecipeProvider
 		};
 	}
 
-	public RailwaysProcessingRecipeGen(PackOutput generator) {
-		super(generator);
+	public RailwaysProcessingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
+		super(generator, registries);
 	}
 
 	/**
@@ -77,7 +78,7 @@ public abstract class RailwaysProcessingRecipeGen extends RailwaysRecipeProvider
 			ItemLike itemLike = singleIngredient.get();
 			transform
 				.apply(new StandardProcessingRecipe.Builder<>(serializer.factory(),
-					ResourceLocation.fromNamespaceAndPath(namespace, CatnipServices.REGISTRIES.getKeyOrThrow(itemLike.asItem())
+					ResourceLocation.fromNamespaceAndPath(namespace, RegisteredObjectsHelper.getKeyOrThrow(itemLike.asItem())
 						.getPath())).withItemIngredients(Ingredient.of(itemLike)))
 				.build(c);
 		};
@@ -130,16 +131,11 @@ public abstract class RailwaysProcessingRecipeGen extends RailwaysRecipeProvider
 
 	protected Supplier<ResourceLocation> idWithSuffix(Supplier<ItemLike> item, String suffix) {
 		return () -> {
-			ResourceLocation registryName = CatnipServices.REGISTRIES.getKeyOrThrow(item.get()
+			ResourceLocation registryName = RegisteredObjectsHelper.getKeyOrThrow(item.get()
 				.asItem());
 			return Railways.asResource(registryName.getPath() + suffix);
 		};
 	}
 
-	@Override
-	public @NotNull String getName() {
-		return "Railways' Processing Recipes: " + getRecipeType().getId()
-			.getPath();
-	}
 
 }

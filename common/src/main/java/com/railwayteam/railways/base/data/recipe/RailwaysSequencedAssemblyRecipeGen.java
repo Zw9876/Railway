@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.base.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.registry.CRItems;
 import com.railwayteam.railways.registry.CRTrackMaterials;
@@ -41,8 +43,8 @@ import java.util.stream.Stream;
 import static com.railwayteam.railways.compat.tracks.TrackCompatUtils.TRACK_COMPAT_MODS;
 
 public class RailwaysSequencedAssemblyRecipeGen extends RailwaysRecipeProvider {
-    public RailwaysSequencedAssemblyRecipeGen(PackOutput output) {
-        super(output);
+    public RailwaysSequencedAssemblyRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries);
     }
 
     protected GeneratedRecipe create(String name, Function<RailwaysSequencedAssemblyRecipeBuilder, SequencedAssemblyRecipeBuilder> transform) {
@@ -183,8 +185,4 @@ public class RailwaysSequencedAssemblyRecipeGen extends RailwaysRecipeProvider {
         ));
     }
 
-    @Override
-    public @NotNull String getName() {
-        return "Railways' Sequenced Assembly Recipes";
-    }
 }

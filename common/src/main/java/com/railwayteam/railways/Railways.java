@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways;
 
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.base.data.CRTagGen;
 import com.railwayteam.railways.base.data.RailwaysHatOffsetGenerator;
 import com.railwayteam.railways.base.data.compat.emi.EmiExcludedTagGen;
@@ -127,19 +129,19 @@ public class Railways {
     return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
   }
 
-  public static void gatherData(DataGenerator.PackGenerator gen) {
+  public static void gatherData(DataGenerator.PackGenerator gen, CompletableFuture<HolderLookup.Provider> registries) {
     REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, CRTagGen::generateBlockTags);
     REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, CRTagGen::generateItemTags);
     REGISTRATE.addDataGenerator(ProviderType.LANG, CRLangGen::generate);
-    gen.addProvider(RailwaysSequencedAssemblyRecipeGen::new);
-    gen.addProvider(RailwaysStandardRecipeGen::new);
-    gen.addProvider(RailwaysMechanicalCraftingRecipeGen::create);
-    gen.addProvider(RailwaysProcessingRecipeGen::registerAll);
+    gen.addProvider(output -> new RailwaysSequencedAssemblyRecipeGen(output, registries));
+    gen.addProvider(output -> new RailwaysStandardRecipeGen(output, registries));
+    gen.addProvider(output -> RailwaysMechanicalCraftingRecipeGen.create(output, registries));
+    gen.addProvider(output -> RailwaysProcessingRecipeGen.registerAll(output, registries));
 
-    gen.addProvider(CRAdvancements::new);
+    gen.addProvider(output -> new CRAdvancements(output, registries));
     gen.addProvider(EmiExcludedTagGen::new);
     gen.addProvider(EmiRecipeDefaultsGen::new);
-    gen.addProvider(RailwaysHatOffsetGenerator::new);
+    gen.addProvider(output -> new RailwaysHatOffsetGenerator(output, registries));
   }
 
   public static CreateRegistrate registrate() {

@@ -18,14 +18,16 @@
 
 package com.railwayteam.railways.base.data;
 
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.registry.CREntities;
 import com.simibubi.create.api.data.TrainHatInfoProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.phys.Vec3;
 
 public class RailwaysHatOffsetGenerator extends TrainHatInfoProvider {
-    public RailwaysHatOffsetGenerator(PackOutput output) {
-        super(output);
+    public RailwaysHatOffsetGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries);
     }
     
     @Override

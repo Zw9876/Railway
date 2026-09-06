@@ -18,13 +18,15 @@
 
 package com.railwayteam.railways.base.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.base.data.compat.emi.EmiRecipeDefaultsGen;
 import com.railwayteam.railways.base.data.recipe.EnumRecipeList.PalettesRecipeList;
 import com.railwayteam.railways.registry.CRPalettes.Styles;
 import com.simibubi.create.api.data.recipe.MechanicalCraftingRecipeBuilder;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -85,8 +87,8 @@ public abstract class RailwaysMechanicalCraftingRecipeGen extends RailwaysRecipe
             .patternLine(" #/# ")
             .patternLine("  #  ")));
 
-    protected RailwaysMechanicalCraftingRecipeGen(PackOutput pPackoutput) {
-        super(pPackoutput);
+    protected RailwaysMechanicalCraftingRecipeGen(PackOutput pPackoutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(pPackoutput, registries);
     }
 
     GeneratedRecipeBuilder create(Supplier<ItemLike> result) {
@@ -137,7 +139,7 @@ public abstract class RailwaysMechanicalCraftingRecipeGen extends RailwaysRecipe
             return register(consumer -> {
                 MechanicalCraftingRecipeBuilder b =
                     builder.apply(MechanicalCraftingRecipeBuilder.shapedRecipe(result.get(), amount));
-                ResourceLocation location = clean(Railways.asResource("mechanical_crafting/" + CatnipServices.REGISTRIES.getKeyOrThrow(result.get()
+                ResourceLocation location = clean(Railways.asResource("mechanical_crafting/" + RegisteredObjectsHelper.getKeyOrThrow(result.get()
                         .asItem())
                     .getPath() + suffix));
                 if (addToEmiDefaults) {
@@ -149,12 +151,8 @@ public abstract class RailwaysMechanicalCraftingRecipeGen extends RailwaysRecipe
     }
 
     @ExpectPlatform
-    public static RecipeProvider create(PackOutput gen) {
+    public static RecipeProvider create(PackOutput gen, CompletableFuture<HolderLookup.Provider> registries) {
         throw new AssertionError();
     }
 
-    @Override
-    public @NotNull String getName() {
-        return "Steam 'n' Rails Mechanical Crafting Recipes";
-    }
 }

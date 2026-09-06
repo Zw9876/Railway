@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.base.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.base.data.compat.emi.EmiRecipeDefaultsGen;
 import com.railwayteam.railways.base.data.recipe.EnumRecipeList.PalettesRecipeList;
@@ -35,7 +37,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -424,14 +426,10 @@ public class RailwaysStandardRecipeGen extends RailwaysRecipeProvider {
         return create(result::get);
     }
 
-    public RailwaysStandardRecipeGen(PackOutput pOutput) {
-        super(pOutput);
+    public RailwaysStandardRecipeGen(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(pOutput, registries);
     }
 
-    @Override
-    public @NotNull String getName() {
-        return "Steam 'n' Rails Standard Recipes";
-    }
 
     class GeneratedRecipeBuilder {
 
@@ -535,7 +533,7 @@ public class RailwaysStandardRecipeGen extends RailwaysRecipeProvider {
         }
 
         private ResourceLocation getRegistryName() {
-            return compatDatagenOutput == null ? CatnipServices.REGISTRIES.getKeyOrThrow(result.get()
+            return compatDatagenOutput == null ? RegisteredObjectsHelper.getKeyOrThrow(result.get()
                 .asItem()) : compatDatagenOutput;
         }
 
@@ -652,7 +650,7 @@ public class RailwaysStandardRecipeGen extends RailwaysRecipeProvider {
                             exp, (int) (cookingTime * cookingTimeModifier)));
                     if (unlockedBy != null)
                         b.unlockedBy("has_item", inventoryTrigger(unlockedBy.get()));
-                    b.save(consumer, createSimpleLocation(CatnipServices.REGISTRIES.getKeyOrThrow(serializer)
+                    b.save(consumer, createSimpleLocation(RegisteredObjectsHelper.getKeyOrThrow(serializer)
                         .getPath()));
                 });
             }

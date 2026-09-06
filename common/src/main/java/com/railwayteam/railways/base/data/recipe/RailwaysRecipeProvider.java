@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.base.data.recipe;
 
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.buffer.headstock.HeadstockStyle;
 import com.railwayteam.railways.content.buffer.single_deco.LinkPinBlock;
@@ -55,8 +57,8 @@ public abstract class RailwaysRecipeProvider extends RecipeProvider {
 
     protected final List<GeneratedRecipe> all = new ArrayList<>();
 
-    public RailwaysRecipeProvider(PackOutput pOutput) {
-        super(pOutput);
+    public RailwaysRecipeProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> registries) {
+        super(pOutput, registries);
     }
 
 

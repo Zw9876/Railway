@@ -56,13 +56,13 @@ public class CommonTag<T> {
 		);
 	}
 
-	public CommonTag<T> generateBoth(RegistrateTagsProvider<T> tags, Consumer<TagAppender<T>> consumer) {
+	public CommonTag<T> generateBoth(RegistrateTagsProvider.IntrinsicImpl<T> tags, Consumer<TagAppender<T>> consumer) {
 		consumer.accept(CRTagGen.tagAppender(tags, fabric));
 		consumer.accept(CRTagGen.tagAppender(tags, forge));
 		return this;
 	}
 
-	public CommonTag<T> generateCommon(RegistrateTagsProvider<T> tags) {
+	public CommonTag<T> generateCommon(RegistrateTagsProvider.IntrinsicImpl<T> tags) {
 		CRTagGen.tagAppender(tags, tag)
 				.addOptionalTag(fabric.location())
 				.addOptionalTag(forge.location());

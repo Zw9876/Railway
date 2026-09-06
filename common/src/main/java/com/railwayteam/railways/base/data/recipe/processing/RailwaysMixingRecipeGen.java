@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.base.data.recipe.processing;
 
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.base.data.compat.emi.EmiRecipeDefaultsGen;
 import com.railwayteam.railways.base.data.recipe.EnumRecipeList.DyedOnlyPalettesRecipeList;
@@ -33,7 +35,7 @@ import com.railwayteam.railways.util.FluidUtils;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.minecraft.data.PackOutput;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -46,7 +48,7 @@ public class RailwaysMixingRecipeGen extends RailwaysProcessingRecipeGen {
     StyledList<DyedOnlyPalettesRecipeList> LOCOMETAL_DYEING = new StyledList<>(style -> new DyedOnlyPalettesRecipeList(
         color -> createWithDeferredId(
             () -> {
-                ResourceLocation loc = Railways.asResource("palettes/dyeing/" + CatnipServices.REGISTRIES.getKeyOrThrow(style.get(color).asItem()).getPath());
+                ResourceLocation loc = Railways.asResource("palettes/dyeing/" + RegisteredObjectsHelper.getKeyOrThrow(style.get(color).asItem()).getPath());
                 if (style != CRPalettes.Styles.FLYWHEEL) {
                     EmiRecipeDefaultsGen.DEFAULT_RECIPES.add(Railways.asResource(getRecipeType().getId().getPath() + "/" + loc.getPath()));
                 }
@@ -106,8 +108,8 @@ public class RailwaysMixingRecipeGen extends RailwaysProcessingRecipeGen {
         PAINT_GRAY = paintMix$(PalettesColor.GRAY, PalettesColor.BLACK, PalettesColor.WHITE)
     ;
 
-    public RailwaysMixingRecipeGen(PackOutput output) {
-        super(output);
+    public RailwaysMixingRecipeGen(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries);
     }
 
     @Override

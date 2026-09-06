@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.base.data.recipe.processing;
 
+import java.util.concurrent.CompletableFuture;
+import net.minecraft.core.HolderLookup;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.base.data.compat.emi.EmiRecipeDefaultsGen;
 import com.railwayteam.railways.base.data.recipe.EnumRecipeList.PalettesRecipeList;
@@ -40,8 +42,8 @@ public class RailwaysItemApplicationRecipeGen extends RailwaysProcessingRecipeGe
             .output(Styles.FLYWHEEL.get(color))
     ));
 
-    public RailwaysItemApplicationRecipeGen(PackOutput generator) {
-        super(generator);
+    public RailwaysItemApplicationRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
+        super(generator, registries);
     }
 
     @Override

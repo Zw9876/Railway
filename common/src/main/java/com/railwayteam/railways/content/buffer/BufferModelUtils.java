@@ -19,7 +19,7 @@
 package com.railwayteam.railways.content.buffer;
 
 import com.railwayteam.railways.Railways;
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.createmod.catnip.render.StitchedSprite;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -58,7 +58,7 @@ public class BufferModelUtils {
     public static UnaryOperator<TextureAtlasSprite> getSwapper(@Nullable BlockState planksState) {
         if (planksState == null) return sprite -> null;
         Block planksBlock = planksState.getBlock();
-        ResourceLocation id = CatnipServices.REGISTRIES.getKeyOrThrow(planksBlock);
+        ResourceLocation id = RegisteredObjectsHelper.getKeyOrThrow(planksBlock);
         String path = id.getPath();
 
         if (path.endsWith("_planks")) {
