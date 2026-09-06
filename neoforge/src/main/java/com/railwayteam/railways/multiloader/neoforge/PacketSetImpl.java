@@ -23,13 +23,10 @@ import com.railwayteam.railways.multiloader.C2SPacket;
 import com.railwayteam.railways.multiloader.PacketSet;
 import com.railwayteam.railways.multiloader.PlayerSelection;
 import com.railwayteam.railways.multiloader.S2CPacket;
-import com.simibubi.create.AllPackets;
-import com.simibubi.create.foundation.networking.SimplePacketBase;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.createmod.catnip.net.base.BasePacketPayload;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.api.distmarker.Dist;
@@ -64,27 +61,29 @@ public class PacketSetImpl extends PacketSet {
 		HANDLERS.put(c2sPacket, this);
 	}
 
+	// Create's packets are catnip payloads now, so they go through PacketDistributor
+	// directly rather than through a per-mod channel.
+
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void send(SimplePacketBase packet) {
-		AllPackets.getChannel().sendToServer(packet);
+	public void send(BasePacketPayload packet) {
+		PacketDistributor.sendToServer(packet);
 	}
 
 	@Override
-	public void sendTo(ServerPlayer player, SimplePacketBase packet) {
-		AllPackets.getChannel().send(PacketDistributor.PLAYER.with(() -> player), packet);
+	public void sendTo(ServerPlayer player, BasePacketPayload packet) {
+		PacketDistributor.sendToPlayer(player, packet);
 	}
 
 	@Override
-	public void sendTo(PlayerSelection selection, SimplePacketBase packet) {
-		AllPackets.getChannel().send(((PlayerSelectionImpl) selection).target, packet);
+	public void sendTo(PlayerSelection selection, BasePacketPayload packet) {
+		((PlayerSelectionImpl) selection).send(packet);
 	}
 
 	@Override
 	protected void doSendC2S(FriendlyByteBuf buf) {
-		ClientPacketListener connection = Minecraft.getInstance().getConnection();
-		if (connection != null) {
-			connection.send(new ServerboundCustomPayloadPacket(c2sPacket, buf));
+		if (Minecraft.getInstance().getConnection() != null) {
+			PacketDistributor.sendToServer(new RailwaysPayloads.C2S(c2sPacket, RailwaysPayloads.toBytes(buf)));
 		} else {
 			Railways.LOGGER.error("Cannot send a C2S packet before the client connection exists, skipping!");
 		}

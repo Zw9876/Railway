@@ -1,6 +1,6 @@
 /*
  * Steam 'n' Rails
- * Copyright (c) 2022-2025 The Railways Team
+ * Copyright (c) 2022-2024 The Railways Team
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,116 +18,90 @@
 
 package com.railwayteam.railways.multiloader.neoforge;
 
-import com.railwayteam.railways.neoforge.mixin.ChunkMapAccessor;
 import com.railwayteam.railways.multiloader.PlayerSelection;
-import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ChunkMap;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.neoforged.neoforge.network.NetworkDirection;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.PacketDistributor.PacketTarget;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
+/**
+ * 1.21 replaced Forge's PacketTarget objects with static PacketDistributor.sendToX methods, so a
+ * selection is now a Consumer of the payload rather than a target you hand a packet to. The two
+ * "...With(predicate)" selections have no distributor equivalent and iterate explicitly, which is
+ * what the old custom PacketDistributors did anyway.
+ */
 public class PlayerSelectionImpl extends PlayerSelection {
 
-	private static Consumer<Packet<?>> playerListAllWith(final PacketDistributor<Predicate<ServerPlayer>> distributor,
-														 final Supplier<Predicate<ServerPlayer>> predicateSupplier) {
-		return p -> {
-			Predicate<ServerPlayer> predicate = predicateSupplier.get();
-			for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
-				if (predicate.test(player)) {
-					player.connection.send(p);
-				}
-			}
-		};
-	}
+    private final Consumer<CustomPacketPayload> sender;
 
-	private static Consumer<Packet<?>> trackingEntityWith(final PacketDistributor<Pair<Entity, Predicate<ServerPlayer>>> distributor,
-														 final Supplier<Pair<Entity, Predicate<ServerPlayer>>> pairSupplier) {
-		return p -> {
-			Pair<Entity, Predicate<ServerPlayer>> pair = pairSupplier.get();
-			Entity entity = pair.getFirst();
-			Predicate<ServerPlayer> predicate = pair.getSecond();
+    private PlayerSelectionImpl(Consumer<CustomPacketPayload> sender) {
+        this.sender = sender;
+    }
 
-			ServerChunkCache manager = (ServerChunkCache) entity.level().getChunkSource();
-			ChunkMap storage = manager.chunkMap;
-			ChunkMap.TrackedEntity trackedEntity = ((ChunkMapAccessor)storage).getEntityMap().get(entity.getId());
+    /** Used by PacketSetImpl to forward a Create/catnip payload to the same selection. */
+    public void send(CustomPacketPayload payload) {
+        sender.accept(payload);
+    }
 
-			if (trackedEntity == null)
-				return;
+    @Override
+    public void accept(ResourceLocation id, FriendlyByteBuf buffer) {
+        sender.accept(new RailwaysPayloads.S2C(id, RailwaysPayloads.toBytes(buffer)));
+    }
 
-			for (ServerPlayerConnection connection : ((ChunkMapAccessor.TrackedEntityAccessor) trackedEntity).getSeenBy()) {
-				if (predicate.test(connection.getPlayer())) {
-					connection.send(p);
-				}
-			}
-		};
-	}
+    public static PlayerSelection all() {
+        return new PlayerSelectionImpl(PacketDistributor::sendToAllPlayers);
+    }
 
-	private static final PacketDistributor<Predicate<ServerPlayer>> ALL_WITH =
-		new PacketDistributor<>(PlayerSelectionImpl::playerListAllWith, NetworkDirection.PLAY_TO_CLIENT);
+    public static PlayerSelection allWith(Predicate<ServerPlayer> condition) {
+        return new PlayerSelectionImpl(payload -> {
+            for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+                if (condition.test(player))
+                    PacketDistributor.sendToPlayer(player, payload);
+            }
+        });
+    }
 
-	private static final PacketDistributor<Pair<Entity, Predicate<ServerPlayer>>> TRACKING_ENTITY_WITH =
-		new PacketDistributor<>(PlayerSelectionImpl::trackingEntityWith, NetworkDirection.PLAY_TO_CLIENT);
+    public static PlayerSelection of(ServerPlayer player) {
+        return new PlayerSelectionImpl(payload -> PacketDistributor.sendToPlayer(player, payload));
+    }
 
-	final PacketTarget target;
+    public static PlayerSelection tracking(Entity entity) {
+        return new PlayerSelectionImpl(payload -> PacketDistributor.sendToPlayersTrackingEntity(entity, payload));
+    }
 
-	private PlayerSelectionImpl(PacketTarget target) {
-		this.target = target;
-	}
+    public static PlayerSelection trackingWith(Entity entity, Predicate<ServerPlayer> condition) {
+        // No distributor takes a predicate, so filter the tracking set by hand. Sending to a
+        // tracked player individually reaches exactly the same people as the unfiltered call.
+        return new PlayerSelectionImpl(payload -> {
+            if (!(entity.level() instanceof ServerLevel level))
+                return;
+            for (ServerPlayer player : level.getChunkSource().chunkMap.getPlayers(
+                    new net.minecraft.world.level.ChunkPos(entity.blockPosition()), false)) {
+                if (condition.test(player))
+                    PacketDistributor.sendToPlayer(player, payload);
+            }
+        });
+    }
 
-	@Override
-	public void accept(ResourceLocation id, FriendlyByteBuf buffer) {
-		ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(id, buffer);
-		target.send(packet);
-	}
+    public static PlayerSelection tracking(BlockEntity be) {
+        return tracking((ServerLevel) be.getLevel(), be.getBlockPos());
+    }
 
-	public static PlayerSelection all() {
-		return new PlayerSelectionImpl(PacketDistributor.ALL.noArg());
-	}
+    public static PlayerSelection tracking(ServerLevel level, BlockPos pos) {
+        return new PlayerSelectionImpl(payload -> PacketDistributor.sendToPlayersTrackingChunk(
+                level, new net.minecraft.world.level.ChunkPos(pos), payload));
+    }
 
-	public static PlayerSelection allWith(Predicate<ServerPlayer> condition) {
-		return new PlayerSelectionImpl(ALL_WITH.with(() -> condition));
-	}
-
-	public static PlayerSelection of(ServerPlayer player) {
-		return new PlayerSelectionImpl(PacketDistributor.PLAYER.with(() -> player));
-	}
-
-	public static PlayerSelection tracking(Entity entity) {
-		return new PlayerSelectionImpl(PacketDistributor.TRACKING_ENTITY.with(() -> entity));
-	}
-
-	public static PlayerSelection trackingWith(Entity entity, Predicate<ServerPlayer> condition) {
-		return new PlayerSelectionImpl(TRACKING_ENTITY_WITH.with(() -> Pair.of(entity, condition)));
-	}
-
-	public static PlayerSelection tracking(BlockEntity be) {
-		LevelChunk chunk = be.getLevel().getChunkAt(be.getBlockPos());
-		return new PlayerSelectionImpl(PacketDistributor.TRACKING_CHUNK.with(() -> chunk));
-	}
-
-	public static PlayerSelection tracking(ServerLevel level, BlockPos pos) {
-		LevelChunk chunk = level.getChunkAt(pos);
-		return new PlayerSelectionImpl(PacketDistributor.TRACKING_CHUNK.with(() -> chunk));
-	}
-
-	public static PlayerSelection trackingAndSelf(ServerPlayer player) {
-		return new PlayerSelectionImpl(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player));
-	}
+    public static PlayerSelection trackingAndSelf(ServerPlayer player) {
+        return new PlayerSelectionImpl(payload -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, payload));
+    }
 }

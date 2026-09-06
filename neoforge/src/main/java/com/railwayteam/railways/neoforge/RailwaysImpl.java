@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.neoforge;
 
+import com.railwayteam.railways.multiloader.neoforge.RailwaysPayloads;
 import net.neoforged.fml.common.EventBusSubscriber;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.config.neoforge.CRConfigsImpl;
@@ -70,6 +71,8 @@ public class RailwaysImpl {
 		Env.CLIENT.runIfCurrent(() -> () -> RailwaysClientImpl.init());
 
 		bus.addListener(RailwaysImpl::onCommonSetup);
+		// 1.21 payload networking: PacketSet's channels have to be registered on the mod bus.
+		bus.addListener(RailwaysPayloads::register);
 	}
 
 	public static void onCommonSetup(final FMLCommonSetupEvent event) {
