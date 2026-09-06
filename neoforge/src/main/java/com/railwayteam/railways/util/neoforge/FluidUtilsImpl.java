@@ -45,7 +45,7 @@ public class FluidUtilsImpl {
         return fluidStack.getFluid();
     }
 
-    public static void addFluidOutput(ProcessingRecipeBuilder<ProcessingRecipe<?>> b, Fluid fluid, long amount, @Nullable CompoundTag nbt) {
+    public static void addFluidOutput(ProcessingRecipeBuilder<?, ?, ?> b, Fluid fluid, long amount, @Nullable CompoundTag nbt) {
         FluidStack stack = new FluidStack(fluid, (int) amount);
         if (nbt != null)
             stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));

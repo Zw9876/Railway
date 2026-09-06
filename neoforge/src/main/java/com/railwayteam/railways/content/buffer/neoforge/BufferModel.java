@@ -18,6 +18,8 @@
 
 package com.railwayteam.railways.content.buffer.neoforge;
 
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
 import com.railwayteam.railways.content.buffer.IDyedBuffer;
 import com.railwayteam.railways.content.buffer.IMaterialAdaptingBuffer;
 import com.railwayteam.railways.content.buffer.TrackBufferBlock;
@@ -143,10 +145,11 @@ public class BufferModel implements BakedModel {
         UnaryOperator<TextureAtlasSprite> materialSwapper = null;
         UnaryOperator<TextureAtlasSprite> colorSwapper = null;
 
-        if (stack.hasTag()) {
-            CompoundTag tag = stack.getTag();
-            if (tag.contains("BlockEntityTag", Tag.TAG_COMPOUND)) {
-                CompoundTag blockEntityTag = tag.getCompound("BlockEntityTag");
+        // 1.21: the BlockEntityTag NBT is the BLOCK_ENTITY_DATA component.
+        CustomData blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+        if (blockEntityData != null) {
+            {
+                CompoundTag blockEntityTag = blockEntityData.copyTag();
                 if (blockEntityTag.contains("Material", Tag.TAG_COMPOUND)) {
                     materialSwapper = getSwapper(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), blockEntityTag.getCompound("Material")));
                 }

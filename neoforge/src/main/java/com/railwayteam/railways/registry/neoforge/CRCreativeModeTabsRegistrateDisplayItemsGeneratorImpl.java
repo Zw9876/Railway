@@ -8,7 +8,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class CRCreativeModeTabsRegistrateDisplayItemsGeneratorImpl {
-    public static boolean isInCreativeTab(RegistryEntry<?> entry, ResourceKey<CreativeModeTab> tab) {
+    public static boolean isInCreativeTab(RegistryEntry<?, ?> entry, ResourceKey<CreativeModeTab> tab) {
         DeferredHolder<CreativeModeTab, CreativeModeTab> tabObject;
         if (tab == CRCreativeModeTabs.getBaseTabKey()) {
             tabObject = CRCreativeModeTabsImpl.MAIN_TAB;

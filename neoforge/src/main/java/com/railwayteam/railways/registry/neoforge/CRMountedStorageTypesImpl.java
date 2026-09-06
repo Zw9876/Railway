@@ -18,12 +18,13 @@
 
 package com.railwayteam.railways.registry.neoforge;
 
+import com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType;
 import com.railwayteam.railways.Railways;
 import com.railwayteam.railways.content.fuel.tank.FuelTankMountedStorageType;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 
 public class CRMountedStorageTypesImpl {
-	public static RegistryEntry<FuelTankMountedStorageType> FUEL_TANK = Railways.registrate()
+	public static RegistryEntry<MountedFluidStorageType<?>, FuelTankMountedStorageType> FUEL_TANK = Railways.registrate()
 			.mountedFluidStorage("fuel_tank", FuelTankMountedStorageType::new)
 			.register();
 	

@@ -18,6 +18,7 @@
 
 package com.railwayteam.railways.util.neoforge;
 
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.neoforge.ConductorFakePlayerForge;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.bus.api.Event.Result;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 public class EntityUtilsImpl {
@@ -47,11 +48,11 @@ public class EntityUtilsImpl {
 	}
 
 	public static double getReachDistance(Player player) {
-		return player.getBlockReach();
+		return player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
 	}
 
 	public static boolean handleUseEvent(Player player, InteractionHand hand, BlockHitResult hit) {
 		PlayerInteractEvent.RightClickBlock event = CommonHooks.onRightClickBlock(player, InteractionHand.MAIN_HAND, hit.getBlockPos(), hit);
-		return event.getResult() != Result.DENY;
+		return event.getUseBlock() != TriState.FALSE;
 	}
 }
