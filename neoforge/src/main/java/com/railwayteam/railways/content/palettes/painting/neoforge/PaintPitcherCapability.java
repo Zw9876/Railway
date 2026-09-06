@@ -18,37 +18,26 @@
 
 package com.railwayteam.railways.content.palettes.painting.neoforge;
 
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import com.railwayteam.railways.content.palettes.PalettesColor;
 import com.railwayteam.railways.content.palettes.painting.PaintFluid;
 import com.railwayteam.railways.content.palettes.painting.PaintPitcherItem;
 import com.railwayteam.railways.content.palettes.painting.PitcherColor;
 import com.railwayteam.railways.registry.CRFluids;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class PaintPitcherCapability implements IFluidHandlerItem, ICapabilityProvider {
-    private final LazyOptional<IFluidHandlerItem> handler = LazyOptional.of(() -> this);
+public class PaintPitcherCapability implements IFluidHandlerItem {
     private ItemStack container;
 
     public PaintPitcherCapability(ItemStack container) {
         this.container = container;
-    }
-
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.FLUID_HANDLER_ITEM) {
-            return handler.cast();
-        }
-        return LazyOptional.empty();
     }
 
     @Override
@@ -65,8 +54,11 @@ class PaintPitcherCapability implements IFluidHandlerItem, ICapabilityProvider {
         if (color.isSandyWater())
             return new FluidStack(Fluids.WATER, amount);
 
+        // 1.21 FluidStack uses data components like ItemStack, so the colour rides in
+        // CUSTOM_DATA and PaintFluid's CompoundTag helpers keep working unchanged.
         FluidStack fluidStack = new FluidStack(CRFluids.PAINT.get().getSource(), amount);
-        PaintFluid.setColor(fluidStack.getOrCreateTag(), color.color());
+        fluidStack.set(DataComponents.CUSTOM_DATA,
+            CustomData.of(PaintFluid.setColor(new CompoundTag(), color.color())));
         return fluidStack;
     }
 
@@ -103,7 +95,7 @@ class PaintPitcherCapability implements IFluidHandlerItem, ICapabilityProvider {
         if (!CRFluids.PAINT.get().isSame(stack.getFluid()))
             return null;
 
-        PalettesColor fluidColor = PaintFluid.getColor(stack.getTag()).orElse(null);
+        PalettesColor fluidColor = PaintFluid.getColor(stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag()).orElse(null);
         if (fluidColor == null)
             return null;
 

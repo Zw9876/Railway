@@ -27,12 +27,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.neoforged.neoforge.event.AttachCapabilitiesEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.TickEvent.Phase;
@@ -54,26 +49,6 @@ public class CommonEventsForge {
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player)
 			CommonEvents.onPlayerJoin(player);
-	}
-
-	private static final ResourceLocation conductorItemCap = Railways.asResource("conductor_item_capability");
-
-	@SubscribeEvent
-	public static void onCapabilitiesAttach(AttachCapabilitiesEvent<Entity> event) {
-		if (event.getObject() instanceof ConductorEntity conductor) {
-			event.addCapability(conductorItemCap, new ICapabilityProvider() {
-				@NotNull
-				@Override
-				public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-					if (cap != ForgeCapabilities.ITEM_HANDLER)
-						return LazyOptional.empty();
-					MountedToolbox toolbox = conductor.getToolbox();
-					if (toolbox == null)
-						return LazyOptional.empty();
-					return toolbox.getCapability(cap);
-				}
-			});
-		}
 	}
 
 	@SubscribeEvent

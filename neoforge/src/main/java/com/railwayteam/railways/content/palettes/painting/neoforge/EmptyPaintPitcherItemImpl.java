@@ -20,10 +20,8 @@ package com.railwayteam.railways.content.palettes.painting.neoforge;
 
 import com.railwayteam.railways.annotation.multiloader.ImplClass;
 import com.railwayteam.railways.content.palettes.painting.EmptyPaintPitcherItem;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.Nullable;
 
 @ImplClass
@@ -34,10 +32,5 @@ public class EmptyPaintPitcherItemImpl extends EmptyPaintPitcherItem {
 
     public static EmptyPaintPitcherItem create(Item.Properties properties) {
         return new EmptyPaintPitcherItemImpl(properties);
-    }
-
-    @Override
-    public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new PaintPitcherCapability(stack);
     }
 }

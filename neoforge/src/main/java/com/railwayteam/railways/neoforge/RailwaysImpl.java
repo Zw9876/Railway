@@ -73,6 +73,7 @@ public class RailwaysImpl {
 		bus.addListener(RailwaysImpl::onCommonSetup);
 		// 1.21 payload networking: PacketSet's channels have to be registered on the mod bus.
 		bus.addListener(RailwaysPayloads::register);
+		bus.addListener(CRCapabilities::register);
 	}
 
 	public static void onCommonSetup(final FMLCommonSetupEvent event) {
