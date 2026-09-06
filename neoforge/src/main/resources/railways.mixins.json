@@ -16,7 +16,6 @@
     "FluidHelperMixin",
     "FluidNetworkMixin",
     "ItemStackMixin",
-    "MixinLootDataManager",
     "RollingModeMixin",
     "TrainMixin",
     "TrainRelocationPacketMixin",

@@ -18,8 +18,6 @@
 
 package com.railwayteam.railways.neoforge.asm;
 
-import cpw.mods.modlauncher.api.INameMappingService;
-import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -44,7 +42,11 @@ import org.objectweb.asm.tree.*;
 public class ContainerLevelAccessASM {
     public static void processNode(ClassNode classNode) {
         for (MethodNode node : classNode.methods) {
-            if (node.name.equals(ObfuscationReflectionHelper.remapName(INameMappingService.Domain.METHOD, "m_39289_"))) {
+            // 1.20 had to remap the SRG name m_39289_ at runtime. NeoForge 1.21 runs on Mojang
+            // mappings, so the method is simply called create - no remapping, and no modlauncher
+            // INameMappingService. The descriptor is checked too, since the name alone is common.
+            if (node.name.equals("create") && node.desc.equals(
+                    "(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/inventory/ContainerLevelAccess;")) {
                 InsnList instructions = node.instructions;
                 InsnList newInstructions = new InsnList();
 

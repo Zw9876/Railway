@@ -19,23 +19,31 @@
 package com.railwayteam.railways.base.data.recipe.neoforge;
 
 import com.railwayteam.railways.base.data.recipe.RailwaysMechanicalCraftingRecipeGen;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
+/**
+ * 1.21 replaced Consumer&lt;FinishedRecipe&gt; with RecipeOutput, and RecipeProvider takes the
+ * registries future. The wrapper exists only because RailwaysMechanicalCraftingRecipeGen is
+ * abstract; it forwards to a concrete instance.
+ */
 public class RailwaysMechanicalCraftingRecipeGenImpl extends RailwaysMechanicalCraftingRecipeGen {
-    protected RailwaysMechanicalCraftingRecipeGenImpl(PackOutput pPackoutput) {
-        super(pPackoutput);
+    protected RailwaysMechanicalCraftingRecipeGenImpl(PackOutput pPackoutput,
+                                                      CompletableFuture<HolderLookup.Provider> registries) {
+        super(pPackoutput, registries);
     }
 
-    public static RecipeProvider create(PackOutput gen) {
-        RailwaysMechanicalCraftingRecipeGenImpl provider = new RailwaysMechanicalCraftingRecipeGenImpl(gen);
-        return new RecipeProvider(gen) {
+    public static RecipeProvider create(PackOutput gen, CompletableFuture<HolderLookup.Provider> registries) {
+        RailwaysMechanicalCraftingRecipeGenImpl provider =
+            new RailwaysMechanicalCraftingRecipeGenImpl(gen, registries);
+        return new RecipeProvider(gen, registries) {
             @Override
-            protected void buildRecipes(@NotNull Consumer<FinishedRecipe> writer) {
+            protected void buildRecipes(@NotNull RecipeOutput writer) {
                 provider.buildRecipes(writer);
             }
         };
