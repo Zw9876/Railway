@@ -25,10 +25,20 @@ import com.railwayteam.railways.base.data.compat.emi.EmiRecipeDefaultsGen;
 import com.railwayteam.railways.base.data.recipe.EnumRecipeList.PalettesRecipeList;
 import com.railwayteam.railways.registry.CRPalettes.Styles;
 import com.simibubi.create.AllRecipeTypes;
+import com.simibubi.create.content.kinetics.deployer.ItemApplicationRecipe;
+import com.simibubi.create.content.kinetics.deployer.ItemApplicationRecipeParams;
+import com.simibubi.create.content.kinetics.deployer.ManualApplicationRecipe;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 
-public class RailwaysItemApplicationRecipeGen extends RailwaysProcessingRecipeGen {
+public class RailwaysItemApplicationRecipeGen extends RailwaysProcessingRecipeGen<ItemApplicationRecipeParams, ManualApplicationRecipe, ItemApplicationRecipe.Builder<ManualApplicationRecipe>> {
+
+    // Item application is NOT a StandardProcessingRecipe -- its serializer and builder are their
+    // own types, which is why the old shared getSerializer() cast blew up at datagen time.
+    @Override
+    protected ItemApplicationRecipe.Builder<ManualApplicationRecipe> getBuilder(ResourceLocation id) {
+        return new ItemApplicationRecipe.Builder<>(ManualApplicationRecipe::new, id);
+    }
     @SuppressWarnings("unused")
     PalettesRecipeList FLYWHEELS = new PalettesRecipeList(color -> createWithDeferredId(
         () -> {

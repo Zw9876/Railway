@@ -19,6 +19,7 @@
 package com.railwayteam.railways.neoforge;
 
 import com.railwayteam.railways.content.conductor.ConductorEntity;
+import com.railwayteam.railways.registry.CRAdvancements;
 import com.railwayteam.railways.registry.CRArmorMaterials;
 import com.railwayteam.railways.registry.CREntities;
 import com.railwayteam.railways.registry.CRPotatoProjectileTypes;
@@ -98,7 +99,13 @@ public class RailwaysImpl {
 		bus.addListener((EntityAttributeCreationEvent event) ->
 			event.put(CREntities.CONDUCTOR.get(), ConductorEntity.createAttributes().build()));
 		bus.addListener((RegisterEvent event) ->
-			event.register(Registries.TRIGGER_TYPE, helper -> CRTriggers.register(helper::register)));
+			event.register(Registries.TRIGGER_TYPE, helper -> {
+				// CRAdvancements builds its entries in static init and creates triggers as it goes, so
+				// it has to be loaded BEFORE we drain CRTriggers - otherwise those triggers are added
+				// to the list after registration and datagen fails with "Unregistered holder".
+				CRAdvancements.register();
+				CRTriggers.register(helper::register);
+			}));
 	}
 
 	public static void onCommonSetup(final FMLCommonSetupEvent event) {

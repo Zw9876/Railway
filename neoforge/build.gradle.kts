@@ -36,7 +36,10 @@ loom {
             programArgs(
                 "--all", "--mod", "railways",
                 "--output", rootProject.file("common/src/generated/resources").absolutePath,
-                "--existing", rootProject.file("common/src/main/resources").absolutePath
+                "--existing", rootProject.file("common/src/main/resources").absolutePath,
+                // Our track models extend Create's, so its assets must be on the ExistingFileHelper path or
+                // blockstate generation fails with "Model at create:block/... does not exist".
+                "--existing-mod", "create"
             )
         }
     }

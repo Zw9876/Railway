@@ -18,7 +18,7 @@
 
 package com.railwayteam.railways.util;
 
-import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
 
 import com.google.gson.JsonObject;
 import com.railwayteam.railways.multiloader.fluid.FluidUnits;
@@ -46,7 +46,7 @@ public class FluidUtils {
     }
 
     @ExpectPlatform
-    public static void addFluidOutput(StandardProcessingRecipe.Builder<?> b, Fluid fluid, long amount, @Nullable CompoundTag nbt) {
+    public static void addFluidOutput(ProcessingRecipeBuilder<?, ?, ?> b, Fluid fluid, long amount, @Nullable CompoundTag nbt) {
         throw new AssertionError();
     }
 }

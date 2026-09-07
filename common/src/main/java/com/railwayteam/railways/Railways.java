@@ -46,7 +46,10 @@ import com.simibubi.create.foundation.item.TooltipModifier;
 import com.tterrag.registrate.providers.ProviderType;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.createmod.catnip.lang.FontHelper;
+import org.jetbrains.annotations.NotNull;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,13 +132,40 @@ public class Railways {
     return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
   }
 
+  /**
+   * Wraps a provider so it reports a unique name. {@code DataGenerator} keys its providers by
+   * {@code getName()} and throws "Duplicate provider: vanilla/Recipes" on a collision, and 1.21
+   * made {@code RecipeProvider.getName()} final, so our recipe generators - which extend the
+   * vanilla class rather than Create's BaseRecipeProvider - cannot name themselves. Create wraps
+   * its own the same way.
+   */
+  private static DataProvider.Factory<DataProvider> named(String name, DataProvider.Factory<? extends DataProvider> factory) {
+    return output -> {
+      DataProvider delegate = factory.create(output);
+      return new DataProvider() {
+        @Override
+        public @NotNull String getName() {
+          return name;
+        }
+
+        @Override
+        public @NotNull CompletableFuture<?> run(@NotNull CachedOutput cache) {
+          return delegate.run(cache);
+        }
+      };
+    };
+  }
+
   public static void gatherData(DataGenerator.PackGenerator gen, CompletableFuture<HolderLookup.Provider> registries) {
     REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, CRTagGen::generateBlockTags);
     REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, CRTagGen::generateItemTags);
     REGISTRATE.addDataGenerator(ProviderType.LANG, CRLangGen::generate);
-    gen.addProvider(output -> new RailwaysSequencedAssemblyRecipeGen(output, registries));
-    gen.addProvider(output -> new RailwaysStandardRecipeGen(output, registries));
-    gen.addProvider(output -> RailwaysMechanicalCraftingRecipeGen.create(output, registries));
+    gen.addProvider(named("Railways' Sequenced Assembly Recipes",
+        output -> new RailwaysSequencedAssemblyRecipeGen(output, registries)));
+    gen.addProvider(named("Railways' Standard Recipes",
+        output -> new RailwaysStandardRecipeGen(output, registries)));
+    gen.addProvider(named("Railways' Mechanical Crafting Recipes",
+        output -> RailwaysMechanicalCraftingRecipeGen.create(output, registries)));
     gen.addProvider(output -> RailwaysProcessingRecipeGen.registerAll(output, registries));
 
     gen.addProvider(output -> new CRAdvancements(output, registries));

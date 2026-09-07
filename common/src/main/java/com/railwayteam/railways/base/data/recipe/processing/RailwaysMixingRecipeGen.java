@@ -33,6 +33,9 @@ import com.railwayteam.railways.registry.CRPalettes;
 import com.railwayteam.railways.registry.CRPalettes.StyledList;
 import com.railwayteam.railways.util.FluidUtils;
 import com.simibubi.create.AllRecipeTypes;
+import com.simibubi.create.content.kinetics.mixer.MixingRecipe;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
+import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
@@ -44,7 +47,12 @@ import net.minecraft.tags.FluidTags;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
-public class RailwaysMixingRecipeGen extends RailwaysProcessingRecipeGen {
+public class RailwaysMixingRecipeGen extends RailwaysProcessingRecipeGen<ProcessingRecipeParams, MixingRecipe, StandardProcessingRecipe.Builder<MixingRecipe>> {
+
+    @Override
+    protected StandardProcessingRecipe.Builder<MixingRecipe> getBuilder(ResourceLocation id) {
+        return new StandardProcessingRecipe.Builder<>(MixingRecipe::new, id);
+    }
     StyledList<DyedOnlyPalettesRecipeList> LOCOMETAL_DYEING = new StyledList<>(style -> new DyedOnlyPalettesRecipeList(
         color -> createWithDeferredId(
             () -> {
