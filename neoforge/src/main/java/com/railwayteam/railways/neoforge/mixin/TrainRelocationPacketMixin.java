@@ -59,18 +59,19 @@ public class TrainRelocationPacketMixin {
 
     // Create 6 does the work directly in handle(ServerPlayer) - there is no enqueueWork lambda
     // any more, so lambda$handle$3 is gone - and the range test is now
-    // Player.canInteractWithBlock/Entity rather than Vec3.closerThan.
+    // ServerPlayer.canInteractWithBlock/Entity rather than Vec3.closerThan. The invoke owner is
+    // ServerPlayer, not Player: the method is inherited, but the receiver is typed ServerPlayer.
     @WrapOperation(method = "handle", at = @At(value = "INVOKE",
-        target = "Lnet/minecraft/world/entity/player/Player;canInteractWithBlock(Lnet/minecraft/core/BlockPos;D)Z"))
-    private boolean unrestrictBlockRange(Player instance, BlockPos pos, double distance, Operation<Boolean> original) {
+        target = "Lnet/minecraft/server/level/ServerPlayer;canInteractWithBlock(Lnet/minecraft/core/BlockPos;D)Z"))
+    private boolean unrestrictBlockRange(ServerPlayer instance, BlockPos pos, double distance, Operation<Boolean> original) {
         if (instance.isCreative() && CRConfigs.server().unlimitedCreativeRelocation.get())
             return true;
         return original.call(instance, pos, distance);
     }
 
     @WrapOperation(method = "handle", at = @At(value = "INVOKE",
-        target = "Lnet/minecraft/world/entity/player/Player;canInteractWithEntity(Lnet/minecraft/world/entity/Entity;D)Z"))
-    private boolean unrestrictEntityRange(Player instance, Entity entity, double distance, Operation<Boolean> original) {
+        target = "Lnet/minecraft/server/level/ServerPlayer;canInteractWithEntity(Lnet/minecraft/world/entity/Entity;D)Z"))
+    private boolean unrestrictEntityRange(ServerPlayer instance, Entity entity, double distance, Operation<Boolean> original) {
         if (instance.isCreative() && CRConfigs.server().unlimitedCreativeRelocation.get())
             return true;
         return original.call(instance, entity, distance);
