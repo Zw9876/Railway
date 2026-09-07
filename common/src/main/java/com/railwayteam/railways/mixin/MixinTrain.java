@@ -214,10 +214,10 @@ public abstract class MixinTrain implements IOccupiedCouplers, IIndexedSchedule,
     }
 
     @Inject(
-            method = {
-                    "lambda$backSignalListener$12", // fabric
-                    "lambda$backSignalListener$10" // forge
-            },
+            // Lambda ordinals are per-class and shift whenever Create adds a lambda anywhere above
+            // this one, so re-derive with javap on the Create jar rather than guessing. There is
+            // only one platform now, so only one name.
+            method = "lambda$backSignalListener$18",
             at = @At("HEAD"),
             cancellable = true
     )
@@ -234,10 +234,7 @@ public abstract class MixinTrain implements IOccupiedCouplers, IIndexedSchedule,
     }
 
     @Inject(
-            method = {
-                    "lambda$collectInitiallyOccupiedSignalBlocks$20", // fabric
-                    "lambda$collectInitiallyOccupiedSignalBlocks$18" // forge
-            },
+            method = "lambda$collectInitiallyOccupiedSignalBlocks$26",
             at = @At("HEAD"),
             cancellable = true
     )
