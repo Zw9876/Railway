@@ -69,8 +69,9 @@ public abstract class TrackedEntityMixin {
 	 * Enables entities that should be sent as well as security camera entities to be sent to the client
 	 */
 	@SuppressWarnings("InvalidInjectorMethodSignature")
-	// variable name: flag or bl
-	@ModifyVariable(method = "updatePlayer", ordinal = 0, at = @At(value = "JUMP", opcode = Opcodes.IFEQ, shift = At.Shift.BEFORE, ordinal = 1))
+	// variable name: flag or bl. 1.21 computes flag with a short-circuiting && whose own IFEQ sits
+	// before the one that tests flag, so the branch we want is ordinal 2, not 1.
+	@ModifyVariable(method = "updatePlayer", ordinal = 0, at = @At(value = "JUMP", opcode = Opcodes.IFEQ, shift = At.Shift.BEFORE, ordinal = 2))
 	public boolean railways$securitycraft$modifyFlag(boolean original) {
 		boolean shouldBeSent = this.shouldBeSent;
 
