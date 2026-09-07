@@ -66,7 +66,7 @@ public class MixinRailwaySavedData implements RailwaySavedDataDuck {
 
     @Inject(method = "lambda$load$5", at = @At(value = "INVOKE", target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"),
         cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT, remap = false)
-    private static void railways$deleteEmptyTrains(RailwaySavedData sd, DimensionPalette dimensions, CompoundTag c,
+    private static void railways$deleteEmptyTrains(HolderLookup.Provider registries, RailwaySavedData sd, DimensionPalette dimensions, CompoundTag c,
                                               CallbackInfo ci, Train train) { // delete trains with 0 carriages
         if (train.carriages.isEmpty()) // just don't add it to the list of trains
             ci.cancel();
