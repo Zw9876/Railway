@@ -53,7 +53,10 @@ public abstract class TrackedEntityMixin {
 	 * shouldBeSent
 	 */
 	@Inject(method = "updatePlayer", at = @At(value = "FIELD", target = "Lnet/minecraft/world/phys/Vec3;x:D", ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
-	private void railways$securitycraft$onUpdatePlayer(ServerPlayer player, CallbackInfo callback, Vec3 unused, double viewDistance) {
+	// 1.21 inserted an int local between the Vec3 and the range: updatePlayer now reads
+	// ChunkMap.getPlayerViewDistance(player) into its own slot before computing the double range,
+	// so the capture list needs it or CAPTURE_FAILSOFT silently skips the injection.
+	private void railways$securitycraft$onUpdatePlayer(ServerPlayer player, CallbackInfo callback, Vec3 unused, int playerViewDistance, double viewDistance) {
 		if (ConductorPossessionController.isPossessingConductor(player)) {
 			Vec3 relativePosToCamera = player.getCamera().position().subtract(entity.position());
 
