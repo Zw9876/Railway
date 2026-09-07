@@ -32,6 +32,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerPlayer;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,17 +44,17 @@ import java.util.UUID;
 // earlier priority to bypass OPAC protections, which freak out about there being no entity associated with the relocation
 @Mixin(value = TrainRelocationPacket.class, priority = 500)
 public class TrainRelocationPacketMixin {
-    @Shadow
+    @Shadow @Final
     UUID trainId;
 
-    @Shadow
+    @Shadow @Final
     BlockPos pos;
 
-    @Shadow private BezierTrackPointLocation hoveredBezier;
+    @Shadow @Final private BezierTrackPointLocation hoveredBezier;
 
-    @Shadow private boolean direction;
+    @Shadow @Final private boolean direction;
 
-    @Shadow
+    @Shadow @Final
     Vec3 lookAngle;
 
     // Create 6 does the work directly in handle(ServerPlayer) - there is no enqueueWork lambda

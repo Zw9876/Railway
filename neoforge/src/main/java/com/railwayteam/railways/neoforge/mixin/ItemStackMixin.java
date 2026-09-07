@@ -18,31 +18,37 @@
 
 package com.railwayteam.railways.neoforge.mixin;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import com.railwayteam.railways.mixin_interfaces.ItemStackDuck;
-import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * 1.21 note: ItemStack no longer keeps a Holder.Reference delegate beside the item, and NeoForge's
+ * forgeInit is gone with the old capability system, so swapping the item is now just the one field.
+ *
+ * <p>The component map still has to be rebuilt, though: it is a patch layered over the item's
+ * default components, and the two paint pitchers do not share defaults (the filled ones are
+ * stacksTo(1), the empty one is not). Re-prototyping onto the new item's defaults keeps the patch —
+ * colour, fill level — while picking up the new item's own defaults.
+ */
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements ItemStackDuck {
     @Mutable
-    @Shadow @Final private @Nullable Item item;
+    @Shadow @Final private Item item;
 
     @Mutable
-    @Shadow @Final private Holder.Reference<Item> delegate;
-
-    @Shadow protected abstract void forgeInit();
+    @Shadow @Final PatchedDataComponentMap components;
 
     @Override
     public void railways$setItem(Item item) {
+        DataComponentPatch patch = this.components.asPatch();
         this.item = item;
-        this.delegate = BuiltInRegistries.ITEM.wrapAsHolder(item) instanceof Holder.Reference<Item> ref ? ref : BuiltInRegistries.ITEM.getHolderOrThrow(BuiltInRegistries.ITEM.getResourceKey(item).orElseThrow());
-        this.forgeInit();
+        this.components = PatchedDataComponentMap.fromPatch(item.components(), patch);
     }
 }
