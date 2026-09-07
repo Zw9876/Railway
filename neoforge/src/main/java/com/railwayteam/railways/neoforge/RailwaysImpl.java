@@ -20,6 +20,7 @@ package com.railwayteam.railways.neoforge;
 
 import com.railwayteam.railways.registry.CRArmorMaterials;
 import com.railwayteam.railways.registry.CRPotatoProjectileTypes;
+import com.railwayteam.railways.registry.CRTriggers;
 import com.railwayteam.railways.registry.CRIngredientTypes;
 import net.neoforged.fml.ModContainer;
 import com.railwayteam.railways.multiloader.neoforge.RailwaysPayloads;
@@ -40,10 +41,12 @@ import com.simibubi.create.api.contraption.BlockMovementChecks;
 import com.simibubi.create.api.contraption.BlockMovementChecks.CheckResult;
 import net.minecraft.commands.Commands.CommandSelection;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -87,6 +90,8 @@ public class RailwaysImpl {
 		CRIngredientTypes.register(bus);
 		CRArmorMaterials.register(bus);
 		CRPotatoProjectileTypes.register(bus);
+		bus.addListener((RegisterEvent event) ->
+			event.register(Registries.TRIGGER_TYPE, helper -> CRTriggers.register(helper::register)));
 	}
 
 	public static void onCommonSetup(final FMLCommonSetupEvent event) {

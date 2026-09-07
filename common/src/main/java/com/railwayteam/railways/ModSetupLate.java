@@ -25,6 +25,5 @@ public class ModSetupLate {
     public static void registerPostRegistration() {
 
         CRAdvancements.register();
-        CRTriggers.register();
     }
 }

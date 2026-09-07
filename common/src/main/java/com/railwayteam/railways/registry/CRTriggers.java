@@ -20,7 +20,10 @@ package com.railwayteam.railways.registry;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 
-import net.minecraft.core.Registry;
+import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.function.BiConsumer;
 
 import com.railwayteam.railways.registry.advancement.CriterionTriggerBase;
 import com.railwayteam.railways.registry.advancement.SimpleRailwaysTrigger;
@@ -41,10 +44,15 @@ public class CRTriggers {
 		return instance;
 	}
 
-	public static void register() {
-		// CriteriaTriggers.register is private in 1.21 -- vanilla registers only its
-		// own triggers. Mod triggers go straight into the TRIGGER_TYPES registry.
-		triggers.forEach(t -> Registry.register(BuiltInRegistries.TRIGGER_TYPES, t.getId(), t));
+	/**
+	 * CriteriaTriggers.register is private in 1.21 and vanilla registers only its own triggers, so
+	 * ours go straight into TRIGGER_TYPES. It cannot happen in FMLCommonSetupEvent any more -- 1.21
+	 * freezes the registries after the registry events -- so the platform entry point calls this
+	 * from RegisterEvent and passes the helper in. A BiConsumer rather than a DeferredRegister
+	 * because each trigger already carries its own full ResourceLocation.
+	 */
+	public static void register(BiConsumer<ResourceLocation, CriterionTrigger<?>> registrar) {
+		triggers.forEach(t -> registrar.accept(t.getId(), t));
 	}
 
 }
