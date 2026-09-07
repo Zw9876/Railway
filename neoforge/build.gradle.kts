@@ -22,9 +22,23 @@ loom {
     val common = project(":common")
     accessWidenerPath = common.loom.accessWidenerPath
 
-    runs.configureEach {
-        // force proper color logs
-        vmArg("-Dterminal.jline=true")
+    runs {
+        configureEach {
+            // force proper color logs
+            vmArg("-Dterminal.jline=true")
+        }
+
+        // Datagen. The output lives in :common because that is the source set which picks the
+        // generated resources back up; --existing points at the hand-written resources so the
+        // providers can see what already exists.
+        create("data") {
+            data()
+            programArgs(
+                "--all", "--mod", "railways",
+                "--output", rootProject.file("common/src/generated/resources").absolutePath,
+                "--existing", rootProject.file("common/src/main/resources").absolutePath
+            )
+        }
     }
 }
 

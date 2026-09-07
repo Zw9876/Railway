@@ -19,12 +19,10 @@
 package com.railwayteam.railways;
 
 import com.railwayteam.railways.registry.CRAdvancements;
-import com.railwayteam.railways.registry.CRPotatoProjectileTypes;
 import com.railwayteam.railways.registry.CRTriggers;
 
 public class ModSetupLate {
     public static void registerPostRegistration() {
-        CRPotatoProjectileTypes.register();
 
         CRAdvancements.register();
         CRTriggers.register();

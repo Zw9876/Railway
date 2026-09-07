@@ -31,14 +31,14 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.DyeColor;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import static com.railwayteam.railways.registry.CRItems.ITEM_CONDUCTOR_CAP;
 
-@EventBusSubscriber(bus = Bus.MOD)
+// No @EventBusSubscriber here: the class has no @SubscribeEvent methods, and NeoForge 21.1
+// throws "has no @SubscribeEvent methods, but register was called anyway" when its automatic
+// scan registers such a class. The DeferredRegister below is wired up explicitly in register().
 public class CRCreativeModeTabsImpl {
 
     private static final DeferredRegister<CreativeModeTab> TAB_REGISTER =

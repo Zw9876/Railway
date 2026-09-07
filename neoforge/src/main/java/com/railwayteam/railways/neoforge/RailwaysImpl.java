@@ -19,6 +19,7 @@
 package com.railwayteam.railways.neoforge;
 
 import com.railwayteam.railways.registry.CRArmorMaterials;
+import com.railwayteam.railways.registry.CRPotatoProjectileTypes;
 import com.railwayteam.railways.registry.CRIngredientTypes;
 import net.neoforged.fml.ModContainer;
 import com.railwayteam.railways.multiloader.neoforge.RailwaysPayloads;
@@ -43,6 +44,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -78,9 +80,13 @@ public class RailwaysImpl {
 		// 1.21 payload networking: PacketSet's channels have to be registered on the mod bus.
 		bus.addListener(RailwaysPayloads::register);
 		bus.addListener(CRCapabilities::register);
+		// HIGHEST so Railways.gatherData installs the Registrate generators before Registrate's
+		// own GatherDataEvent listener (added at default priority) builds its provider.
+		bus.addListener(EventPriority.HIGHEST, RailwaysDataImpl::gatherData);
 		// DeferredRegisters declared in :common still need the platform mod bus.
 		CRIngredientTypes.register(bus);
 		CRArmorMaterials.register(bus);
+		CRPotatoProjectileTypes.register(bus);
 	}
 
 	public static void onCommonSetup(final FMLCommonSetupEvent event) {

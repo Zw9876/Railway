@@ -28,7 +28,9 @@ import com.simibubi.create.api.registry.CreateBuiltInRegistries;
 import com.simibubi.create.api.registry.CreateRegistries;
 import com.simibubi.create.content.equipment.potatoCannon.AllPotatoProjectileEntityHitActions.PotionEffect;
 import com.tterrag.registrate.util.entry.ItemEntry;
-import net.minecraft.core.Registry;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffects;
@@ -79,11 +81,20 @@ public class CRPotatoProjectileTypes {
         }
     }
 
-    private static void registerAction(String name, MapCodec<? extends PotatoProjectileBlockHitAction> codec) {
-        Registry.register(CreateBuiltInRegistries.POTATO_PROJECTILE_BLOCK_HIT_ACTION, Railways.asResource(name), codec);
-    }
+    /**
+     * 1.21 freezes the modded registries once the registry events are done, so this can no longer
+     * run from FMLCommonSetupEvent - Registry.register threw "Registry is already frozen". Create's
+     * own actions go in through AllPotatoProjectileBlockHitActions during registration, and ours
+     * ride a DeferredRegister on the mod bus for the same reason.
+     */
+    private static final DeferredRegister<MapCodec<? extends PotatoProjectileBlockHitAction>> BLOCK_HIT_ACTIONS =
+        DeferredRegister.create(CreateRegistries.POTATO_PROJECTILE_BLOCK_HIT_ACTION, Railways.MOD_ID);
 
-    public static void register() {
-        registerAction("paint", PaintAction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends PotatoProjectileBlockHitAction>, MapCodec<PaintAction>> PAINT =
+        BLOCK_HIT_ACTIONS.register("paint", () -> PaintAction.CODEC);
+
+    /** Called from the platform entry point, which owns the mod event bus. */
+    public static void register(IEventBus modEventBus) {
+        BLOCK_HIT_ACTIONS.register(modEventBus);
     }
 }
