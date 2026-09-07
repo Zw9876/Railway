@@ -113,7 +113,7 @@ public abstract class MixinRadialToolboxMenu extends AbstractSimiScreen {
 			),
 			cancellable = true
 	)
-	private void railways$sendConductorToolboxEquipPacketOnClick(CallbackInfoReturnable<Boolean> cir) {
+	private void railways$sendConductorToolboxEquipPacketOnClick(double x, double y, int button, CallbackInfoReturnable<Boolean> cir) {
 		if (!(selectedBox instanceof MountedToolbox mounted))
 			return;
 		int selected = (scrollMode ? scrollSlot : hoveredSlot);

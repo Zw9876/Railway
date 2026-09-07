@@ -32,6 +32,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -135,7 +136,7 @@ public abstract class MixinTrackBlockEntity extends SmartBlockEntity implements 
         ),
         cancellable = true
     )
-    private void preventTileRemoval2(CallbackInfo ci) {
+    private void preventTileRemoval2(boolean dropAndDiscard, CallbackInfo ci) {
         if (railways$getTrackCasing() != null) {
             notifyUpdate();
             ci.cancel();
@@ -143,7 +144,7 @@ public abstract class MixinTrackBlockEntity extends SmartBlockEntity implements 
     }
 
     @Inject(method = "write", at = @At("RETURN"))
-    private void writeCasing(CompoundTag tag, boolean clientPacket, CallbackInfo ci) {
+    private void writeCasing(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket, CallbackInfo ci) {
         Block casing = railways$getTrackCasing();
         if (casing != null) {
             tag.putString("TrackCasing", BuiltInRegistries.BLOCK.getKey(casing).toString());
@@ -152,7 +153,7 @@ public abstract class MixinTrackBlockEntity extends SmartBlockEntity implements 
     }
 
     @Inject(method = "read", at = @At("RETURN"))
-    private void readCasing(CompoundTag tag, boolean clientPacket, CallbackInfo ci) {
+    private void readCasing(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket, CallbackInfo ci) {
         if (tag.contains("AlternateModel")) {
             this.railways$setAlternate(tag.getBoolean("AlternateModel"));
         } else {

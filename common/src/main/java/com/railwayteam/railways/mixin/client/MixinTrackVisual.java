@@ -91,13 +91,13 @@ public abstract class MixinTrackVisual extends AbstractVisual implements BlockEn
     }
 
     @Inject(method = "update", at = @At(value = "RETURN", ordinal = 0))
-    private void updateWithoutConnections(CallbackInfo ci) { //otherwise it visually stays when an encased track is broken
+    private void updateWithoutConnections(float pt, CallbackInfo ci) { //otherwise it visually stays when an encased track is broken
         this._delete();
         railways$makeCasingData(false);
     }
 
     @Inject(method = "update", at = @At(value = "RETURN", ordinal = 1))
-    private void updateWithConnections(CallbackInfo ci) {
+    private void updateWithConnections(float pt, CallbackInfo ci) {
         railways$makeCasingData(true);
     }
 

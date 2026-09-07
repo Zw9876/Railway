@@ -25,6 +25,7 @@ import com.railwayteam.railways.registry.CRPackets;
 import com.railwayteam.railways.registry.CRTrackMaterials;
 import com.railwayteam.railways.util.AdventureUtils;
 import com.simibubi.create.content.trains.track.BezierConnection;
+import net.neoforged.neoforge.client.event.InputEvent;
 import com.simibubi.create.content.trains.track.BezierTrackPointLocation;
 import com.simibubi.create.content.trains.track.CurvedTrackInteraction;
 import com.simibubi.create.content.trains.track.TrackBlockEntity;
@@ -55,7 +56,7 @@ public abstract class MixinCurvedTrackInteraction {
         ),
         cancellable = true
     )
-    private static void railways$encaseCurve(CallbackInfoReturnable<Boolean> cir) {
+    private static void railways$encaseCurve(InputEvent.InteractionKeyMappingTriggered event, CallbackInfoReturnable<Boolean> cir) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (AdventureUtils.isAdventure(player))
             return;

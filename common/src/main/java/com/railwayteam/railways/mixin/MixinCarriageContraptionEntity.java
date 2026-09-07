@@ -33,6 +33,7 @@ import com.railwayteam.railways.util.BlockPosUtils;
 import com.railwayteam.railways.util.MixinVariables;
 import com.railwayteam.railways.util.packet.SwitchDataUpdatePacket;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.OrientedContraptionEntity;
 import com.simibubi.create.content.contraptions.actors.trainControls.ControlsBlock;
 import com.simibubi.create.content.trains.bogey.AbstractBogeyBlock;
@@ -82,13 +83,16 @@ public abstract class MixinCarriageContraptionEntity extends OrientedContraption
             railways$fakePlayer = true;
     }
 
-    @WrapOperation(method = "control", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;closerThan(Lnet/minecraft/core/Position;D)Z", remap = true))
-    private boolean railways$closerThan(Vec3 instance, Position pos, double distance, Operation<Boolean> original) {
+    // Create 6 replaced the raw Vec3.closerThan range test with
+    // AbstractContraptionEntity.canInteractWithBlock, which resolves the control block to a global
+    // position before asking the player. Same guard, one level up.
+    @WrapOperation(method = "control", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/content/contraptions/AbstractContraptionEntity;canInteractWithBlock(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/phys/Vec3;D)Z"))
+    private boolean railways$closerThan(AbstractContraptionEntity instance, Player player, Vec3 localPos, double distance, Operation<Boolean> original) {
         if (railways$fakePlayer) {
             railways$fakePlayer = false;
             return true;
         }
-        return original.call(instance, pos, distance);
+        return original.call(instance, player, localPos, distance);
     }
 
     @WrapOperation(method = "control", at = @At(value = "FIELD", target = "Lcom/simibubi/create/content/trains/entity/Train;throttle:D", opcode = Opcodes.GETFIELD))

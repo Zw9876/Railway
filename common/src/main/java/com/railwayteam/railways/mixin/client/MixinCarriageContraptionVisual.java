@@ -28,6 +28,7 @@ import com.simibubi.create.content.contraptions.render.ContraptionVisual;
 import com.simibubi.create.content.trains.bogey.BogeyVisual;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import com.simibubi.create.content.trains.entity.CarriageContraptionVisual;
+import dev.engine_room.flywheel.api.visual.DynamicVisual;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import net.minecraft.nbt.CompoundTag;
 import org.spongepowered.asm.mixin.Final;
@@ -74,7 +75,7 @@ public abstract class MixinCarriageContraptionVisual extends ContraptionVisual<C
 	}
 
 	@Inject(method = "beginFrame", at = @At("HEAD"), remap = false)
-	private void railways$refreshBogeys(CallbackInfo ci) {
+	private void railways$refreshBogeys(DynamicVisual.Context ctx, CallbackInfo ci) {
 		if (IUpdateCount.outOfSync(this, (IUpdateCount) this.entity)) {
 			for (BogeyVisual visual : visuals) {
 				if (visual != null) {
