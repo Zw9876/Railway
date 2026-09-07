@@ -22,7 +22,6 @@ import com.railwayteam.railways.content.extended_sliding_doors.SlidingDoorMode;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -67,9 +66,9 @@ public abstract class MixinSlidingDoorBlock {
         }
     }
 
-    @Inject(method = "use", at = @At("HEAD"), remap = true, cancellable = true)
+    @Inject(method = "useWithoutItem", at = @At("HEAD"), remap = true, cancellable = true)
     private void railways$preventSpecialDoorManualOpen(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer,
-                                                  InteractionHand pHand, BlockHitResult pHit,
+                                                  BlockHitResult pHit,
                                                   CallbackInfoReturnable<InteractionResult> cir) {
         boolean lower = pState.getValue(SlidingDoorBlock.HALF) == DoubleBlockHalf.LOWER;
         BlockEntity be = pLevel.getBlockEntity(lower ? pPos : pPos.below());

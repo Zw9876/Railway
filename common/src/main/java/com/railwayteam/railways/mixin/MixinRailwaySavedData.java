@@ -26,6 +26,7 @@ import com.railwayteam.railways.mixin_interfaces.RailwaySavedDataDuck;
 import com.simibubi.create.content.trains.RailwaySavedData;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -71,8 +72,8 @@ public class MixinRailwaySavedData implements RailwaySavedDataDuck {
             ci.cancel();
     }
 
-    @Inject(method = "load(Lnet/minecraft/nbt/CompoundTag;)Lcom/simibubi/create/content/trains/RailwaySavedData;", at = @At("RETURN"))
-    private static void loadShadowTrains(CompoundTag nbt, CallbackInfoReturnable<RailwaySavedData> cir) {
+    @Inject(method = "load(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/core/HolderLookup$Provider;)Lcom/simibubi/create/content/trains/RailwaySavedData;", at = @At("RETURN"))
+    private static void loadShadowTrains(CompoundTag nbt, HolderLookup.Provider registries, CallbackInfoReturnable<RailwaySavedData> cir) {
         RailwaySavedData sd = cir.getReturnValue();
         if (sd == null) return;
 
@@ -93,7 +94,7 @@ public class MixinRailwaySavedData implements RailwaySavedDataDuck {
     }
 
     @WrapOperation(
-        method = "save(Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/nbt/CompoundTag;",
+        method = "save(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/core/HolderLookup$Provider;)Lnet/minecraft/nbt/CompoundTag;",
         at = @At(
             value = "INVOKE",
             target = "Lnet/createmod/catnip/nbt/NBTHelper;writeCompoundList(Ljava/lang/Iterable;Ljava/util/function/Function;)Lnet/minecraft/nbt/ListTag;",

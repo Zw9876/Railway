@@ -25,6 +25,7 @@ import com.railwayteam.railways.content.custom_tracks.monorail.MonorailTrackBloc
 import com.railwayteam.railways.content.roller_extensions.TrackReplacePaver;
 import com.railwayteam.railways.registry.CRBogeyStyles;
 import com.railwayteam.railways.registry.CRShapes;
+import com.railwayteam.railways.util.InteractionUtils;
 import com.simibubi.create.AllBogeyStyles;
 import com.simibubi.create.content.trains.bogey.BogeySizes;
 import com.simibubi.create.content.trains.bogey.BogeySizes.BogeySize;
@@ -38,7 +39,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -58,13 +61,13 @@ import java.util.Optional;
 
 @Mixin(value = TrackBlock.class, remap = false)
 public class MixinTrackBlock {
-  @Inject(method = "use", at = @At("HEAD"), cancellable = true, remap = true)
-  private void extendedUse(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
+  @Inject(method = "useItemOn", at = @At("HEAD"), cancellable = true, remap = true)
+  private void extendedUse(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<ItemInteractionResult> cir) {
     //noinspection ConstantValue
     if (!(((Object) this) instanceof MonorailTrackBlock)) {
       InteractionResult result = CustomTrackBlock.casingUse(state, world, pos, player, hand, hit);
       if (result != null) {
-        cir.setReturnValue(result);
+        cir.setReturnValue(InteractionUtils.toItemResult(result));
       }
     }
   }

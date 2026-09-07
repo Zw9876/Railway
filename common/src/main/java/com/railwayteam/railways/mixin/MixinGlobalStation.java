@@ -22,6 +22,7 @@ import com.railwayteam.railways.mixin_interfaces.ILimitedGlobalStation;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
 import com.simibubi.create.content.trains.station.GlobalStation;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.spongepowered.asm.mixin.Mixin;
@@ -69,8 +70,8 @@ public abstract class MixinGlobalStation implements ILimitedGlobalStation {
         return limitEnabled;
     }
 
-    @Inject(method = "read(Lnet/minecraft/nbt/CompoundTag;ZLcom/simibubi/create/content/trains/graph/DimensionPalette;)V", at = @At("TAIL"), remap = true)
-    private void readLimit(CompoundTag nbt, boolean migration, DimensionPalette dimensions, CallbackInfo ci) {
+    @Inject(method = "read(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/core/HolderLookup$Provider;ZLcom/simibubi/create/content/trains/graph/DimensionPalette;)V", at = @At("TAIL"), remap = true)
+    private void readLimit(CompoundTag nbt, HolderLookup.Provider registries, boolean migration, DimensionPalette dimensions, CallbackInfo ci) {
         limitEnabled = nbt.getBoolean("LimitEnabled");
     }
 
@@ -79,8 +80,8 @@ public abstract class MixinGlobalStation implements ILimitedGlobalStation {
         limitEnabled = buffer.readBoolean();
     }
 
-    @Inject(method = "write(Lnet/minecraft/nbt/CompoundTag;Lcom/simibubi/create/content/trains/graph/DimensionPalette;)V", at = @At("TAIL"), remap = true)
-    private void writeLimit(CompoundTag nbt, DimensionPalette dimensions, CallbackInfo ci) {
+    @Inject(method = "write(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/core/HolderLookup$Provider;Lcom/simibubi/create/content/trains/graph/DimensionPalette;)V", at = @At("TAIL"), remap = true)
+    private void writeLimit(CompoundTag nbt, HolderLookup.Provider registries, DimensionPalette dimensions, CallbackInfo ci) {
         nbt.putBoolean("LimitEnabled", limitEnabled);
     }
 

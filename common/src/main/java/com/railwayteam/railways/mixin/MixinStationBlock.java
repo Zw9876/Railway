@@ -50,7 +50,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -72,17 +72,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Mixin(value = StationBlock.class, remap = false)
 public abstract class MixinStationBlock {
     @SuppressWarnings("UnresolvedMixinReference")
-    @Inject(method = "use", at = @At("HEAD"), cancellable = true, remap = true)
-    private void autoWhistle(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit, CallbackInfoReturnable<InteractionResult> cir){
+    @Inject(method = "useItemOn", at = @At("HEAD"), cancellable = true, remap = true)
+    private void autoWhistle(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit, CallbackInfoReturnable<ItemInteractionResult> cir){
         ItemStack itemInHand = pPlayer.getItemInHand(pHand);
         if (CRBlocks.CONDUCTOR_WHISTLE_FLAG.asStack().getItem().equals(itemInHand.getItem())) {
             if (!pLevel.isClientSide && pPlayer instanceof DeployerFakePlayer && pLevel.getBlockEntity(pPos) instanceof StationBlockEntity stationBe) {
-                cir.setReturnValue(InteractionResult.CONSUME);
+                cir.setReturnValue(ItemInteractionResult.CONSUME);
                 GlobalStation station = stationBe.getStation();
                 if (station != null && station.getPresentTrain() == null) {
                     CompoundTag stackTag = ItemUtils.getCustomTag(itemInHand);
                     if (stackTag == null || !stackTag.hasUUID("SelectedTrain") || !stackTag.hasUUID("SelectedConductor")) {
-                        cir.setReturnValue(InteractionResult.FAIL);
+                        cir.setReturnValue(ItemInteractionResult.FAIL);
                         return;
                     }
                     BlockPos pos = stationBe.edgePoint.getPos();
@@ -174,7 +174,7 @@ public abstract class MixinStationBlock {
                     schedule.cyclic = false;
                     train.runtime.setSchedule(schedule, true);
                     ((AccessorScheduleRuntime) train.runtime).setCooldown(10);
-                    cir.setReturnValue(InteractionResult.SUCCESS);
+                    cir.setReturnValue(ItemInteractionResult.SUCCESS);
                 }
                 else if(station != null && station.getPresentTrain() != null) {
                     UUID trainId = station.getPresentTrain().id;
@@ -192,21 +192,21 @@ public abstract class MixinStationBlock {
                                         stackTag.putByte("SelectedColor", conductor.getEntityData().get(ConductorEntity.COLOR));
                                         ItemUtils.setCustomTag(itemInHand, stackTag);
                                         pPlayer.setItemInHand(pHand, itemInHand);
-                                        cir.setReturnValue(InteractionResult.SUCCESS);
+                                        cir.setReturnValue(ItemInteractionResult.SUCCESS);
                                         found.set(true);
                                     }
                                 }));
                 }
             }
             if (CRBlocks.CONDUCTOR_WHISTLE_FLAG.isIn(itemInHand))
-                cir.setReturnValue(InteractionResult.PASS);
+                cir.setReturnValue(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
         }
     }
 
-    @Inject(method = "use", at = @At(value = "RETURN", ordinal = 1), cancellable = true, remap = true)
-    private void deployersAssemble(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit, CallbackInfoReturnable<InteractionResult> cir) {
+    @Inject(method = "useItemOn", at = @At("TAIL"), cancellable = true, remap = true)
+    private void deployersAssemble(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit, CallbackInfoReturnable<ItemInteractionResult> cir) {
         if (!pLevel.isClientSide && pPlayer instanceof DeployerFakePlayer deployerFakePlayer && pLevel.getBlockEntity(pPos) instanceof StationBlockEntity stationBe) {
-            cir.setReturnValue(InteractionResult.CONSUME);
+            cir.setReturnValue(ItemInteractionResult.CONSUME);
             GlobalStation station = stationBe.getStation();
             boolean isAssemblyMode = pState.getValue(StationBlock.ASSEMBLING);
             if (station != null && station.getPresentTrain() == null) {
@@ -214,7 +214,7 @@ public abstract class MixinStationBlock {
                 if (stationBe.isAssembling() || stationBe.tryEnterAssemblyMode()) {
                     //Need to fix blockstate
                     stationBe.assemble(deployerFakePlayer.getUUID());
-                    cir.setReturnValue(InteractionResult.SUCCESS);
+                    cir.setReturnValue(ItemInteractionResult.SUCCESS);
 
                     if (isAssemblyMode) {
                         pLevel.setBlock(pPos, pState.setValue(StationBlock.ASSEMBLING, false), 3);
@@ -234,7 +234,7 @@ public abstract class MixinStationBlock {
 
                     stationBe.refreshAssemblyInfo();
                 }
-                cir.setReturnValue(InteractionResult.SUCCESS);
+                cir.setReturnValue(ItemInteractionResult.SUCCESS);
             }
         }
     }
@@ -268,14 +268,14 @@ public abstract class MixinStationBlock {
             .addFreshEntity(itemEntity);
     }
 
-    @Inject(method = "use", at = @At("HEAD"), cancellable = true, remap = true)
-    private void deployersNameTag(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit, CallbackInfoReturnable<InteractionResult> cir) {
+    @Inject(method = "useItemOn", at = @At("HEAD"), cancellable = true, remap = true)
+    private void deployersNameTag(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit, CallbackInfoReturnable<ItemInteractionResult> cir) {
         ItemStack itemInHand = pPlayer.getItemInHand(pHand);
         if (!pLevel.isClientSide && pPlayer instanceof DeployerFakePlayer
             && pLevel.getBlockEntity(pPos) instanceof StationBlockEntity stationBe
             && itemInHand.getItem() instanceof NameTagItem
         ) {
-            cir.setReturnValue(InteractionResult.CONSUME);
+            cir.setReturnValue(ItemInteractionResult.CONSUME);
             GlobalStation station = stationBe.getStation();
             if (station == null || station.getPresentTrain() == null) return;
 

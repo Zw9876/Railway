@@ -38,14 +38,10 @@ import org.spongepowered.asm.mixin.injection.Slice;
 @Mixin(ServerLevel.class)
 public class MixinServerLevel {
     @WrapOperation(
-        method = "tickChunk(Lnet/minecraft/world/level/chunk/LevelChunk;I)V",
+        method = "tickPrecipitation(Lnet/minecraft/core/BlockPos;)V",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/server/level/ServerLevel;getHeightmapPos(Lnet/minecraft/world/level/levelgen/Heightmap$Types;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/core/BlockPos;"
-        ),
-        slice = @Slice(
-            from = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", args = "ldc=iceandsnow"),
-            to = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", args = "ldc=tickBlocks")
         )
     )
     private BlockPos lowerHeightForTracks(ServerLevel instance, Heightmap.Types types, BlockPos pos, Operation<BlockPos> original) {
@@ -61,7 +57,7 @@ public class MixinServerLevel {
     }
 
     @WrapOperation(
-        method = "tickChunk(Lnet/minecraft/world/level/chunk/LevelChunk;I)V",
+        method = "tickPrecipitation(Lnet/minecraft/core/BlockPos;)V",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/server/level/ServerLevel;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"
