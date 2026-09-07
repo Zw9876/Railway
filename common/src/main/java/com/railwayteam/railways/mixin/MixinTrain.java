@@ -94,7 +94,10 @@ public abstract class MixinTrain implements IOccupiedCouplers, IIndexedSchedule,
     @Shadow public int fuelTicks;
     @Shadow public Player backwardsDriver;
 
-    @Unique public Set<UUID> railways$occupiedCouplers;
+    // Initialised here rather than by an @Inject on <init>: Train has three constructors in
+    // Create 6 (one of them private, without the TrackGraph), so a name-only <init> selector
+    // cannot match them all. Mixin merges field initialisers into every target constructor.
+    @Unique public Set<UUID> railways$occupiedCouplers = new HashSet<>();
     @Unique protected int railways$index = 0;
     @Unique protected boolean railways$isHandcar = false;
     @Unique protected boolean railways$isStrictSignalTrain = false;
@@ -149,10 +152,6 @@ public abstract class MixinTrain implements IOccupiedCouplers, IIndexedSchedule,
         return railways$occupiedCouplers;
     }
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void initCouplers(UUID id, UUID owner, TrackGraph graph, List<Carriage> carriages, List<Integer> carriageSpacing, boolean doubleEnded, CallbackInfo ci) {
-        railways$occupiedCouplers = new HashSet<>();
-    }
 
     @Inject(method = "earlyTick", at = @At("HEAD"))
     private void killEmptyTrains(Level level, CallbackInfo ci) { // hopefully help deal with empty trains
@@ -265,7 +264,7 @@ public abstract class MixinTrain implements IOccupiedCouplers, IIndexedSchedule,
     }
 
     @Inject(method = "read", at = @At("RETURN"))
-    private static void readOccupiedCouplers(CompoundTag tag, Map<UUID, TrackGraph> trackNetworks,
+    private static void readOccupiedCouplers(CompoundTag tag, HolderLookup.Provider registries, Map<UUID, TrackGraph> trackNetworks,
                                              DimensionPalette dimensions, CallbackInfoReturnable<Train> cir,
                                              @Local Train train) {
         NBTHelper.iterateCompoundList(tag.getList("OccupiedCouplers", Tag.TAG_COMPOUND),

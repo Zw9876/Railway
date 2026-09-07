@@ -104,7 +104,10 @@ public abstract class ClientChunkCacheMixin {
 	 * Handles chunks that are dropped in range of the camera storage
 	 */
 	@Inject(method = "drop", at = @At(value = "HEAD"))
-	public void railways$securitycraft$onDrop(int x, int z, CallbackInfo ci) {
+	public void railways$securitycraft$onDrop(ChunkPos pos, CallbackInfo ci) {
+		// 1.21 passes a ChunkPos rather than the loose x/z pair.
+		int x = pos.x;
+		int z = pos.z;
 		ClientChunkCache.Storage cameraStorage = ConductorPossessionController.getCameraStorage();
 
 		if (cameraStorage.inRange(x, z)) {

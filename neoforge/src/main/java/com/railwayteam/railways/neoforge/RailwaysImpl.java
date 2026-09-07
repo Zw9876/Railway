@@ -53,6 +53,7 @@ import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.Configurator;
 
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -104,18 +105,25 @@ public class RailwaysImpl {
 	}
 
 	private static void restoreLoggers() {
-		if (Utils.isDevEnv()) {
-			// restore our logging config, since forge likes to nuke it for fun
-			for (String prop : new String[] {"log4j.configurationFile", "log4j2.configurationFile"}) {
-				String file = System.getProperty(prop);
-				if (file != null) {
-					Configurator.reconfigure(ConfigurationFactory.getInstance().getConfiguration(
-						LoggerContext.getContext(),
-						ConfigurationSource.fromUri(URI.create(file))
-					));
-					break;
-				}
+		if (!Utils.isDevEnv())
+			return;
+		// restore our logging config, since the loader likes to nuke it for fun
+		for (String prop : new String[] {"log4j.configurationFile", "log4j2.configurationFile"}) {
+			String file = System.getProperty(prop);
+			if (file == null)
+				continue;
+			try {
+				// The property holds a filesystem path, not a URI. On Windows "C:\..." is not a
+				// legal URI ("Illegal character in opaque part at index 2"), and the exception
+				// escaping this constructor used to abort mod construction outright.
+				Configurator.reconfigure(ConfigurationFactory.getInstance().getConfiguration(
+					LoggerContext.getContext(),
+					ConfigurationSource.fromUri(Path.of(file).toUri())
+				));
+			} catch (Exception e) {
+				Railways.LOGGER.warn("Could not restore the dev logging config from {}", file, e);
 			}
+			break;
 		}
 	}
 

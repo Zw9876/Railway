@@ -23,7 +23,7 @@ import com.railwayteam.railways.content.custom_tracks.phantom.PhantomSpriteManag
 import com.railwayteam.railways.mixin_interfaces.AnimatedTextureDuck;
 import com.railwayteam.railways.mixin_interfaces.IPotentiallyInvisibleSpriteContents;
 import net.minecraft.client.renderer.texture.SpriteContents;
-import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
+import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +42,7 @@ public abstract class MixinSpriteContents implements IPotentiallyInvisibleSprite
     @Shadow @Final @Nullable private SpriteContents.AnimatedTexture animatedTexture;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void railways$onInit(ResourceLocation name, FrameSize frameSize, NativeImage originalImage, AnimationMetadataSection metadata, CallbackInfo ci) {
+    private void railways$onInit(ResourceLocation name, FrameSize frameSize, NativeImage originalImage, ResourceMetadata metadata, CallbackInfo ci) {
         if (PhantomSpriteManager.register((SpriteContents) (Object) this))
             railways$shouldDoInvisibility = true;
     }
