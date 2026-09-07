@@ -18,7 +18,9 @@
 
 package com.railwayteam.railways.neoforge;
 
+import com.railwayteam.railways.content.conductor.ConductorEntity;
 import com.railwayteam.railways.registry.CRArmorMaterials;
+import com.railwayteam.railways.registry.CREntities;
 import com.railwayteam.railways.registry.CRPotatoProjectileTypes;
 import com.railwayteam.railways.registry.CRTriggers;
 import com.railwayteam.railways.registry.CRIngredientTypes;
@@ -46,6 +48,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -90,6 +93,10 @@ public class RailwaysImpl {
 		CRIngredientTypes.register(bus);
 		CRArmorMaterials.register(bus);
 		CRPotatoProjectileTypes.register(bus);
+		// Registrate's EntityBuilder.attributes did not land the supplier in DefaultAttributes --
+		// the server logged "Entity railways:conductor has no attributes" -- so register it here.
+		bus.addListener((EntityAttributeCreationEvent event) ->
+			event.put(CREntities.CONDUCTOR.get(), ConductorEntity.createAttributes().build()));
 		bus.addListener((RegisterEvent event) ->
 			event.register(Registries.TRIGGER_TYPE, helper -> CRTriggers.register(helper::register)));
 	}
