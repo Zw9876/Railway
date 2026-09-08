@@ -11,6 +11,13 @@ displayName = "Create: Steam 'n' Rails"
 authors = "The Railways Team"
 description = '''Customization and extension of Create rail systems and steam system'''
 
+# Loaded from the default path anyway, but declared explicitly so a build that drops
+# the file fails loudly instead of turning every widened member into a runtime
+# IllegalAccessError. Generated from common/src/main/resources/railways.accesswidener -
+# NeoForge does not read accesswidener files, only access transformers.
+[[accessTransformers]]
+file = "META-INF/accesstransformer.cfg"
+
 [[mixins]]
 config = "railways.mixins.json"
 
