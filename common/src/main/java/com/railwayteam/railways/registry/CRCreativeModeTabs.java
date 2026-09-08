@@ -226,6 +226,15 @@ public class CRCreativeModeTabs {
             items.addAll(collectItems(tab, is3d, false, exclusionPredicate));
 
             applyOrderings(items, orderings);
+
+            // NeoForge 21.1 throws IllegalArgumentException ("already exists in the tab's list") the
+            // instant the same stack is offered twice; 1.20 quietly ignored the repeat. The three
+            // passes above are each internally consistent but are concatenated without a shared
+            // dedupe, and applyOrderings can insert an item that was never collected, so guarantee
+            // uniqueness here rather than at any one source. Items are singletons, so reference
+            // identity is the right comparison, and the linked set preserves the order just built.
+            items = new ReferenceArrayList<>(new ReferenceLinkedOpenHashSet<>(items));
+
             outputAll(output, items, stackFunc, visibilityFunc);
         }
 
