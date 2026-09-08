@@ -240,7 +240,10 @@ public class CRBlocks {
             // the item too emits block.railways.<name> twice and Registrate rejects the duplicate.
             .lang(description)
             .item(styled ? BlockStateBlockItem.create(StyledSmokeStackBlock.STYLE, SmokestackStyle.STEEL, true) : BlockItem::new)
-                .tab(CRCreativeModeTabs.getBaseTabKey())
+                // No explicit .tab(): the base tab is already the Registrate default here (see the
+                // useBaseTab() static block above), and RegistrateDisplayItemsGenerator adds every entry
+                // in that tab itself. Calling .tab() ALSO registers Registrate own handler, so the item
+                // gets added twice and NeoForge 21.1 throws "already exists in the tab list".
                 .model((c, p) -> p.withExistingParent(
                     c.getName(),
                     p.modLoc(styled ? "block/smokestack_" + variant + "_steel" : "block/smokestack/block_" + variant)
@@ -294,7 +297,10 @@ public class CRBlocks {
             .blockstate(BuilderTransformers.variableSmokeStack(variant, rotType))
             .lang(description)
             .item(BlockStateBlockItem.create(StyledSmokeStackBlock.STYLE, SmokestackStyle.STEEL, true))
-            .tab(CRCreativeModeTabs.getBaseTabKey())
+            // No explicit .tab(): the base tab is already the Registrate default here (see the
+            // useBaseTab() static block above), and RegistrateDisplayItemsGenerator adds every entry
+            // in that tab itself. Calling .tab() ALSO registers Registrate own handler, so the item
+            // gets added twice and NeoForge 21.1 throws "already exists in the tab list".
             .model((c, p) -> p.withExistingParent(
                 c.getName(),
                 p.modLoc("block/smokestack_" + variant + "_steel" + variationType.modelSuffix)

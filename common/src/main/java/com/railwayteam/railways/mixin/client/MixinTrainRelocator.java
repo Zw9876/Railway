@@ -58,20 +58,23 @@ public class MixinTrainRelocator {
             ShadowRealm.clientShadowRestoringTrain = null;
     }
 
-    @WrapOperation(method = "relocateClient", at = @At(value = "NEW", target = "(Ljava/util/UUID;Lnet/minecraft/core/BlockPos;Lcom/simibubi/create/content/trains/track/BezierTrackPointLocation;ZLnet/minecraft/world/phys/Vec3;I)Lcom/simibubi/create/content/trains/entity/TrainRelocationPacket;"))
-    private static TrainRelocationPacket relocateShadowTrain(UUID trainId, BlockPos pos, BezierTrackPointLocation hoveredBezier, boolean direction, Vec3 lookAngle, int entityId, Operation<TrainRelocationPacket> original) {
+    // TrainRelocationPacket is a record in Create 6 and its components are in a different order:
+    // (trainId, pos, lookAngle, entityId, direction, hoveredBezier).
+    @WrapOperation(method = "relocateClient", at = @At(value = "NEW", target = "(Ljava/util/UUID;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/Vec3;IZLcom/simibubi/create/content/trains/track/BezierTrackPointLocation;)Lcom/simibubi/create/content/trains/entity/TrainRelocationPacket;"))
+    private static TrainRelocationPacket relocateShadowTrain(UUID trainId, BlockPos pos, Vec3 lookAngle, int entityId, boolean direction, BezierTrackPointLocation hoveredBezier, Operation<TrainRelocationPacket> original) {
         if (ShadowRealm.MARKER.equals(trainId) && ShadowRealm.clientShadowRestoringTrain != null) {
             trainId = ShadowRealm.clientShadowRestoringTrain.id;
         }
-        return original.call(trainId, pos, hoveredBezier, direction, lookAngle, entityId);
+        return original.call(trainId, pos, lookAngle, entityId, direction, hoveredBezier);
     }
 
-    @WrapOperation(method = {"clientTick", "onClicked"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;closerThan(Lnet/minecraft/core/Position;D)Z"))
-    private static boolean unrestrictRange(Vec3 instance, Position pos, double distance, Operation<Boolean> original,
-                                           @Local(name = "player") LocalPlayer player) {
+    // Create 6 replaced the raw Vec3.closerThan range test with LocalPlayer.canInteractWithBlock,
+    // whose receiver IS the player - so the fragile @Local(name = "player") capture is gone too.
+    @WrapOperation(method = {"clientTick", "onClicked"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;canInteractWithBlock(Lnet/minecraft/core/BlockPos;D)Z"))
+    private static boolean unrestrictRange(LocalPlayer player, BlockPos pos, double distance, Operation<Boolean> original) {
         if (ShadowRealm.MARKER.equals(relocatingTrain) || (player.isCreative() && CRConfigs.server().unlimitedCreativeRelocation.get()))
             return true;
 
-        return original.call(instance, pos, distance);
+        return original.call(player, pos, distance);
     }
 }
