@@ -19,10 +19,15 @@
 package com.railwayteam.railways.neoforge;
 
 import com.railwayteam.railways.Railways;
+import com.railwayteam.railways.registry.CRPotatoProjectileTypes;
+import com.simibubi.create.api.registry.CreateRegistries;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.DataGenerator;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -39,6 +44,15 @@ public class RailwaysDataImpl {
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         CompletableFuture<HolderLookup.Provider> registries = event.getLookupProvider();
-        Railways.gatherData(generator.getVanillaPack(true), registries);
+        DataGenerator.PackGenerator pack = generator.getVanillaPack(true);
+        Railways.gatherData(pack, registries);
+
+        // Datapack-registry entries. CRPotatoProjectileTypes.bootstrap had no caller at all, so the
+        // paint pitcher's potato-cannon projectile type stopped being generated - the one file the
+        // 1.20 output had that a fresh run did not reproduce. Mirrors Create's GeneratedEntriesProvider.
+        pack.addProvider(output -> new DatapackBuiltinEntriesProvider(output, registries,
+            new RegistrySetBuilder()
+                .add(CreateRegistries.POTATO_PROJECTILE_TYPE, CRPotatoProjectileTypes::bootstrap),
+            Set.of(Railways.MOD_ID)));
     }
 }

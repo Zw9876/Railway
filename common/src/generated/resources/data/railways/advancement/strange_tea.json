@@ -1,0 +1,29 @@
+{
+  "parent": "railways:root",
+  "criteria": {
+    "0": {
+      "trigger": "railways:strange_tea_builtin"
+    }
+  },
+  "display": {
+    "description": {
+      "color": "#DBA213",
+      "translate": "advancement.railways.strange_tea.desc"
+    },
+    "frame": "goal",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "create:builders_tea"
+    },
+    "title": {
+      "translate": "advancement.railways.strange_tea"
+    }
+  },
+  "requirements": [
+    [
+      "0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

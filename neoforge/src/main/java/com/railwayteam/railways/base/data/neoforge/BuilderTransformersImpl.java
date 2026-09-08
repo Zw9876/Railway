@@ -45,6 +45,7 @@ import com.railwayteam.railways.content.handcar.HandcarBlock;
 import com.railwayteam.railways.content.palettes.PalettesColor;
 import com.railwayteam.railways.content.palettes.RotatedPillarWindowBlock;
 import com.railwayteam.railways.content.palettes.doors.HingedDoorBlock;
+import com.railwayteam.railways.content.palettes.doors.PalettesSlidingDoorBlock;
 import com.railwayteam.railways.content.palettes.hazard_stripes.HazardStripesBlock;
 import com.railwayteam.railways.content.palettes.painting.PaintPitcherItem;
 import com.railwayteam.railways.content.palettes.smokebox.PalettesSmokeboxBlock;
@@ -469,7 +470,11 @@ public class BuilderTransformersImpl {
                 boolean right = state.getValue(DoorBlock.HINGE) == DoorHingeSide.RIGHT;
                 boolean open = state.getValue(DoorBlock.OPEN);
                 boolean lower = state.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER;
-                boolean windowed = state.getValue(HingedDoorBlock.WINDOWED);
+                // Sliding and folding locometal doors are PalettesSlidingDoorBlock, which declares its own
+                // "windowed" property. It is a DIFFERENT BooleanProperty object from HingedDoorBlock's, and
+                // 1.21 looks properties up in a Reference2ObjectArrayMap (identity), not an equals-based
+                // map as 1.20 did - so the hinged door's property no longer resolves here.
+                boolean windowed = state.getValue(PalettesSlidingDoorBlock.WINDOWED);
 
                 if (open) {
                     yRot += 90;

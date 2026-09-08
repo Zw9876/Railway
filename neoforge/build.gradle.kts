@@ -33,6 +33,10 @@ loom {
         // providers can see what already exists.
         create("data") {
             data()
+            // Compat tracks only register when their host mod is present OR this is set - see
+            // GenericTrackCompat.shouldRegisterMissing(). Without it datagen silently drops every
+            // compat track (285 blocks: BOP, BYG, TFC, Quark, Twilight Forest, ...).
+            environmentVariable("DATAGEN", "true")
             programArgs(
                 "--all", "--mod", "railways",
                 "--output", rootProject.file("common/src/generated/resources").absolutePath,

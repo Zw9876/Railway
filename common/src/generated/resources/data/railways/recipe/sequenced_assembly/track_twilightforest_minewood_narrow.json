@@ -1,0 +1,70 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "twilightforest"
+    }
+  ],
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "type": "railways:soft",
+    "item": "twilightforest:mining_slab"
+  },
+  "results": [
+    {
+      "id": "railways:track_twilightforest_minewood_narrow"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:cutting",
+      "ingredients": [
+        {
+          "item": "railways:track_incomplete_twilightforest_minewood_narrow"
+        }
+      ],
+      "results": [
+        {
+          "id": "railways:track_incomplete_twilightforest_minewood_narrow"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "railways:track_incomplete_twilightforest_minewood_narrow"
+        },
+        [
+          {
+            "tag": "railways:internal/nuggets/iron_nuggets"
+          },
+          {
+            "tag": "railways:internal/nuggets/zinc_nuggets"
+          }
+        ]
+      ],
+      "results": [
+        {
+          "id": "railways:track_incomplete_twilightforest_minewood_narrow"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "railways:track_incomplete_twilightforest_minewood_narrow"
+        }
+      ],
+      "results": [
+        {
+          "id": "railways:track_incomplete_twilightforest_minewood_narrow"
+        }
+      ]
+    }
+  ],
+  "transitional_item": {
+    "id": "railways:track_incomplete_twilightforest_minewood_narrow"
+  }
+}

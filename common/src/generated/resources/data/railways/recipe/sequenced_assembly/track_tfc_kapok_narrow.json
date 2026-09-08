@@ -1,0 +1,70 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "tfc"
+    }
+  ],
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "type": "railways:soft",
+    "item": "tfc:wood/planks/kapok_slab"
+  },
+  "results": [
+    {
+      "id": "railways:track_tfc_kapok_narrow"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:cutting",
+      "ingredients": [
+        {
+          "item": "railways:track_incomplete_tfc_kapok_narrow"
+        }
+      ],
+      "results": [
+        {
+          "id": "railways:track_incomplete_tfc_kapok_narrow"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "railways:track_incomplete_tfc_kapok_narrow"
+        },
+        [
+          {
+            "tag": "forge:rods/wrought_iron"
+          },
+          {
+            "tag": "forge:rods/zinc"
+          }
+        ]
+      ],
+      "results": [
+        {
+          "id": "railways:track_incomplete_tfc_kapok_narrow"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "railways:track_incomplete_tfc_kapok_narrow"
+        }
+      ],
+      "results": [
+        {
+          "id": "railways:track_incomplete_tfc_kapok_narrow"
+        }
+      ]
+    }
+  ],
+  "transitional_item": {
+    "id": "railways:track_incomplete_tfc_kapok_narrow"
+  }
+}

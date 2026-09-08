@@ -1,0 +1,78 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "tfc"
+    }
+  ],
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "type": "railways:soft",
+    "item": "tfc:wood/planks/chestnut_slab"
+  },
+  "results": [
+    {
+      "id": "railways:track_tfc_chestnut"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "railways:track_incomplete_tfc_chestnut"
+        },
+        [
+          {
+            "tag": "forge:rods/wrought_iron"
+          },
+          {
+            "tag": "forge:rods/zinc"
+          }
+        ]
+      ],
+      "results": [
+        {
+          "id": "railways:track_incomplete_tfc_chestnut"
+        }
+      ]
+    },
+    {
+      "type": "create:deploying",
+      "ingredients": [
+        {
+          "item": "railways:track_incomplete_tfc_chestnut"
+        },
+        [
+          {
+            "tag": "forge:rods/wrought_iron"
+          },
+          {
+            "tag": "forge:rods/zinc"
+          }
+        ]
+      ],
+      "results": [
+        {
+          "id": "railways:track_incomplete_tfc_chestnut"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "railways:track_incomplete_tfc_chestnut"
+        }
+      ],
+      "results": [
+        {
+          "id": "railways:track_incomplete_tfc_chestnut"
+        }
+      ]
+    }
+  ],
+  "transitional_item": {
+    "id": "railways:track_incomplete_tfc_chestnut"
+  }
+}

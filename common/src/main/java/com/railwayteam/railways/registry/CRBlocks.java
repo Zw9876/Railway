@@ -236,9 +236,10 @@ public class CRBlocks {
             .transform(styled ? BuilderTransformers.smokestackLoot(cycleGroupSupplier) : b -> b)
             .onRegister(movementBehaviour(new SmokeStackMovementBehaviour(spawnExtraSmoke)))
             .blockstate(blockStateProvider)
+            // Block-level lang only: a BlockItem's translation key IS the block's, so calling .lang on
+            // the item too emits block.railways.<name> twice and Registrate rejects the duplicate.
             .lang(description)
             .item(styled ? BlockStateBlockItem.create(StyledSmokeStackBlock.STYLE, SmokestackStyle.STEEL, true) : BlockItem::new)
-                .lang(description)
                 .tab(CRCreativeModeTabs.getBaseTabKey())
                 .model((c, p) -> p.withExistingParent(
                     c.getName(),
@@ -293,7 +294,6 @@ public class CRBlocks {
             .blockstate(BuilderTransformers.variableSmokeStack(variant, rotType))
             .lang(description)
             .item(BlockStateBlockItem.create(StyledSmokeStackBlock.STYLE, SmokestackStyle.STEEL, true))
-            .lang(description)
             .tab(CRCreativeModeTabs.getBaseTabKey())
             .model((c, p) -> p.withExistingParent(
                 c.getName(),

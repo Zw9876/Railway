@@ -1,0 +1,27 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "tag": "railways:internal/dyes/blue_dyes"
+    },
+    {
+      "tag": "railways:binding_agents"
+    },
+    {
+      "type": "neoforge:tag",
+      "amount": 1000,
+      "tag": "minecraft:water"
+    }
+  ],
+  "results": [
+    {
+      "amount": 1000,
+      "components": {
+        "minecraft:custom_data": {
+          "Color": "blue"
+        }
+      },
+      "id": "railways:flowing_paint"
+    }
+  ]
+}
