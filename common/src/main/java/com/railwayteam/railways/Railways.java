@@ -50,7 +50,9 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -79,6 +81,15 @@ public class Railways {
   private static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID);
 
   static {
+    // Registrate's constructor defaults every item builder to CreativeModeTabs.SEARCH, so each
+    // entry also gets a Registrate tab modifier that re-adds it when the vanilla search tab is
+    // built. Railways already emits its whole catalogue with PARENT_AND_SEARCH_TABS through
+    // CRCreativeModeTabs.RegistrateDisplayItemsGenerator, and the search tab aggregates from our
+    // tabs anyway, so that modifier is a pure duplicate: NeoForge 21.1 throws
+    // "already exists in the tab's list" on it and crashes the creative inventory. 1.20 ignored
+    // the repeat, which is why this only surfaced after the port. null disables the default.
+    REGISTRATE.defaultCreativeTab((ResourceKey<CreativeModeTab>) null);
+
     REGISTRATE.setTooltipModifierFactory(item -> new ItemDescription.Modifier(item, FontHelper.Palette.STANDARD_CREATE)
         .andThen(TooltipModifier.mapNull(KineticStats.create(item))));
   }
