@@ -10,6 +10,7 @@
   ],
   "mixins": [
     "AllKeysMixin",
+    "BuildCreativeModeTabContentsEventMixin",
     "ChunkMapAccessor",
     "ChunkMapAccessor$TrackedEntityAccessor",
     "ContainerLevelAccessMixin",
