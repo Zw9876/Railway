@@ -41,3 +41,6 @@ accessible method net/minecraft/world/item/context/UseOnContext <init> (Lnet/min
 accessible method net/minecraft/network/protocol/game/ServerboundMovePlayerPacket$PosRot read (Lnet/minecraft/network/FriendlyByteBuf;)Lnet/minecraft/network/protocol/game/ServerboundMovePlayerPacket$PosRot;
 accessible method net/minecraft/network/protocol/game/ServerboundMovePlayerPacket$PosRot write (Lnet/minecraft/network/FriendlyByteBuf;)V
 accessible field net/minecraft/world/item/CreativeModeTabs SEARCH Lnet/minecraft/resources/ResourceKey;
+# CRCreativeModeTabsImpl.withTabsBefore. Private in the NeoForge-patched jar; it is only public
+# in dev because loom stacks dependency wideners on top, and no dependency ships an AT for it.
+accessible field net/minecraft/world/item/CreativeModeTabs SPAWN_EGGS Lnet/minecraft/resources/ResourceKey;
