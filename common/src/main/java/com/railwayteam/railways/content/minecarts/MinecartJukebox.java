@@ -93,7 +93,10 @@ public class MinecartJukebox extends MinecartBlock {
     if (active && !level.isClientSide) {
       if (cooldownCount <= 0) {
         cooldownCount = COOLDOWN;
-        PacketSender.updateJukeboxClientside(this, this.disc);
+        // An empty stack here crashes the client handler and softlocks the cart - reachable by
+        // running an empty jukebox cart over a powered activator rail.
+        if (!this.disc.isEmpty())
+          PacketSender.updateJukeboxClientside(this, this.disc);
       }
     }
   }

@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-08T18:48:14.3575635	Registrate Provider for railways [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2026-09-09T17:07:11.2944355	Registrate Provider for railways [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 8c558c7bddce85565a267985153b6dd6857ed523 assets/railways/blockstates/big_buffer.json
 951f94b03d04ec3d8c1e5842a95b2c24dd481644 assets/railways/blockstates/black_brass_wrapped_locometal.json
 d321ee17d15d23060493325ec99577905672649a assets/railways/blockstates/black_brass_wrapped_locometal_boiler.json
@@ -250,7 +250,7 @@ f5ad0ad686c9a14e07bafdeb48b0afa36b2490a1 assets/railways/blockstates/flat_rivete
 585af67021a7a70e226d65addcc99f157849e37f assets/railways/blockstates/flat_slashed_locometal.json
 17cce96c49c0dcaeb4acaef6d561846fae8507d8 assets/railways/blockstates/folding_locometal_door.json
 eff4f641dbd9b8f1328a7a381f3d9cce74bb03b8 assets/railways/blockstates/four_pane_locometal_window.json
-e89c08552ff710f9ce3717bb8888870a5ee00869 assets/railways/blockstates/fuel_tank.json
+ec136079e6f3a16a066508c926633394f1b0b3ad assets/railways/blockstates/fuel_tank.json
 369019204ef0cac89b9797f003904c57498715c0 assets/railways/blockstates/generic_crossing.json
 8b3d51880673ac25a81b103f74e6819b104a4543 assets/railways/blockstates/granite_brass_wrapped_locometal.json
 bfe8033ff022e250c2d756dcb76fdde569597a27 assets/railways/blockstates/granite_brass_wrapped_locometal_boiler.json
@@ -1449,7 +1449,6 @@ e9a915a465f7424e356ab46f6ab2c57be3a79f53 assets/railways/blockstates/yellow_wrap
 1d6aad0ecb25316ffd95d31972211e506404a42c assets/railways/lang/en_ud.json
 c449449ab3d997e7feaedc547ea5b42d54d0b8a2 assets/railways/lang/en_us.json
 2d1ade82820569936fd3021a877283474ced09d0 assets/railways/models/block/casing_collision.json
-e3c95e8fd344b4b0b82ea58b2adf947798878aff assets/railways/models/block/fuel_tank.json
 aeb297b317e6a5de8c288d5d9acbb717abff1e4a assets/railways/models/block/generic_crossing.json
 85ca4109f93c3378b2801b583af0190a3d60db0b assets/railways/models/block/palettes/black/brass_wrapped_locometal.json
 6905438b152346b8da3bca48f92cc77ec11efc19 assets/railways/models/block/palettes/black/brass_wrapped_locometal_boiler_flat_x.json

@@ -35,9 +35,12 @@ public class TFCTrackCompat extends GenericTrackCompat {
 
     @Override
     protected Ingredient getIngredientForRail() {
+        // 1.21 retired the forge: tag namespace outright - Create 6 ships no data/forge at all - so
+        // these have to be c:, or both TagValues resolve empty and every TFC track recipe becomes
+        // uncraftable.
         return Ingredient.fromValues(Stream.of(
-                new Ingredient.TagValue(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("forge", "rods/wrought_iron"))),
-                new Ingredient.TagValue(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("forge", "rods/zinc")))
+                new Ingredient.TagValue(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "rods/wrought_iron"))),
+                new Ingredient.TagValue(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "rods/zinc")))
         ));
     }
 

@@ -115,13 +115,8 @@ public class SemaphoreRenderer extends SafeBlockEntityRenderer<SemaphoreBlockEnt
 			}
 
 
-			CachedBuffers.partial(AllPartialModels.SIGNAL_WHITE_CUBE, blockState)
-					.light(0xF000F0)
-					.disableDiffuse()
-					.scale(1, 1, 1)
-					.renderInto(ms, buffer.getBuffer(RenderType.translucent()));
-
-
+			// No white backing cube: on 1.21 it renders through the lamp instead of behind it, which is
+			// what made the lamps look see-through. The opaque semaphore_lamp_* textures replace it.
 			CachedBuffers
 					.partial(
 							bottom ? AllPartialModels.SIGNAL_WHITE_GLOW : yellow ? AllPartialModels.SIGNAL_YELLOW_GLOW : AllPartialModels.SIGNAL_RED_GLOW,
@@ -137,7 +132,7 @@ public class SemaphoreRenderer extends SafeBlockEntityRenderer<SemaphoreBlockEnt
 					.light(0xF000F0)
 					.disableDiffuse()
 					.scale(1 + 1 / 16f)
-					.renderInto(ms, buffer.getBuffer(RenderTypes.additive()));
+					.renderInto(ms, buffer.getBuffer(RenderType.solid()));
 
 
 			ms.popPose();

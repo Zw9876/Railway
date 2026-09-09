@@ -37,10 +37,10 @@
         },
         [
           {
-            "tag": "forge:rods/wrought_iron"
+            "tag": "c:rods/wrought_iron"
           },
           {
-            "tag": "forge:rods/zinc"
+            "tag": "c:rods/zinc"
           }
         ]
       ],
