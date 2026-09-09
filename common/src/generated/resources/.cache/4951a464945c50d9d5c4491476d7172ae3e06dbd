@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-07T22:45:24.6161419	Registrate Provider for railways [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.21.1	2026-09-08T18:48:14.3575635	Registrate Provider for railways [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 8c558c7bddce85565a267985153b6dd6857ed523 assets/railways/blockstates/big_buffer.json
 951f94b03d04ec3d8c1e5842a95b2c24dd481644 assets/railways/blockstates/black_brass_wrapped_locometal.json
 d321ee17d15d23060493325ec99577905672649a assets/railways/blockstates/black_brass_wrapped_locometal_boiler.json
@@ -1446,8 +1446,8 @@ ded200e995cc50bc13f2d655493ef78c78600c3b assets/railways/blockstates/yellow_slas
 61bf5cb67eaa6ea0d5f6e74e2bcced7b2cb208d6 assets/railways/blockstates/yellow_sliding_locometal_door.json
 81bde303c0bbb3500cd3ff12cd1cc18976080340 assets/railways/blockstates/yellow_two_pane_locometal_window.json
 e9a915a465f7424e356ab46f6ab2c57be3a79f53 assets/railways/blockstates/yellow_wrapped_locometal_smokebox.json
-dc4b250f346f5243b61e0f0e6d9201d5beaef79f assets/railways/lang/en_ud.json
-5718a4abf17c11a47176e86459d0b7c29fb51cd8 assets/railways/lang/en_us.json
+1d6aad0ecb25316ffd95d31972211e506404a42c assets/railways/lang/en_ud.json
+c449449ab3d997e7feaedc547ea5b42d54d0b8a2 assets/railways/lang/en_us.json
 2d1ade82820569936fd3021a877283474ced09d0 assets/railways/models/block/casing_collision.json
 e3c95e8fd344b4b0b82ea58b2adf947798878aff assets/railways/models/block/fuel_tank.json
 aeb297b317e6a5de8c288d5d9acbb717abff1e4a assets/railways/models/block/generic_crossing.json

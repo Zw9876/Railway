@@ -236,10 +236,13 @@ public class CRBlocks {
             .transform(styled ? BuilderTransformers.smokestackLoot(cycleGroupSupplier) : b -> b)
             .onRegister(movementBehaviour(new SmokeStackMovementBehaviour(spawnExtraSmoke)))
             .blockstate(blockStateProvider)
-            // Block-level lang only: a BlockItem's translation key IS the block's, so calling .lang on
-            // the item too emits block.railways.<name> twice and Registrate rejects the duplicate.
             .lang(description)
             .item(styled ? BlockStateBlockItem.create(StyledSmokeStackBlock.STYLE, SmokestackStyle.STEEL, true) : BlockItem::new)
+                // BlockStateBlockItem overrides getDescriptionId to the plain Item form, so the styled
+                // variant is named by item.railways.<name> and needs its own entry - the block-level
+                // .lang above only covers block.railways.<name>. A plain BlockItem, by contrast, shares
+                // the block's key, and repeating .lang there makes Registrate reject the duplicate.
+                .transform(styled ? b -> b.lang(description) : b -> b)
                 // No explicit .tab(): the base tab is already the Registrate default here (see the
                 // useBaseTab() static block above), and RegistrateDisplayItemsGenerator adds every entry
                 // in that tab itself. Calling .tab() ALSO registers Registrate own handler, so the item
@@ -297,6 +300,9 @@ public class CRBlocks {
             .blockstate(BuilderTransformers.variableSmokeStack(variant, rotType))
             .lang(description)
             .item(BlockStateBlockItem.create(StyledSmokeStackBlock.STYLE, SmokestackStyle.STEEL, true))
+            // BlockStateBlockItem overrides getDescriptionId to the plain Item form, so this needs its
+            // own item.railways.<name> entry; the block-level .lang above only covers block.railways.<name>.
+            .lang(description)
             // No explicit .tab(): the base tab is already the Registrate default here (see the
             // useBaseTab() static block above), and RegistrateDisplayItemsGenerator adds every entry
             // in that tab itself. Calling .tab() ALSO registers Registrate own handler, so the item
